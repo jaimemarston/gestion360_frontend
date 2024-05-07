@@ -1,16 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
+import { FileUploader } from "react-drag-drop-files";
 
 export default function FileManager() {
-  const [selectedItemId, setSelectedItemId] = useState(null);
+    const [selectedItemId, setSelectedItemId] = useState(null);
+    const [files, setFiles] = useState([]);
 
-  const handleItemClick = (itemId) => {
-    setSelectedItemId(itemId);
-    console.log("ID del item seleccionado:", itemId);
-  };
+    const handleChange = (selectedFiles) => {
+      // Mapear los archivos seleccionados y filtrar los que son PDF
+      const selectedFilesArray = Array.from(selectedFiles);
+      const pdfFiles = selectedFilesArray.filter((file) => file.type === "application/pdf");
+      if (pdfFiles.length > 0) {
+        // Concatenar los nuevos archivos PDF al array existente
+        setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
+      } else {
+        alert("Solo se permiten archivos PDF.");
+      }
+    };
+  
+    const handleItemClick = (itemId) => {
+      setSelectedItemId(itemId);
+      console.log("ID del item seleccionado:", itemId);
+    };
+
+    useEffect(()=>{
+      console.log(files)
+    }, [files])
+
+  const fileTypes = ["pdf"];
 
   const Arr = [
     {
@@ -95,31 +115,50 @@ export default function FileManager() {
 
   return (
     <div className="container">
-      <Box sx={{ height: 220, maxWidth: 400 }}>
-        {Arr.map((item, index) => (
-          <SimpleTreeView key={index}>
-            <TreeItem itemId={item.id} label={item.father} onClick={() => handleItemClick(item.id)}>
-              {item.secondLevel && item.secondLevel.map((secondLevelItem) => (
+      <div className="row">
+        <div className="col-6">
+          <Box sx={{ height: 220, maxWidth: 400 }}>
+            {Arr.map((item, index) => (
+              <SimpleTreeView key={index}>
                 <TreeItem
-                  key={secondLevelItem.id}
-                  itemId={secondLevelItem.id}
-                  label={secondLevelItem.title}
-                  onClick={() => handleItemClick(secondLevelItem.id)} // Manejar clic en el segundo nivel
+                  itemId={item.id}
+                  label={item.father}
+                  onClick={() => handleItemClick(item.id)}
                 >
-                  {secondLevelItem.thirdLevel && secondLevelItem.thirdLevel.map((thirdLevelItem) => (
-                    <TreeItem
-                      key={thirdLevelItem.id}
-                      itemId={thirdLevelItem.id}
-                      label={thirdLevelItem.title}
-                      onClick={() => handleItemClick(thirdLevelItem.id)} // Manejar clic en el tercer nivel
-                    />
-                  ))}
+                  {item.secondLevel &&
+                    item.secondLevel.map((secondLevelItem) => (
+                      <TreeItem
+                        key={secondLevelItem.id}
+                        itemId={secondLevelItem.id}
+                        label={secondLevelItem.title}
+                        onClick={() => handleItemClick(secondLevelItem.id)} // Manejar clic en el segundo nivel
+                      >
+                        {secondLevelItem.thirdLevel &&
+                          secondLevelItem.thirdLevel.map((thirdLevelItem) => (
+                            <TreeItem
+                              key={thirdLevelItem.id}
+                              itemId={thirdLevelItem.id}
+                              label={thirdLevelItem.title}
+                              onClick={() => handleItemClick(thirdLevelItem.id)} // Manejar clic en el tercer nivel
+                            />
+                          ))}
+                      </TreeItem>
+                    ))}
                 </TreeItem>
-              ))}
-            </TreeItem>
-          </SimpleTreeView>
-        ))}
-      </Box>
+              </SimpleTreeView>
+            ))}
+          </Box>
+        </div>
+        <div className="col-6">
+          <FileUploader
+            multiple={true}
+            handleChange={handleChange}
+            name="file"
+            types={fileTypes}
+          />
+       <p>{files.length > 0 ? `File name: ${files[files.length - 1].name}` : "no files uploaded yet"}</p>
+        </div>
+      </div>
     </div>
   );
 }
