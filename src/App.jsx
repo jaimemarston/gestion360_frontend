@@ -43,6 +43,7 @@ import {
   PermisoVacaciones,
 } from "./Components/Sistema/Menu";
 import { RegistroPresupuestoFinanciero } from "./Components/Sistema/Menu/RegistroPresupuestoFinanciero";
+import FileManager from "./Components/Sistema/Menu/FileManager";
 
 function App() {
   const [isDarkMode, setDarkMode] = useState(false);
@@ -166,6 +167,11 @@ function App() {
             exact
             path={"lugar-comision"}
             element={<LugarComision isDarkMode={isDarkMode} />}
+          />
+          <Route
+            exact
+            path={"file-manager"}
+            element={<FileManager isDarkMode={isDarkMode} />}
           />
         </Route>
       </Routes>
