@@ -1,0 +1,16 @@
+.eliminar-li li {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.eliminar-li ul {
+  font-size: 1.5rem;
+
+}
+.li {
+  cursor: pointer;
+  padding: 1rem 0;
+  font-size: 1.3rem;
+}
+
+

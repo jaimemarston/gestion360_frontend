@@ -1,0 +1,87 @@
+
+.flex-container{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+
+.layout-sidebar{
+    animation-duration: 2s !important;
+    width: 100vw;
+}
+
+.layout-expand{
+    visibility: hidden;
+    width: -0vw !important;
+}
+
+.expand-menu{
+    width: 120vw ;
+    margin-left: -22vw;
+}
+
+
+
+.dark-mode {
+    background-color: black !important;
+    color: white;
+
+    span {
+        color: white !important; 
+    }
+
+  
+  }
+
+
+  .body-dark {
+    background-color: rgb(22, 22, 22) !important;  
+}  
+
+
+
+
+
+  .dark-mode-button {
+    background-color: black !important;
+    color: white;
+    
+    :hover {
+        background-color: black !important;
+        color: white; 
+    }
+
+    ul {
+        background-color: black !important;
+        color: azure !important;
+    }
+
+
+    li {
+        background-color: black !important;
+        color: azure !important;
+    }
+
+
+  }
+
+@media (min-width:1500px){
+    .expand-menu{
+        max-width: 118vw !important;
+        margin-left: -19vw !important;
+    }
+        
+}
+
+
+
+
+@media (min-width:1800px){
+    .expand-menu{
+        max-width: 115vw !important;
+        margin-left: -15vw !important;
+    }
+}
+
+
+

@@ -1,0 +1,66 @@
+.flexF {
+  display: flex;
+  justify-content: space-around;
+}
+
+.flexF label {
+  width: 15rem;
+  font-size: 1.2rem;
+}
+.InputTextF {
+  width: 30rem;
+}
+.flexright {
+  display: flex;
+  justify-content: right;
+}
+.CardF {
+  margin: 2rem 10rem 5rem 0rem;
+}
+.CardF div {
+  display: flex;
+}
+.CardF p {
+  width: 25rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.CardF span {
+  font-family: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.dark-mode-table {
+
+  #state {
+    background-color: black;
+    color: #fff;
+  }
+
+ .p-datatable .p-datatable-thead > tr > th {
+    background-color: black !important;
+  color: #fff;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    background-color: black !important;
+  color: #fff;
+}
+
+.p-datatable .p-paginator-bottom {
+    background-color: black !important;
+  color: #fff;
+}
+.p-datatable .p-datatable-header {
+  background-color: black !important;
+  color: white;
+}
+
+}
+
+/* .dark-mode {
+  background-color: black !important;
+  color: #fff;
+} */
