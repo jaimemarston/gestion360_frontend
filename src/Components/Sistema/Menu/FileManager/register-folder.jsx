@@ -219,8 +219,8 @@ useEffect(()=> {
     return (
       <Dialog
         visible={isModal}
-        style={{ width: '950px', height: "650px" }}
-        header='Detalle del registro'
+        style={{ width: '950px', height: "660px" }}
+        header='Crear carpeta'
         modal
         className='p-fluid'
         footer={productDialogFooter}

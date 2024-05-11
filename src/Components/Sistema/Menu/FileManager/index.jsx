@@ -5,31 +5,35 @@ import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./register-folder";
+import { RegisterGroup } from "./register-group";
 
 export default function FileManager() {
-    const [selectedItemId, setSelectedItemId] = useState(null);
-    const [files, setFiles] = useState([]);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [files, setFiles] = useState([]);
 
-    const handleChange = (selectedFiles) => {
-      // Mapear los archivos seleccionados y filtrar los que son PDF
-      const selectedFilesArray = Array.from(selectedFiles);
-      const pdfFiles = selectedFilesArray.filter((file) => file.type === "application/pdf");
-      if (pdfFiles.length > 0) {
-        // Concatenar los nuevos archivos PDF al array existente
-        setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
-      } else {
-        alert("Solo se permiten archivos PDF.");
-      }
-    };
-  
-    const handleItemClick = (itemId) => {
-      setSelectedItemId(itemId);
-      console.log("ID del item seleccionado:", itemId);
-    };
+  const handleChange = (selectedFiles) => {
+    // Mapear los archivos seleccionados y filtrar los que son PDF
+    const selectedFilesArray = Array.from(selectedFiles);
+    const pdfFiles = selectedFilesArray.filter(
+      (file) => file.type === "application/pdf"
+    );
+    if (pdfFiles.length > 0) {
+      // Concatenar los nuevos archivos PDF al array existente
+      setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
+    } else {
+      alert("Solo se permiten archivos PDF.");
+    }
+  };
 
-    useEffect(()=>{
-      console.log(files)
-    }, [files])
+  const handleItemClick = (itemId) => {
+    setSelectedItemId(itemId);
+    console.log("ID del item seleccionado:", itemId);
+  };
+
+  useEffect(() => {
+    console.log(files);
+  }, [files]);
 
   const fileTypes = ["pdf"];
 
@@ -113,11 +117,18 @@ export default function FileManager() {
       ],
     },
   ];
-  
+
   return (
     <div className="container">
       <div className="row">
-      <RegisterFolder />
+      <div className="col-10">
+        <RegisterGroup />
+      </div>
+      <div className="col-2">
+        {showModal ? (
+          <RegisterFolder />
+        ) : (<></>)}
+      </div>
         <div className="col-6">
           <Box sx={{ height: 220, maxWidth: 400 }}>
             {Arr.map((item, index) => (
@@ -125,7 +136,7 @@ export default function FileManager() {
                 <TreeItem
                   itemId={item.id}
                   label={item.father}
-                  onClick={() => handleItemClick(item.id)}
+                  onClick={() => {handleItemClick(item.id), setShowModal(true)}}
                 >
                   {item.secondLevel &&
                     item.secondLevel.map((secondLevelItem) => (
@@ -133,7 +144,7 @@ export default function FileManager() {
                         key={secondLevelItem.id}
                         itemId={secondLevelItem.id}
                         label={secondLevelItem.title}
-                        onClick={() => handleItemClick(secondLevelItem.id)} // Manejar clic en el segundo nivel
+                        onClick={() => {handleItemClick(secondLevelItem.id), setShowModal(true)}} // Manejar clic en el segundo nivel
                       >
                         {secondLevelItem.thirdLevel &&
                           secondLevelItem.thirdLevel.map((thirdLevelItem) => (
@@ -141,7 +152,7 @@ export default function FileManager() {
                               key={thirdLevelItem.id}
                               itemId={thirdLevelItem.id}
                               label={thirdLevelItem.title}
-                              onClick={() => handleItemClick(thirdLevelItem.id)} // Manejar clic en el tercer nivel
+                              onClick={() => {handleItemClick(thirdLevelItem.id), setShowModal(true)}} // Manejar clic en el tercer nivel
                             />
                           ))}
                       </TreeItem>
@@ -151,14 +162,29 @@ export default function FileManager() {
             ))}
           </Box>
         </div>
-        <div className="col-6">
+
+        <div className="col-6 d-flex justify-content-center">
           <FileUploader
             multiple={true}
+            children={
+              <div className="upload-file">
+                <div className="d-flex align-items-center col-10">
+                  <i className="pi pi-file" style={{ fontSize: "22px" }} />
+                  <p className="ms-2 fs-5">
+                    {files.length > 0
+                      ? `File name: ${files[files.length - 1].name}`
+                      : "Upload or drop a file right here"}
+                  </p>
+                </div>
+                <div className="d-flex justify-content-end col-2">
+                  <p className="fs-5">{fileTypes}</p>
+                </div>
+              </div>
+            }
             handleChange={handleChange}
             name="file"
             types={fileTypes}
           />
-       <p>{files.length > 0 ? `File name: ${files[files.length - 1].name}` : "no files uploaded yet"}</p>
         </div>
       </div>
     </div>

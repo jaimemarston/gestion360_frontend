@@ -73,8 +73,19 @@
         
 }
 
-
-
+.upload-file{
+    position: relative;
+  display: flex;
+  -moz-box-align: center;
+  align-items: center;
+  min-width: 322px;
+  max-width: 508px;
+  height: 48px;
+  border: 2px dashed rgb(6, 88, 194);
+  padding: 8px 16px 8px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 @media (min-width:1800px){
     .expand-menu{
