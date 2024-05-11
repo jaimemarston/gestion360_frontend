@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { FileUploader } from "react-drag-drop-files";
+import { RegisterFolder } from "./register-folder";
 
 export default function FileManager() {
     const [selectedItemId, setSelectedItemId] = useState(null);
@@ -159,6 +160,7 @@ export default function FileManager() {
        <p>{files.length > 0 ? `File name: ${files[files.length - 1].name}` : "no files uploaded yet"}</p>
         </div>
       </div>
+      <RegisterFolder />
     </div>
   );
 }
