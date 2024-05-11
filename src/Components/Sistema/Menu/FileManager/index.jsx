@@ -113,10 +113,11 @@ export default function FileManager() {
       ],
     },
   ];
-
+  
   return (
     <div className="container">
       <div className="row">
+      <RegisterFolder />
         <div className="col-6">
           <Box sx={{ height: 220, maxWidth: 400 }}>
             {Arr.map((item, index) => (
@@ -160,7 +161,6 @@ export default function FileManager() {
        <p>{files.length > 0 ? `File name: ${files[files.length - 1].name}` : "no files uploaded yet"}</p>
         </div>
       </div>
-      <RegisterFolder />
     </div>
   );
 }
