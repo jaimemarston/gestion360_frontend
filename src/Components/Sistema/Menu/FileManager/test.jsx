@@ -1,4 +1,4 @@
-import  React, { useEffect, useState } from 'react';
+import  React from 'react';
 import clsx from 'clsx';
 import { animated, useSpring } from '@react-spring/web';
 import { styled, alpha } from '@mui/material/styles';
@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import ArticleIcon from '@mui/icons-material/Article';
 
 import FolderRounded from '@mui/icons-material/FolderRounded';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { unstable_useTreeItem2 as useTreeItem2 } from '@mui/x-tree-view/useTreeItem2';
@@ -24,7 +23,7 @@ import { TreeItem2Provider } from '@mui/x-tree-view/TreeItem2Provider';
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 
 function DotIcon() {
-  return (
+    return (
     <Box
       sx={{
         width: 6,
@@ -134,7 +133,7 @@ function CustomLabel({ icon: Icon, expandable, children, ...other }) {
       )}
 
       <StyledTreeItemLabelText variant="body2">{children}</StyledTreeItemLabelText>
-      {expandable && <DotIcon />}
+      {expandable && <DotIcon id={children} />}
     </TreeItem2Label>
   );
 }
@@ -195,7 +194,6 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   
     const handleClick = () => {
       onItemSelect(itemId);
-      console.log(itemId, "id");        
     };
   
     return (
@@ -227,12 +225,9 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
     );
   });
 
-export default function FileExplorer({date}) {
-
-    const [selectedItems, setSelectedItems] = useState({});
-
+export default function FileExplorer({date, select}) {
     const handleItemSelect = (selectedItemId) => {
-        setSelectedItems(selectedItemId);
+        select(selectedItemId);
       };
       
   return (

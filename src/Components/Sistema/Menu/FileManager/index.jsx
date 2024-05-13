@@ -30,10 +30,6 @@ export default function FileManager() {
     console.log("ID del item seleccionado:", itemId);
   };
 
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
-
   const fileTypes = ["pdf"];
 
   const ITEMS = [
@@ -80,7 +76,7 @@ export default function FileManager() {
            <RegisterFolder /> 
         </div>
         <div className="col-6">
-          <FileExplorer date={ITEMS} />
+          <FileExplorer date={ITEMS} select={handleItemClick} />
         </div>
 
         <div className="col-6 d-grid w-50 h-50 justify-content-start">
