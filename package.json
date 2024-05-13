@@ -12,11 +12,13 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.17",
     "@mui/lab": "^5.0.0-alpha.170",
-    "@mui/material": "^5.15.16",
+    "@mui/material": "^5.15.17",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/x-tree-view": "^7.3.1",
     "@react-pdf/renderer": "^3.1.9",
+    "@react-spring/web": "^9.7.3",
     "@reduxjs/toolkit": "^1.9.0",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.2",
@@ -39,7 +41,7 @@
     "react-router-dom": "^6.10.0",
     "react-transition-group": "^4.4.5",
     "sass": "^1.55.0",
-    "styled-components": "^6.1.9",
+    "styled-components": "^6.1.11",
     "sweetalert2": "^11.7.3",
     "xlsx": "^0.18.5",
     "yup": "^0.32.11"
