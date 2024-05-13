@@ -229,6 +229,14 @@ export default  function  AppMenu({isOpen}) {
                 navigate('/repositorio-documentos');
               },
             },
+            {
+              label: 'Gestor de archivos',
+              icon: 'pi pi-fw pi-bookmark',
+              to: '/file-manager',
+              command: () => {
+                navigate('/file-manager');
+              },
+            },
       ],
     },
   ];

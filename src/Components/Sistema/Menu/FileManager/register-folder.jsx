@@ -7,18 +7,16 @@ import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-
-
-import { InputSwitch } from 'primereact/inputswitch';
 import { fetchDelete, fetchGet, fetchPut, postUser } from '../../../../api';
 
-const RegistroUsuario = ({isDarkMode}) => {
+const RegisterFolder = ({isDarkMode}) => {
+  const [usersId, setUsersId] = useState([]);
   let empty = {
-    codigo: '',
-    nombre: '',
-    email: '',
-    password: '',
+    mainFolder: '',
+    subFolder: '',
+    lastFolder: '',
     rol:"USER_ROLE",
+    usersId,
     estado: true,
   };
   const [listProduct, setlistProduct] = useState([]);
@@ -26,9 +24,9 @@ const RegistroUsuario = ({isDarkMode}) => {
   const [newData, setNewData] = useState(null);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const [value, setValue] = useState(empty.estado);
+  const [selectedProducts, setSelectedProducts] = useState(null);
 
   const [product, setProduct] = useState(empty);
-  const [selectedProducts, setSelectedProducts] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
@@ -63,10 +61,10 @@ const RegistroUsuario = ({isDarkMode}) => {
     const saveProduct = () => {
       setSubmitted(true);
       console.log(product)
-      if (
-        product?.nombre.trim() &&
-        product?.codigo.trim() &&
-        product?.email.trim() &&
+/*       if (
+        product?.mainFolder.trim() &&
+        product?.subFolder.trim() &&
+        product?.lastFolder.trim() &&
         product?.password.trim()
       ) {
         if (product.id) {
@@ -113,13 +111,12 @@ const RegistroUsuario = ({isDarkMode}) => {
             })
           }
         }
-      }
+      } */
     };
 
     const editProduct = (product) => {
   
       setProduct({ ...product });
-      // console.log('product', product);
       setIsModal();
     };
 
@@ -128,39 +125,27 @@ const RegistroUsuario = ({isDarkMode}) => {
       closeModal();
     };
 
-    const deleteSelected = () => {
-
-        fetchDelete(`usuario/${newData.id}`)
-        .then((res) => {
-          toast.current.show({
-            severity: 'success',
-            summary: 'Successful',
-            detail: 'Usuario eliminado',
-            life: 3000,
-          });
-          listarUsuarios();
-          closeModal();
-        })
-        .catch((error) => {
-          toast.current.show({
-            severity: 'error',
-            summary: 'Successful',
-            detail: error.response.data.message,
-            life: 3000,
-          });
-          closeModal();
-        }); 
-    };
-
     const onInputChange = (e, name) => {
       setProduct({ ...product, [e.target.name]: e.target.value });
     };
+
+  useEffect(()=>{
+    if(selectedProducts !== null){
+      const id = selectedProducts.map((item)=> item.id);
+      setUsersId(id)
+      empty.usersId = id;
+    }
+  }, [selectedProducts])
+
+useEffect(()=> {
+  console.log(empty.usersId)
+}, [empty.usersId])
 
   const leftToolbarTemplate = () => (
     <>
       <div className='my-2'>
         <Button
-          label='Nuevo'
+          label='Crear carpeta'
           icon='pi pi-plus'
           className='p-button-success mr-2'
           onClick={openModal}
@@ -220,6 +205,96 @@ const RegistroUsuario = ({isDarkMode}) => {
     );
   };
 
+
+  const CrudUsuario = ({
+    isModal,
+    productDialogFooter,
+    openModal,
+    product,
+    onInputChange,
+    submitted,
+  }) => {
+    // console.log(product);
+  
+    return (
+      <Dialog
+        visible={isModal}
+        style={{ width: '950px', height: "660px" }}
+        header='Crear carpeta'
+        modal
+        className='p-fluid'
+        footer={productDialogFooter}
+        onHide={openModal}
+      >
+        <div className='field'>
+          <label htmlFor='mainFolder'>Carpeta principal</label>
+          <InputText
+            id='mainFolder'
+            name='mainFolder'
+            value={product?.mainFolder?.trim()}
+            onChange={(e) => onInputChange(e, 'mainFolder')}
+            required
+            autoFocus
+            className={classNames({
+              'p-invalid': submitted && !product.mainFolder,
+            })}
+          />
+          {submitted && !product.codigo && (
+            <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
+          )}
+        </div>
+  
+        <div className='field'>
+          <label htmlFor='subFolder'>Sub carpeta</label>
+          <InputText
+            id='subFolder'
+            name='subFolder'
+            value={product?.subFolder?.trim()}
+            onChange={(e) => onInputChange(e, 'subFolder')}
+            required
+            autoFocus
+          />
+        </div>
+  
+        <div className='field'>
+          <label htmlFor='lastFolder'>Ultima carpeta</label>
+          <InputText
+            id='lastFolder'
+            name='lastFolder'
+            type='text'
+            value={product?.lastFolder?.trim()}
+            onChange={(e) => onInputChange(e, 'lastFolder')}
+            required
+            autoFocus
+          />
+        </div>
+        <div
+          className='field'
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+        </div>
+  
+        <TablaUsuario
+              dt={dt}
+              listProduct={listProduct}
+              selectedProducts={selectedProducts}
+              setSelectedProducts={setSelectedProducts}
+              globalFilter={globalFilter}
+              header={header}
+              actionBodyTemplate={actionBodyTemplate}
+              actionBodyTemplate2={actionBodyTemplate2}
+              codigoBodyTemplate={codigoBodyTemplate}
+              nombreBodyTemplate={nombreBodyTemplate}
+              usuarioBodyTemplate={usuarioBodyTemplate}
+              statusBodyTemplate={statusBodyTemplate}
+            />
+      </Dialog>
+    );
+  };
   const actionBodyTemplate2 = (rowData) => {
     return (
       <div className='actions'>
@@ -236,7 +311,10 @@ const RegistroUsuario = ({isDarkMode}) => {
 
   const header = (
     <div className='flex flex-column md:flex-row md:justify-content-between md:align-items-center'>
+      <div className="col-2">
       <h5 className='m-0'>Lista de Usuarios</h5>
+      </div>
+      <div className="col-10">
       <span className='block mt-2 md:mt-0 p-input-icon-left'>
         <i className='pi pi-search' />
         <InputText
@@ -245,6 +323,7 @@ const RegistroUsuario = ({isDarkMode}) => {
           placeholder='Buscar...'
         />
       </span>
+      </div>
     </div>
   );
 
@@ -271,30 +350,9 @@ const RegistroUsuario = ({isDarkMode}) => {
   return (
     <div className={isDarkMode ?  'dark-mode-table grid crud-demo' : 'grid crud-demo'  }>
       <div className='col-12'>
-        <div className={isDarkMode ?  'dark-mode card' : 'card'  }>
+        <div >
           <Toast ref={toast} />
-          <Toolbar className={isDarkMode ?  'dark-mode mb-4' : 'mb-4'  } left={leftToolbarTemplate}></Toolbar>
-          <TablaUsuario
-            dt={dt}
-            listProduct={listProduct}
-            selectedProducts={selectedProducts}
-            setSelectedProducts={setSelectedProducts}
-            globalFilter={globalFilter}
-            header={header}
-            actionBodyTemplate={actionBodyTemplate}
-            actionBodyTemplate2={actionBodyTemplate2}
-            codigoBodyTemplate={codigoBodyTemplate}
-            nombreBodyTemplate={nombreBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
-            statusBodyTemplate={statusBodyTemplate}
-          />
-          {isCloseModal &&
-            EliminarUsuario({
-              isCloseModal,
-              closeModal,
-              deleteSelected,
-            })}
-
+          <Toolbar style={{ background: "transparent", border: "none" }} left={leftToolbarTemplate}></Toolbar>
           {isModal &&
             CrudUsuario({
               isModal,
@@ -314,11 +372,7 @@ const RegistroUsuario = ({isDarkMode}) => {
   );
 };
 
-const comparisonFn = function (prevProps, nextProps) {
-  return prevProps.location.pathname === nextProps.location.pathname;
-};
-
-export { RegistroUsuario };
+export { RegisterFolder };
 
 const TablaUsuario = ({
   dt,
@@ -327,8 +381,6 @@ const TablaUsuario = ({
   setSelectedProducts,
   globalFilter,
   header,
-  actionBodyTemplate,
-  actionBodyTemplate2,
   codigoBodyTemplate,
   nombreBodyTemplate,
   usuarioBodyTemplate,
@@ -387,161 +439,7 @@ const TablaUsuario = ({
         sortable
         headerStyle={{ width: '14%', minWidth: '10rem' }}
       ></Column>
-      <Column body={actionBodyTemplate}></Column>
-      <Column body={actionBodyTemplate2}></Column>
     </DataTable>
   );
 };
 
-const EliminarUsuario = ({ isCloseModal, closeModal, deleteSelected }) => {
-  const deleteDialogFooter = (
-    <>
-      <Button
-        label='No'
-        icon='pi pi-times'
-        className='p-button-text'
-        onClick={closeModal}
-      />
-      <Button
-        label='Si'
-        icon='pi pi-check'
-        className='p-button-text'
-        onClick={() => deleteSelected()}
-      />
-    </>
-  );
-
-  return (
-    <Dialog
-      visible={isCloseModal}
-      style={{ width: '450px' }}
-      header='Confirmar'
-      modal
-      footer={deleteDialogFooter}
-      onHide={closeModal}
-    >
-      <div className='flex align-items-center justify-content-center'>
-        <i
-          className='pi pi-exclamation-triangle mr-3'
-          style={{ fontSize: '2rem' }}
-        />
-        <span>Desea eliminar al usuario?</span>
-      </div>
-    </Dialog>
-  );
-};
-
-const CrudUsuario = ({
-  isModal,
-  productDialogFooter,
-  openModal,
-  product,
-  onInputChange,
-  submitted,
-  switchFondo,
-  value,
-  setValue,
-}) => {
-  // console.log(product);
-
-  return (
-    <Dialog
-      visible={isModal}
-      style={{ width: '450px' }}
-      header='Detalle del registro'
-      modal
-      className='p-fluid'
-      footer={productDialogFooter}
-      onHide={openModal}
-    >
-      <div className='field'>
-        <label htmlFor='codigo'>codigo</label>
-        <InputText
-          id='codigo'
-          name='codigo'
-          value={product?.codigo?.trim()}
-          onChange={(e) => onInputChange(e, 'codigo')}
-          required
-          autoFocus
-          className={classNames({
-            'p-invalid': submitted && !product.codigo,
-          })}
-        />
-        {submitted && !product.codigo && (
-          <small className='p-invalid'>Codigo es Requerido.</small>
-        )}
-      </div>
-
-      <div className='field'>
-        <label htmlFor='nombre'>Nombre</label>
-        <InputText
-          id='nombre'
-          name='nombre'
-          value={product?.nombre?.trim()}
-          onChange={(e) => onInputChange(e, 'nombre')}
-          required
-          autoFocus
-          className={classNames({
-            'p-invalid': submitted && !product.nombre,
-          })}
-        />
-        {submitted && !product.nombre && (
-          <small className='p-invalid'>Nombre es Requerido.</small>
-        )}
-      </div>
-
-      <div className='field'>
-        <label htmlFor='email'>Email</label>
-        <InputText
-          id='email'
-          name='email'
-          type='email'
-          value={product?.email?.trim()}
-          onChange={(e) => onInputChange(e, 'email')}
-          required
-          autoFocus
-          className={classNames({
-            'p-invalid': submitted && !product.email,
-          })}
-        />
-        {submitted && !product.email && (
-          <small className='p-invalid'>Usuario es Requerido.</small>
-        )}
-      </div>
-      <div className='field'>
-        <label htmlFor='password'>Contraseña</label>
-        <InputText
-          type='password'
-          name='password'
-          id='password'
-          value={product?.password?.trim()}
-          onChange={(e) => onInputChange(e, 'password')}
-          required
-          autoFocus
-          className={classNames({
-            'p-invalid': submitted && !product.password,
-          })}
-        />
-        {submitted && !product.password && (
-          <small className='p-invalid'>Password es Requerido.</small>
-        )}
-      </div>
-
-      <div
-        className='field'
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <label htmlFor='estado'>Estado</label>
-        <InputSwitch
-          defaultValue={value}
-          checked={product.estado}
-          onChange={(e) => setValue(e.value)}
-        />
-      </div>
-    </Dialog>
-  );
-};
