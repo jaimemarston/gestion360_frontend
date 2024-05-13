@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Box from "@mui/material/Box";
-import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
-import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./register-folder";
 import { RegisterGroup } from "./register-group";
@@ -40,46 +37,48 @@ export default function FileManager() {
   const fileTypes = ["pdf"];
 
   const ITEMS = [
-    {
-      id: "1",
-      label: "item-father-1",
-      children: [
-        {
-          id: "1.1",
-          label: "second-level-1",
-          children: [
-            { id: "1.1.1", label: "Ultimo nivel1-item1" },
-            { id: "1.1.2", label: "Ultimo nivel1-item2" },
-            { id: "1.1.3", label: "Ultimo nivel1-item3" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "2",
-      label: "Bookmarked",
-      fileType: "pinned",
-      children: [
-        {
-          id: "2.1",
-          label: "Learning materials",
-        },
-        { id: "2.2", label: "News" },
-        { id: "2.3", label: "Forums" },
-        { id: "2.4", label: "Travel documents" },
-      ],
-    },
-    { id: "3", label: "History" },
-    { id: "4", label: "Trash" },
+    {id: 13, label: 'group', children: [
+      {
+        id: 1,
+        label: "item-father-1",
+        children: [
+          {
+            id: 2,
+            label: "second-level-1",
+            children: [
+              { id: 3, label: "Ultimo nivel1-item1" },
+              { id: 4, label: "Ultimo nivel1-item2" },
+              { id: 5, label: "Ultimo nivel1-item3" },
+            ],
+          },
+        ],
+      },
+      {
+        id: 6,
+        label: "Bookmarked",
+        fileType: "pinned",
+        children: [
+          {
+            id: 7,
+            label: "Learning materials",
+          },
+          { id: 8, label: "News" },
+          { id: 9, label: "Forums" },
+          { id: 10, label: "Travel documents" },
+        ],
+      },
+      { id: 11, label: "History" },
+      { id: 12, label: "Trash" },
+    ]}
   ];
 
   return (
     <div className="container">
       <div className="row">
-        <div className="col-10">
+        <div className="col-12 d-flex">
           <RegisterGroup />
+           <RegisterFolder /> 
         </div>
-        <div className="col-2">{showModal ? <RegisterFolder /> : <></>}</div>
         <div className="col-6">
           <FileExplorer date={ITEMS} />
         </div>
