@@ -6,6 +6,7 @@ import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./register-folder";
 import { RegisterGroup } from "./register-group";
+import "./style-file-manager.scss";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -20,11 +21,12 @@ export default function FileManager() {
     );
     if (pdfFiles.length > 0) {
       // Concatenar los nuevos archivos PDF al array existente
-      setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
+      setFiles((prevFiles) => [...prevFiles,...pdfFiles]);
     } else {
       alert("Solo se permiten archivos PDF.");
     }
   };
+
 
   const handleItemClick = (itemId) => {
     setSelectedItemId(itemId);
@@ -163,7 +165,7 @@ export default function FileManager() {
           </Box>
         </div>
 
-        <div className="col-6 d-flex justify-content-center">
+        <div className="col-6 d-grid justify-content-center">
           <FileUploader
             multiple={true}
             children={
@@ -172,12 +174,12 @@ export default function FileManager() {
                   <i className="pi pi-file" style={{ fontSize: "22px" }} />
                   <p className="ms-2 fs-5">
                     {files.length > 0
-                      ? `File name: ${files[files.length - 1].name}`
-                      : "Upload or drop a file right here"}
+                     ? 'Precione para subir otro archivo'
+                      : "Subir o soltar un archivo aquí"}
                   </p>
                 </div>
                 <div className="d-flex justify-content-end col-2">
-                  <p className="fs-5">{fileTypes}</p>
+                  <p className="fs-5">{fileTypes.join(", ")}</p>
                 </div>
               </div>
             }
@@ -185,6 +187,18 @@ export default function FileManager() {
             name="file"
             types={fileTypes}
           />
+          <div className="col-12 row mt-5 justify-content-start">
+            {files.length > 0
+             ? files.map((file, index) => (
+                  <div key={index} className="col-2">
+                    <div className="file-item me-4 d-grid justify-content-center card w-card">
+                      <i className="pi pi-file text-center size-file-card" />
+                      <p className="ms-2 fs-5 text-center">{file.name.slice(0, 22) + '... pdf'}</p>
+                    </div>
+                  </div>
+                ))
+              : ""}
+          </div>
         </div>
       </div>
     </div>
