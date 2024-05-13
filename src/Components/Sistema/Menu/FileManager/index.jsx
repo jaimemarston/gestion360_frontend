@@ -165,7 +165,7 @@ export default function FileManager() {
           </Box>
         </div>
 
-        <div className="col-6 d-grid justify-content-center">
+        <div className="col-6 d-grid w-50 justify-content-center">
           <FileUploader
             multiple={true}
             children={
@@ -187,13 +187,13 @@ export default function FileManager() {
             name="file"
             types={fileTypes}
           />
-          <div className="col-12 row mt-5 justify-content-start">
+          <div className={`col-12 mt-4 ${files.length < 5 ? 'd-flex' : 'row' }`}>
             {files.length > 0
              ? files.map((file, index) => (
-                  <div key={index} className="col-2">
-                    <div className="file-item me-4 d-grid justify-content-center card w-card">
+                  <div key={index} className="col-2 card w-card d-flex align-items-center justify-content-center me-4">
+                    <div className="file-item d-grid justify-content-center">
                       <i className="pi pi-file text-center size-file-card" />
-                      <p className="ms-2 fs-5 text-center">{file.name.slice(0, 22) + '... pdf'}</p>
+                      <p className="ms-2 w-p-card fs-5 text-center">{file.name.length > 22 ? file.name.slice(0, 22) + '... pdf' : file.name}</p>
                     </div>
                   </div>
                 ))
