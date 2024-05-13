@@ -172,7 +172,7 @@ const getIconFromFileTypeAndDepth = (item, depth) => {
 
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
-    const { id, itemId, label, disabled, children, onItemSelect,...other } = props;
+    const { id, itemId, label, disabled, children, group, onItemSelect,...other } = props;
   
     const {
       getRootProps,
@@ -197,7 +197,6 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
     };
   
     return (
-      <div onClick={handleClick}>
         <TreeItem2Provider itemId={itemId}>
           <StyledTreeItemRoot {...getRootProps(other)}>
             <CustomTreeItemContent
@@ -215,17 +214,17 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
               </TreeItem2IconContainer>
   
               <CustomLabel
+                onClick={handleClick}
                 {...getLabelProps({ icon, expandable: expandable && status.expanded })}
               />
             </CustomTreeItemContent>
             {children && <TransitionComponent {...getGroupTransitionProps()} />}
           </StyledTreeItemRoot>
         </TreeItem2Provider>
-      </div>
     );
   });
 
-export default function FileExplorer({date, select}) {
+export default function FileExplorer({date, select, statusGroup}) {
     const handleItemSelect = (selectedItemId) => {
         select(selectedItemId);
       };
@@ -235,7 +234,7 @@ export default function FileExplorer({date, select}) {
       items={date}
       aria-label="file explorer"
       sx={{ height: 'fit-content', flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-      slots={{ item: (props) => <CustomTreeItem {...props} onItemSelect={handleItemSelect} /> }}
+      slots={{ item: (props) => <CustomTreeItem {...props} group={statusGroup} onItemSelect={handleItemSelect} /> }}
     />
   );
 }

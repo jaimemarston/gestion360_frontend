@@ -27,7 +27,6 @@ export default function FileManager() {
 
   const handleItemClick = (itemId) => {
     setSelectedItemId(itemId);
-    console.log("ID del item seleccionado:", itemId);
   };
 
   const fileTypes = ["pdf"];
