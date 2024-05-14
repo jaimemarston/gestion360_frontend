@@ -130,7 +130,7 @@ function CustomLabel({ icon: Icon, expandable, children, ...other }) {
           component={Icon}
           className="labelIcon"
           color="inherit"
-          sx={{ mr: 1, fontSize: "1.6rem" }}
+          sx={{ mr: 1, fontSize: "2rem" }}
         />
       )}
 
