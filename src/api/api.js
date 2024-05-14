@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 export const { VITE_API_URL }  = import.meta.env;
 
 function handle401(status) {
-  console.log('status', status)
   if(status === 401 && window.location.pathname  !== "/") {
     fetchUserLogout();
   }

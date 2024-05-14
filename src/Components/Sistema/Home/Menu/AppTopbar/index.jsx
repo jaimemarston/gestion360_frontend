@@ -77,6 +77,14 @@ export default function AppTopbar({isOpen, setMenuIsOpen, setIsDarkMode}) {
                   navigate('/registro-empleado');
                 },
               },
+              {
+                label: 'Gestor de archivos',
+                icon: 'pi pi-folder',
+                to: '/Dashboard',
+                command: () => {
+                  navigate('/file-manager');
+                },
+              },
             ],
           },
         ],
@@ -165,7 +173,7 @@ export default function AppTopbar({isOpen, setMenuIsOpen, setIsDarkMode}) {
     <div   className={value ?  'dark-mode layout-topbar ' : 'layout-topbar'  }  >
       
       <Link to='/Dashboard' className='layout-topbar-logo'>
-        <img style={{height: 40}} src="../../../../../public/logo.png" alt="logo" />
+        <img style={{height: 40}} src="/src/Components/Sistema/Login/predes.png" alt="logo" />
       </Link>
       
       <button 

@@ -8,8 +8,9 @@ import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { fetchDelete, fetchGet, fetchPut, postUser } from '../../../../api';
+import FolderIcon from '@mui/icons-material/Folder';
 
-const RegisterFolder = ({isDarkMode}) => {
+const RegisterFolder = ({isDarkMode, groupName, groupID}) => {
   const [usersId, setUsersId] = useState([]);
   let empty = {
     mainFolder: '',
@@ -137,19 +138,17 @@ const RegisterFolder = ({isDarkMode}) => {
     }
   }, [selectedProducts])
 
-useEffect(()=> {
-  console.log(empty.usersId)
-}, [empty.usersId])
 
   const leftToolbarTemplate = () => (
     <>
       <div className='my-2'>
         <Button
-          label='Crear carpeta'
-          icon='pi pi-plus'
-          className='p-button-success mr-2'
+          className='p-button-success d-flex justify-content-center mr-2'
           onClick={openModal}
-        />
+        >
+          <FolderIcon className='me-2' />
+          Crear carpeta
+          </Button>
       </div>
     </>
   );
@@ -220,7 +219,7 @@ useEffect(()=> {
       <Dialog
         visible={isModal}
         style={{ width: '950px', height: "660px" }}
-        header='Crear carpeta'
+        header={`Grupo seleccionado: ${groupName}`}
         modal
         className='p-fluid'
         footer={productDialogFooter}
