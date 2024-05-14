@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 
 const RegisterGroup = ({ isDarkMode }) => {
   const [usersId, setUsersId] = useState([]);
@@ -40,12 +41,13 @@ const RegisterGroup = ({ isDarkMode }) => {
   const leftToolbarTemplate = () => (
     <>
       <div className="my-2">
-        <Button
-          label="Crear grupo"
-          icon="pi pi-plus"
-          className="p-button-success mr-2"
+      <Button
+          className='p-button-success d-flex align-items-center mr-2'
           onClick={openModal}
-        />
+        >
+          <FolderCopyIcon className="me-2" />
+          Crear grupo
+        </Button>
       </div>
     </>
   );
