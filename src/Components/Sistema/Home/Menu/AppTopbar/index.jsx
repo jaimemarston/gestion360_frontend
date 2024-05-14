@@ -77,6 +77,14 @@ export default function AppTopbar({isOpen, setMenuIsOpen, setIsDarkMode}) {
                   navigate('/registro-empleado');
                 },
               },
+              {
+                label: 'Gestor de archivos',
+                icon: 'pi pi-folder',
+                to: '/Dashboard',
+                command: () => {
+                  navigate('/file-manager');
+                },
+              },
             ],
           },
         ],
