@@ -10,6 +10,7 @@ export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
+  const [nameItem, setNameItem] = useState()
 
   const handleChange = (selectedFiles) => {
     const selectedFilesArray = Array.from(selectedFiles);
@@ -32,6 +33,12 @@ export default function FileManager() {
     }
     setSelectedItemId(itemId);
   };
+
+  useEffect(()=>{
+   const select = ITEMS.filter((item) => item.id === selectedItemId ? item.label : '')
+  const name = select.map((itemName) => itemName.label);
+   setNameItem(name)
+  }, [selectedItemId])
 
   const fileTypes = ["pdf"];
 
@@ -93,7 +100,7 @@ export default function FileManager() {
       <div className="row">
         <div className="col-12 d-flex">
           <RegisterGroup />
-          {showModal ? (<RegisterFolder />): (<></>)}
+          {showModal ? (<RegisterFolder groupName={nameItem} groupID={selectedItemId} />): (<></>)}
             
         </div>
         <div className="col-6">

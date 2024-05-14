@@ -9,7 +9,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { fetchDelete, fetchGet, fetchPut, postUser } from '../../../../api';
 
-const RegisterFolder = ({isDarkMode}) => {
+const RegisterFolder = ({isDarkMode, groupName, groupID}) => {
   const [usersId, setUsersId] = useState([]);
   let empty = {
     mainFolder: '',
@@ -137,9 +137,6 @@ const RegisterFolder = ({isDarkMode}) => {
     }
   }, [selectedProducts])
 
-useEffect(()=> {
-  console.log(empty.usersId)
-}, [empty.usersId])
 
   const leftToolbarTemplate = () => (
     <>
@@ -220,7 +217,7 @@ useEffect(()=> {
       <Dialog
         visible={isModal}
         style={{ width: '950px', height: "660px" }}
-        header='Crear carpeta'
+        header={`Grupo seleccionado: ${groupName}`}
         modal
         className='p-fluid'
         footer={productDialogFooter}
