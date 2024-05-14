@@ -75,9 +75,9 @@ export default function Login() {
             </div>
             <Button type="submit" label={"Ingreso"} className="inputs" />
 
-            <button type="button" class="login-with-google-btn mt-3">
-              Sign in with Google
-            </button>
+              <button type="button" class="login-with-google-btn mt-5">
+                Sign in with Google
+              </button>
           </form>
         </div>
       </div>
