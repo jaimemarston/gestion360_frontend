@@ -24,15 +24,23 @@ export default function FileManager() {
       alert("Solo se permiten archivos PDF.");
     }
   };
-
   const handleItemClick = (itemId) => {
+    // Busca el ítem seleccionado en la lista de ITEMS
+    const selectedItem = ITEMS.find(item => item.id === itemId);
+  
+    // Verifica si el ítem seleccionado tiene la propiedad 'father' establecida en true
+    if (selectedItem && selectedItem.father === true) {
+      setShowModal(true); // Muestra el modal si el ítem seleccionado tiene 'father' en true
+    } else {
+      setShowModal(false); // Oculta el modal si el ítem seleccionado no tiene 'father' en true
+    }
     setSelectedItemId(itemId);
   };
 
   const fileTypes = ["pdf"];
 
   const ITEMS = [
-    {id: 13, label: 'group', children: [
+    {id: 13, label: 'group', father: true, children: [
       {
         id: 1,
         label: "item-father-1",
@@ -64,6 +72,23 @@ export default function FileManager() {
       },
       { id: 11, label: "History" },
       { id: 12, label: "Trash" },
+    ]},
+    {id: 14, label: 'group 2', father: true, children: [
+      {
+        id: 15,
+        label: "item-father-2",
+        children: [
+          {
+            id: 16,
+            label: "second-level-2",
+            children: [
+              { id: 17, label: "Ultimo nivel2-item1" },
+              { id: 18, label: "Ultimo nivel2-item2" },
+              { id: 19, label: "Ultimo nivel2-item3" },
+            ],
+          },
+        ],
+      },
     ]}
   ];
 
@@ -72,7 +97,8 @@ export default function FileManager() {
       <div className="row">
         <div className="col-12 d-flex">
           <RegisterGroup />
-           <RegisterFolder /> 
+          {showModal ? (<RegisterFolder />): (<></>)}
+            
         </div>
         <div className="col-6">
           <FileExplorer date={ITEMS} select={handleItemClick} />
