@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // PrimeReact
 import sd from "./descocentro.jpg";
-import logo from "./logo1.png";
+import logo from "./predes.png";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 
@@ -40,22 +40,17 @@ export default function Login() {
   return (
     <section id="login">
       <div className={`containerLogin`}>
-      <div className={`imgLogin`}>
+        <div className={`imgLogin`}>
           <div class="img-login"></div>
         </div>
         <div className={`formLogin`}>
           <form onSubmit={handleSubmit} className="p-fluid">
-
             <center>
-              <img src={logo} alt="hyper" class="mb-1 img-logo"/>
+              <img src={logo} alt="hyper" class="mb-1 img-logo" />
             </center>
 
-            
-
             <div className="field">
-              <label htmlFor="Correo electronico">
-                Correo
-              </label>
+              <label htmlFor="Correo electronico">Correo</label>
               <InputText
                 placeholder="Correo"
                 className="inputs"
@@ -79,10 +74,12 @@ export default function Login() {
               />
             </div>
             <Button type="submit" label={"Ingreso"} className="inputs" />
+
+            <button type="button" class="login-with-google-btn mt-3">
+              Sign in with Google
+            </button>
           </form>
         </div>
-
-       
       </div>
     </section>
   );
