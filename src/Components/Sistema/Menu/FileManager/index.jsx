@@ -12,27 +12,23 @@ export default function FileManager() {
   const [files, setFiles] = useState([]);
 
   const handleChange = (selectedFiles) => {
-    // Mapear los archivos seleccionados y filtrar los que son PDF
     const selectedFilesArray = Array.from(selectedFiles);
     const pdfFiles = selectedFilesArray.filter(
       (file) => file.type === "application/pdf"
     );
     if (pdfFiles.length > 0) {
-      // Concatenar los nuevos archivos PDF al array existente
       setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
     } else {
       alert("Solo se permiten archivos PDF.");
     }
   };
   const handleItemClick = (itemId) => {
-    // Busca el ítem seleccionado en la lista de ITEMS
     const selectedItem = ITEMS.find(item => item.id === itemId);
   
-    // Verifica si el ítem seleccionado tiene la propiedad 'father' establecida en true
     if (selectedItem && selectedItem.father === true) {
-      setShowModal(true); // Muestra el modal si el ítem seleccionado tiene 'father' en true
+      setShowModal(true);
     } else {
-      setShowModal(false); // Oculta el modal si el ítem seleccionado no tiene 'father' en true
+      setShowModal(false);
     }
     setSelectedItemId(itemId);
   };
