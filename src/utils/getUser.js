@@ -1,4 +1,3 @@
-
 import { fetchSearchUser } from "../api/api";
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +8,7 @@ function handle401(status) {
   } 
 
 
-export const getUser = async () => {
+  export const getUser = async () => {
 
     const token =  localStorage.getItem('token');
   
@@ -18,10 +17,11 @@ export const getUser = async () => {
             
     const decodedPayload = JSON.parse(atob(payload));
      
-     
     const res = await fetchSearchUser('usuario', 'GET', decodedPayload.id);
 
-    
+    if(res.usuario.rol !== undefined){
+      localStorage.setItem('rol', res.usuario.rol)
+    }
     
     handle401(res.status);
     return res.usuario;

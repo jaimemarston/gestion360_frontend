@@ -27,8 +27,8 @@ const Pdf = (match) => {
   const usuario_ndocumento = localStorage.getItem('ndocumento');
  
   const [dataUser, setDataUser] = useState();
+  const [pdfUrl, setPdfUrl] = useState(null);
 
-  useEffect( () =>  {
     async function doIt(){
 
       const userData = await getUser();
@@ -39,6 +39,8 @@ const Pdf = (match) => {
       
     
     }
+
+  useEffect( () =>  {
 
     doIt();
 
@@ -105,9 +107,32 @@ navigate('/visor-documento')
   }; */
 
 
-  const url1 = `${mainUrlmin}/uploads/firmado_${pdfdetalle?.nombredoc}`;
-  const url2 = `${mainUrlmin}/uploads/${pdfdetalle?.nombredoc}`;
+  const url1 = `${mainUrlmin}/api/minio/get-file-url/documents/firmado_${pdfdetalle?.nombredoc}`;
+  const url2 = `${mainUrlmin}/api/minio/get-file-url/documents/${pdfdetalle?.nombredoc}`;
   const path = pdfdetalle.estado === true ? url1 : url2;
+ 
+
+  const getPdfUrl = async () => {
+    const res = await fetch(path)
+    const { url } = await res.json()
+
+    const response = await fetch(url); // Reemplaza con la ruta correcta
+    const arrayBuffer = await response.arrayBuffer();
+    const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+    const urlPDF = URL.createObjectURL(blob);
+    setPdfUrl(urlPDF);
+
+    return url
+  }
+
+
+useEffect(() => {
+  getPdfUrl()
+},[])
+
+        // const response = await fetch(path);
+        // const data = await response.json();
+
 
 /*   const url1 = `${mainUrlmin}/uploads/firmado_${pdfdetalle?.nombredoc}`;
   const url2 = `${mainUrlmin}/uploads/${pdfdetalle?.nombredoc}`; */
@@ -115,15 +140,15 @@ navigate('/visor-documento')
 
   // var usuario_codigo = localStorage.getItem('codigo');
   const Print = () => (
-    <div>
-      <PDFViewer
-        height={600}
-        width={'100%'}
-        src={`${path}`}
-        style={{ display: 'block' }}
-      ></PDFViewer>
-    </div>
-  );
+      <div>
+        <PDFViewer
+          height={600}
+          width={'100%'}
+          src={`${pdfUrl}`}
+          style={{ display: 'block' }}
+        ></PDFViewer>
+      </div>
+    );
   const [url] = useState(window.location.pathname);
   const [centrar, setCentrar] = useState('');
   // console.log(url);
