@@ -337,7 +337,6 @@ const mainUrlmin = VITE_API_URL.slice(0, -4);
 const [dataUser, setDataUser] = useState();
 console.log(mainUrlmin, 'firma')
 
-useEffect( () =>  {
   async function doIt(){
 
     const userData = await getUser();
@@ -346,6 +345,7 @@ useEffect( () =>  {
 
   
   }
+useEffect( () =>  {
 
   doIt();
 
@@ -445,6 +445,26 @@ useEffect( () =>  {
       // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [firmaUrl, setFirmaUrl] = useState(null);
+
+  const getFirmaUrl = async () => {
+    console.log('GETTING FIRMA URL')
+    const res = await fetch(`${mainUrlmin}/api/minio/get-file-url/firmas/${dataUser?.imgfirma}.jpg`)
+    const { url } = await res.json()
+    console.log(url, 'url - ELVIS')
+    setFirmaUrl(url);
+
+    // const response = await fetch(url); // reemplaza con la ruta correcta
+    // const arraybuffer = await response.arraybuffer();
+    // const blob = new blob([arraybuffer], { type: 'application/pdf' });
+    // const urlpdf = url.createobjecturl(blob);
+  }
+
+  useEffect(() => {
+    console.log('ELVIS FIRST USE EFFECT');
+    getFirmaUrl()
+  },[dataUser])
+
   return (
     <div className={isDarkMode ?  'dark-mode card p-fluid' : 'card p-fluid'  } >
       <Toast ref={toast}></Toast>
@@ -516,10 +536,11 @@ useEffect( () =>  {
             <Image
                width='80px'
                height='100px'
-               src={`${mainUrlmin}/uploads/firmas/${dataUser?.imgfirma}.jpg `} 
+               src={firmaUrl} 
+
             ></Image>
           ) : (
-            <Image src={`${mainUrlmin}/uploads/firmas/${dataUser?.imgfirma}.jpg `}></Image>
+            <Image src={firmaUrl}></Image>
           )}
         </center>
       </div>
