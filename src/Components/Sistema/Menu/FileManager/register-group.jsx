@@ -1,47 +1,52 @@
-import React, { useState, useEffect, useRef } from "react";
-import classNames from "classnames";
-import { Toast } from "primereact/toast";
+import React, { useState } from "react";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
+import groupService from "../../../../api/services/fileManager/group.service";
+import { useToast } from "../../../../hooks/useToast";
 
 const RegisterGroup = ({ isDarkMode }) => {
   const [usersId, setUsersId] = useState([]);
-  let empty = {
-    nameGroup: "",
-  };
+
   const [isModal, setIsModal] = useState(false);
   const [isCloseModal, setIsCloseModal] = useState(false);
-  const toast = useRef(null);
+  const { showToast, ToastComponent } = useToast()
 
-  const [product, setProduct] = useState(empty);
+  const [data, setData] = useState({ name: '' });
 
   const openModal = () => {
     setIsModal(!isModal);
 
-    if (product.length === 0) {
-      setProduct({});
+    if (data.length === 0) {
+      setData({});
     }
   };
 
   const closeModal = () => {
     setIsCloseModal(!isCloseModal);
+    setIsModal(!isModal);
   };
 
   const onInputChange = (e, name) => {
-    setProduct({ ...product, [e.target.name]: e.target.value });
+    setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  const saveProduct = () => {
-    console.log(product);
+  const save = async () => {
+    try {
+      await groupService.createGroup(data)
+      showToast('success', 'Grupo creado con éxito');
+      closeModal()
+    } catch (error) {
+      showToast('error', 'Error al crear el grupo');
+    }
   };
 
   const leftToolbarTemplate = () => (
     <>
       <div className="my-2">
-      <Button
+        <Button
           className='p-button-success d-flex align-items-center mr-2'
           onClick={openModal}
         >
@@ -59,11 +64,11 @@ const RegisterGroup = ({ isDarkMode }) => {
         icon="pi pi-times"
         className="p-button-text"
         onClick={() => {
-            openModal();
-            setProduct({});
+          openModal();
+          setData({});
         }}
       />
-      <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={saveProduct} />
+      <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={save} />
     </>
   );
 
@@ -71,7 +76,7 @@ const RegisterGroup = ({ isDarkMode }) => {
     isModal,
     productDialogFooter,
     openModal,
-    product,
+    data,
     onInputChange,
   }) => {
     return (
@@ -85,17 +90,17 @@ const RegisterGroup = ({ isDarkMode }) => {
         onHide={openModal}
       >
         <div className="field">
-          <label htmlFor="nameGroup">Carpeta principal</label>
+          <label htmlFor="name">Carpeta principal</label>
           <InputText
-            id="nameGroup"
-            name="nameGroup"
-            value={product?.nameGroup?.trim()}
-            onChange={(e) => onInputChange(e, "nameGroup")}
+            id="name"
+            name="name"
+            value={data?.name?.trim()}
+            onChange={(e) => onInputChange(e, "name")}
             required
             autoFocus
-            
+
           />
-            </div>
+        </div>
 
         <div
           className="field"
@@ -117,7 +122,6 @@ const RegisterGroup = ({ isDarkMode }) => {
     >
       <div className="col-12">
         <div>
-          <Toast ref={toast} />
           <Toolbar
             style={{ background: "transparent", border: "none" }}
             left={leftToolbarTemplate}
@@ -126,13 +130,14 @@ const RegisterGroup = ({ isDarkMode }) => {
             CrudUsuario({
               isModal,
               openModal,
-              product,
-              setProduct,
+              data,
+              setData,
               onInputChange,
               productDialogFooter
             })}
         </div>
       </div>
+      {ToastComponent}
     </div>
   );
 };
