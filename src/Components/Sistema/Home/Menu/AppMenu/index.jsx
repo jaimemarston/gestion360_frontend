@@ -71,22 +71,22 @@ export default function AppMenu({ isOpen }) {
             navigate('/visor-documento');
           },
         },
-        {
+/*         {
           label: 'Formato permiso laboral',
           icon: 'pi pi-eye',
           to: '/permiso-laboral',
           command: () => {
             navigate('/permiso-laboral');
           },
-        },
-        {
+        }, */
+/*         {
           label: 'Formato permiso vacacional',
           icon: 'pi pi-eye',
           to: '/permiso-vacacional',
           command: () => {
             navigate('/permiso-vacacional');
           },
-        },
+        }, */
 
 
       ],
