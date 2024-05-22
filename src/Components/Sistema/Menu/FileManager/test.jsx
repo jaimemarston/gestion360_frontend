@@ -241,7 +241,9 @@ export default function FileExplorer({ date, select }) {
       }}
       slots={{
         item: (props) => (
+        <>
           <CustomTreeItem {...props} onItemSelect={handleItemSelect} />
+        </>
         ),
       }}
     />

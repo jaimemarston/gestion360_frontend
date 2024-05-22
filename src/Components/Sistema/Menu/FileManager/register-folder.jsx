@@ -1,3 +1,4 @@
+import { addFolder, fetchGroups } from '../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -5,11 +6,11 @@ import { Dialog } from 'primereact/dialog';
 import { fetchGet, } from '../../../../api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
+import { useDispatch } from 'react-redux';
+import { useToast } from '../../../../hooks/useToast';
 import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
-import folderService from '../../../../api/services/fileManager/folder.service';
 import React, { useState, useEffect, useRef } from 'react';
-import { useToast } from '../../../../hooks/useToast';
 
 const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
   const [usersId, setUsersId] = useState([]);
@@ -34,6 +35,11 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
 
   const { showToast, ToastComponent } = useToast()
 
+  const dispatch = useDispatch();
+
+  const refetch = async () => {
+    dispatch(fetchGroups());
+  };
 
   const switchFondo = (e) => {
     setValue(e);
@@ -58,6 +64,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
   };
 
   const closeModal = () => {
+    setIsModal(!isModal);
     setIsCloseModal(!isCloseModal);
   };
 
@@ -70,13 +77,15 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
       usersId: selectedUsers.map((item) => item.id),
     }
 
-    console.log(payload)
-
     try {
-      await folderService.createFolder(payload)
+      dispatch(addFolder(payload));
+      await refetch()
+
       showToast('success', 'Carpeta creada con éxito');
+
       closeModal();
     } catch (error) {
+      console.log("error", error)
       showToast('error', 'Error al crear la carpeta')
     } finally {
       setSubmitted(false);
@@ -318,7 +327,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
     <div className={isDarkMode ? 'dark-mode-table grid crud-demo' : 'grid crud-demo'}>
       <div className='col-12'>
         <div >
-        {ToastComponent}
+          {ToastComponent}
           <Toolbar style={{ background: "transparent", border: "none" }} left={leftToolbarTemplate}></Toolbar>
           {isModal &&
             Handler({

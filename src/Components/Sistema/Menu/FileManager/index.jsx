@@ -6,8 +6,9 @@ import { RegisterGroup } from "./register-group";
 import "./style-file-manager.scss";
 import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
-import groupsService from "../../../../api/services/fileManager/group.service";
 import { useToast } from "../../../../hooks/useToast";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchGroups } from "../../../../store/slices/fileManager/fileManagerSlice";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -16,50 +17,44 @@ export default function FileManager() {
   const [nameItem, setNameItem] = useState();
   const permission = localStorage.getItem("rol");
   const permissions = usePermission.getPermissionLevel()
-  const { showToast, ToastComponent } = useToast()
+  const { ToastComponent } = useToast()
 
-  const [groups, setGroups] = useState([]);
+  const dispatch = useDispatch();
 
-  const fetchGroups = async () => {
-    const result = await groupsService.getAllGroups();
+  const groups = useSelector((state) => state.FileManager.groups.map(item => ({
+    id: item.id,
+    label: item.name,
+    father: true,
+    children: item?.folders ? item.folders.map((folder, index) => {
+      let children = [];
+      if (folder.label3) {
+        children = [{
+          id: `${item.id}-${folder.id}-3`,
+          label: folder.label3,
+          children: folder.documents || [],
+        }];
+      }
+      if (folder.label2) {
+        children = [{
+          id: `${item.id}-${folder.id}-2`,
+          label: folder.label2,
+          children: children,
+        }];
+      }
+      return {
+        id: `${item.id}-${folder.id}-1`,
+        label: folder.label1,
+        children: children.length > 0 ? children : folder.documents || [],
+      };
+    }) : [],
+  })));
 
-    console.log("result", result)
-
-    const groups = result.map(item => ({
-      id: item.id,
-      label: item.name,
-      father: true,
-      children: item.folders.map((folder, index) => {
-        let children = [];
-        if (folder.label3) {
-          children = [{
-            id: `${item.id}-${folder.id}-3`,
-            label: folder.label3,
-            children: folder.documents || [],
-          }];
-        }
-        if (folder.label2) {
-          children = [{
-            id: `${item.id}-${folder.id}-2`,
-            label: folder.label2,
-            children: children,
-          }];
-        }
-        return {
-          id: `${item.id}-${folder.id}-1`,
-          label: folder.label1,
-          children: children.length > 0 ? children : folder.documents || [],
-        };
-      }),
-    }));
-
-    setGroups(groups);
+  const fetch = async () => {
+    dispatch(fetchGroups());
   };
 
-
   useEffect(() => {
-
-    fetchGroups();
+    fetch();
   }, []);
 
   const handleChange = (selectedFiles) => {
@@ -73,6 +68,7 @@ export default function FileManager() {
       alert("Solo se permiten archivos PDF.");
     }
   };
+
   const handleItemClick = (itemId) => {
     const selectedItem = groups.find((item) => item.id === itemId);
 
@@ -101,17 +97,9 @@ export default function FileManager() {
     <div className="container">
       <div className="row">
         <div className="col-12 d-flex">
-          {permissions === 2 ? (<RegisterGroup />) : (<></>)}
+          {permissions === 2 && <RegisterGroup />}
 
-          {showModal ? (
-            permissions >= 2 ? (
-              <RegisterFolder groupName={nameItem} groupID={selectedItemId} />
-            ) : (
-              <></>
-            )
-          ) : (
-            <></>
-          )}
+          {showModal && <RegisterFolder groupName={nameItem} groupID={selectedItemId} />}
         </div>
         <div className="col-6">
           <FileExplorer date={groups} select={handleItemClick} />
@@ -141,6 +129,7 @@ export default function FileManager() {
               types={fileTypes}
             />
           </div>
+
           <div
             className={`col-12 align-items-start mt-4 ${files.length < 5 ? "d-flex" : "row"
               }`}

@@ -1,20 +1,25 @@
-import React, { useState } from "react";
+import { addGroup, fetchGroups } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
-import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import FolderCopyIcon from "@mui/icons-material/FolderCopy";
-import groupService from "../../../../api/services/fileManager/group.service";
+import { Toolbar } from "primereact/toolbar";
+import { useDispatch } from "react-redux";
 import { useToast } from "../../../../hooks/useToast";
+import FolderCopyIcon from "@mui/icons-material/FolderCopy";
+import React, { useState } from "react";
 
 const RegisterGroup = ({ isDarkMode }) => {
-  const [usersId, setUsersId] = useState([]);
-
   const [isModal, setIsModal] = useState(false);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const { showToast, ToastComponent } = useToast()
 
   const [data, setData] = useState({ name: '' });
+
+  const dispatch = useDispatch();
+
+  const refetch = async () => {
+    dispatch(fetchGroups());
+  };
 
   const openModal = () => {
     setIsModal(!isModal);
@@ -35,10 +40,15 @@ const RegisterGroup = ({ isDarkMode }) => {
 
   const save = async () => {
     try {
-      await groupService.createGroup(data)
+      
+      dispatch(addGroup(data));
+
+ 
+
       showToast('success', 'Grupo creado con éxito');
       closeModal()
     } catch (error) {
+      console.log("error", error)
       showToast('error', 'Error al crear el grupo');
     }
   };
@@ -72,7 +82,7 @@ const RegisterGroup = ({ isDarkMode }) => {
     </>
   );
 
-  const CrudUsuario = ({
+  const Handler = ({
     isModal,
     productDialogFooter,
     openModal,
@@ -127,7 +137,7 @@ const RegisterGroup = ({ isDarkMode }) => {
             left={leftToolbarTemplate}
           ></Toolbar>
           {isModal &&
-            CrudUsuario({
+            Handler({
               isModal,
               openModal,
               data,
