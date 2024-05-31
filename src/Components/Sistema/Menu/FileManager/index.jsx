@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./register-folder";
 import { RegisterGroup } from "./register-group";
@@ -8,16 +7,15 @@ import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
 import { useToast } from "../../../../hooks/useToast";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGroups } from "../../../../store/slices/fileManager/fileManagerSlice";
+import { fetchGroups, addFile } from "../../../../store/slices/fileManager/fileManagerSlice";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
-  const permission = localStorage.getItem("rol");
-  const permissions = usePermission.getPermissionLevel()
-  const { ToastComponent } = useToast()
+  const permissions = usePermission.getPermissionLevel();
+  const { ToastComponent } = useToast();
 
   const dispatch = useDispatch();
 
@@ -57,13 +55,35 @@ export default function FileManager() {
     fetch();
   }, []);
 
-  const handleChange = (selectedFiles) => {
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]); // Remueve el prefijo data
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleChange = async (selectedFiles) => {
     const selectedFilesArray = Array.from(selectedFiles);
     const pdfFiles = selectedFilesArray.filter(
       (file) => file.type === "application/pdf"
     );
+
     if (pdfFiles.length > 0) {
-      setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
+      const pdfFilesWithBase64 = await Promise.all(
+        pdfFiles.map(async (file) => {
+          const base64Content = await convertToBase64(file);
+          return {
+            mimetype: file.type,
+            filename: file.name,
+            base64Content: base64Content,
+            tags: ["tag1", "tag2", "tag3"]
+          };
+        })
+      );
+
+      setFiles((prevFiles) => [...prevFiles, ...pdfFilesWithBase64]);
     } else {
       alert("Solo se permiten archivos PDF.");
     }
@@ -71,7 +91,6 @@ export default function FileManager() {
 
   const handleItemClick = (itemId) => {
     const selectedItem = groups.find((item) => item.id === itemId);
-
     if (selectedItem && selectedItem.father === true) {
       setShowModal(true);
     } else {
@@ -90,8 +109,10 @@ export default function FileManager() {
 
   const fileTypes = ["pdf"];
 
-
-
+  const handleSubmit = () => {
+    dispatch(addFile(files, selectedItemId));
+    console.log(files, selectedItemId);
+  };
 
   return (
     <div className="container">
@@ -143,14 +164,15 @@ export default function FileManager() {
                   <div className="file-item d-grid justify-content-center">
                     <i className="pi pi-file text-center size-file-card" />
                     <p className="ms-2 w-p-card fs-5 text-center">
-                      {file.name.length > 22
-                        ? file.name.slice(0, 22) + "... pdf"
-                        : file.name}
+                      {file.filename.length > 22
+                        ? file.filename.slice(0, 22) + "... pdf"
+                        : file.filename}
                     </p>
                   </div>
                 </div>
               ))
               : ""}
+            <button className="btn btn-primary" onClick={handleSubmit}>Enviar</button>
           </div>
         </div>
       </div>

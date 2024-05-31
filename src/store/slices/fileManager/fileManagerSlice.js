@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import folderService from '../../../api/services/fileManager/folder.service';
 import groupService from '../../../api/services/fileManager/group.service';
+import fileService from '../../../api/services/fileManager/file.service';
 
 const initialState = {
     isLoading: false,
@@ -41,12 +42,21 @@ export const addGroup = createAsyncThunk(
     }
 );
 
+export const addFile = createAsyncThunk(
+    'FileManagerSlice/addFile',
+    async (group, id, thunkAPI) => {
+
+        const response = await fileService.createFile(group, id);
+
+        thunkAPI.dispatch(fetchGroups());
+        return response;
+    }
+);
+
 export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
         const response = await folderService.createFolder(removeEmptyStringProperties(folder));
-
-        thunkAPI.dispatch(fetchGroups());
 
         return response;
     }
