@@ -191,7 +191,6 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
   const handleClick = () => {
     onItemSelect(itemId);
-    console.log(itemId, "id")
   };
 
   return (

@@ -44,9 +44,12 @@ export const addGroup = createAsyncThunk(
 
 export const addFile = createAsyncThunk(
     'FileManagerSlice/addFile',
-    async (group, id, thunkAPI) => {
+    async ( files, thunkAPI) => {
 
-        const response = await fileService.createFile(group, id);
+        const { idFolder, ...formattedFiles } = files;
+
+        console.log(formattedFiles, idFolder, "xiover");
+        const response = await fileService.createFile(idFolder, formattedFiles);
 
         thunkAPI.dispatch(fetchGroups());
         return response;

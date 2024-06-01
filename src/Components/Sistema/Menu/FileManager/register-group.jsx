@@ -42,9 +42,6 @@ const RegisterGroup = ({ isDarkMode }) => {
     try {
       
       dispatch(addGroup(data));
-
- 
-
       showToast('success', 'Grupo creado con éxito');
       closeModal()
     } catch (error) {

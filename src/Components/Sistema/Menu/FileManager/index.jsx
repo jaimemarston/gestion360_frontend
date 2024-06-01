@@ -15,7 +15,7 @@ export default function FileManager() {
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
   const permissions = usePermission.getPermissionLevel();
-  const { ToastComponent } = useToast();
+  const { showToast, ToastComponent } = useToast();
 
   const dispatch = useDispatch();
 
@@ -23,29 +23,29 @@ export default function FileManager() {
     id: item.id,
     label: item.name,
     father: true,
-    children: item?.folders ? item.folders.map((folder, index) => {
+    children: item?.folders ? item.folders.map((folder) => {
       let children = [];
       if (folder.label3) {
         children = [{
-          id: `${item.id}-${folder.id}-3`,
+          id: `${folder.id}-3`,
           label: folder.label3,
           children: folder.documents || [],
         }];
       }
       if (folder.label2) {
         children = [{
-          id: `${item.id}-${folder.id}-2`,
+          id: `${folder.id}-2`,
           label: folder.label2,
-          children: children,
+          children: children
         }];
       }
       return {
-        id: `${item.id}-${folder.id}-1`,
+        id: `${folder.id}-1`,
         label: folder.label1,
         children: children.length > 0 ? children : folder.documents || [],
       };
     }) : [],
-  })));
+  }))); 
 
   const fetch = async () => {
     dispatch(fetchGroups());
@@ -90,13 +90,14 @@ export default function FileManager() {
   };
 
   const handleItemClick = (itemId) => {
-    const selectedItem = groups.find((item) => item.id === itemId);
+    const rootItemId = parseInt(itemId.split('-')[0]); // Extraer el ID raíz
+    const selectedItem = groups.find((item) => item.id === rootItemId);
     if (selectedItem && selectedItem.father === true) {
       setShowModal(true);
     } else {
       setShowModal(false);
     }
-    setSelectedItemId(itemId);
+    setSelectedItemId(rootItemId); // Guardar solo el ID raíz
   };
 
   useEffect(() => {
@@ -105,12 +106,24 @@ export default function FileManager() {
     );
     const name = select.map((itemName) => itemName.label);
     setNameItem(name);
+    console.log(selectedItemId);
   }, [selectedItemId]);
 
   const fileTypes = ["pdf"];
 
-  const handleSubmit = () => {
-    dispatch(addFile(files, selectedItemId));
+  const handleSubmit = async ()  => {
+    const payload = {
+      files: [...files],
+      idFolder: selectedItemId,
+    }
+    try {
+      dispatch(addFile(payload));
+      setFiles([])
+      showToast('success', 'Archivos subidos con éxito');
+    } catch (error) {
+      console.log("error", error)
+      showToast('error', 'Error al subir archivos');
+    }
     console.log(files, selectedItemId);
   };
 
