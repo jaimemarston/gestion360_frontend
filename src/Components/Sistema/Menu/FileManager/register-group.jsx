@@ -39,14 +39,16 @@ const RegisterGroup = ({ isDarkMode }) => {
   };
 
   const save = async () => {
-    try {
-      
-      dispatch(addGroup(data));
-      showToast('success', 'Grupo creado con éxito');
-      closeModal()
-    } catch (error) {
-      console.log("error", error)
-      showToast('error', 'Error al crear el grupo');
+    try{
+      const resultAction = await dispatch(addGroup(data));
+      if (resultAction.error) {
+        showToast('error', 'Error al intentar crear un grupo');
+      } else {
+        showToast('success', 'Grupo creado con éxito');
+        closeModal()
+      }
+    }catch{
+      console.log(resultAction)
     }
   };
 

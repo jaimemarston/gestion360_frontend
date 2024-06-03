@@ -66,20 +66,22 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
 
   const save = async () => {
     setSubmitted(true);
-
+  
     const payload = {
-      ...data,
+     ...data,
       groupId: groupID,
       usersId: selectedUsers.map((item) => item.id),
-    }
-
+    };
     try {
-      dispatch(addFolder(payload));
-      showToast('success', 'Carpeta creada con éxito');
-      closeModal();
+      const resultAction = await dispatch(addGroup(data));
+      if (resultAction.error) {
+        showToast('error', 'Error al intentar crear una carpeta')
+      } else {
+        showToast('success', 'Carpeta creada con éxito');
+        closeModal();
+      }
     } catch (error) {
-      console.log("error", error)
-/*       showToast('error', 'Error al crear la carpeta') */
+      console.log("error", error);
     } finally {
       setSubmitted(false);
     }

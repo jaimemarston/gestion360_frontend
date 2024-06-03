@@ -137,12 +137,15 @@ const createFolder = ((value) => {
       idFolder: selectedItemId,
     };
     try {
-      dispatch(addFile(payload));
-      setFiles([]);
-      showToast("success", "Archivos subidos con éxito");
+      const resultAction = await dispatch(addFile(payload));
+      if (resultAction.error) {
+        showToast("error", "Error al subir archivos");
+      } else {
+        setFiles([]);
+        showToast("success", "Archivos subidos con éxito");
+      }
     } catch (error) {
       console.log("error", error);
-      showToast("error", "Error al subir archivos");
     }
   };
 
