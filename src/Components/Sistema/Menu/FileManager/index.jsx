@@ -25,7 +25,7 @@ export default function FileManager() {
     father: true,
     children: item?.folders ? item.folders.map((folder) => {
       const documents = folder.documents.map((doc) => ({
-        id: doc.id,
+        id: doc.uuid,
         label: doc.filename,
         mimetype: doc.mimetype,
         tags: doc.tags,
@@ -97,7 +97,8 @@ export default function FileManager() {
   };
 
   const handleItemClick = (itemId) => {
-    const rootItemId = parseInt(itemId.split('-')[0]); // Extraer el ID raíz
+    const rootItemId = parseInt(itemId); // Extraer el ID raíz
+    console.log(rootItemId, "items")
     const selectedItem = groups.find((item) => item.id === rootItemId);
     if (selectedItem) {
       setShowModal(true);

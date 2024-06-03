@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import { animated, useSpring } from "@react-spring/web";
 import { styled, alpha } from "@mui/material/styles";
@@ -184,14 +184,15 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   const item = publicAPI.getItem(itemId);
   const expandable = isExpandable(children);
 
-  // Determina el icono a mostrar
   const icon = item.isFile
     ? ArticleIcon
     : getIconFromFileTypeAndDepth(item, children.length);
 
-  const handleClick = () => {
-    onItemSelect(itemId);
-  };
+    const handleClick = () => {
+      if (icon === FolderCopyIcon) {
+        onItemSelect(itemId);
+      }
+    };
 
   return (
     <TreeItem2Provider itemId={itemId}>
