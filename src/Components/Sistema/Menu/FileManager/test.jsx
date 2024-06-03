@@ -183,11 +183,11 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
   const item = publicAPI.getItem(itemId);
   const expandable = isExpandable(children);
-  let icon;
-  // Determina la profundidad del nodo
-  const depth = children ? children.length : 0;
-  // Usa la profundidad para determinar el icono
-  icon = getIconFromFileTypeAndDepth(item, depth);
+
+  // Determina el icono a mostrar
+  const icon = item.isFile
+    ? ArticleIcon
+    : getIconFromFileTypeAndDepth(item, children.length);
 
   const handleClick = () => {
     onItemSelect(itemId);
@@ -241,9 +241,7 @@ export default function FileExplorer({ date, select }) {
       }}
       slots={{
         item: (props) => (
-        <>
-          <CustomTreeItem {...props} onItemSelect={handleItemSelect} />
-        </>
+            <CustomTreeItem {...props} onItemSelect={handleItemSelect} />
         ),
       }}
     />

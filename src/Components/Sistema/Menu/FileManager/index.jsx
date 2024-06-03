@@ -24,25 +24,32 @@ export default function FileManager() {
     label: item.name,
     father: true,
     children: item?.folders ? item.folders.map((folder) => {
+      const documents = folder.documents.map((doc) => ({
+        id: doc.id,
+        label: doc.filename,
+        mimetype: doc.mimetype,
+        tags: doc.tags,
+        isFile: true
+      }));
       let children = [];
       if (folder.label3) {
         children = [{
-          id: `${folder.id}-3`,
+          id: `${item.id}-${folder.id}-3`,
           label: folder.label3,
-          children: folder.documents || [],
+          children: documents,
         }];
       }
       if (folder.label2) {
         children = [{
-          id: `${folder.id}-2`,
+          id: `${item.id}-${folder.id}-2`,
           label: folder.label2,
-          children: children
+          children: children.length > 0 ? children : documents,
         }];
       }
       return {
-        id: `${folder.id}-1`,
+        id: `${item.id}-${folder.id}-1`,
         label: folder.label1,
-        children: children.length > 0 ? children : folder.documents || [],
+        children: children.length > 0 ? children : documents,
       };
     }) : [],
   }))); 
@@ -92,7 +99,7 @@ export default function FileManager() {
   const handleItemClick = (itemId) => {
     const rootItemId = parseInt(itemId.split('-')[0]); // Extraer el ID raíz
     const selectedItem = groups.find((item) => item.id === rootItemId);
-    if (selectedItem && selectedItem.father === true) {
+    if (selectedItem) {
       setShowModal(true);
     } else {
       setShowModal(false);
@@ -106,7 +113,6 @@ export default function FileManager() {
     );
     const name = select.map((itemName) => itemName.label);
     setNameItem(name);
-    console.log(selectedItemId);
   }, [selectedItemId]);
 
   const fileTypes = ["pdf"];
