@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { Button } from "primereact/button";
 import { Image } from "primereact/image";
 import "./login.scss";
+import { setToken } from "../../../api/services/axios";
 
 export default function Login() {
   const [login, setLogin] = useState({
@@ -25,6 +26,7 @@ export default function Login() {
 
     if (data.token) {
       localStorage.setItem("token", data.token);
+      setToken(data.token);
       navigate(`/Dashboard`);
     }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import { animated, useSpring } from "@react-spring/web";
 import { styled, alpha } from "@mui/material/styles";
@@ -168,7 +168,7 @@ const getIconFromFileTypeAndDepth = (item, depth) => {
 };
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
-  const { id, itemId, label, disabled, children, onItemSelect, ...other } =
+  const { id, itemId, label, disabled, children, showModal, selectGroup, onItemSelect, ...other } =
     props;
 
   const {
@@ -183,15 +183,18 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
   const item = publicAPI.getItem(itemId);
   const expandable = isExpandable(children);
-  let icon;
-  // Determina la profundidad del nodo
-  const depth = children ? children.length : 0;
-  // Usa la profundidad para determinar el icono
-  icon = getIconFromFileTypeAndDepth(item, depth);
 
-  const handleClick = () => {
-    onItemSelect(itemId);
-  };
+  const icon = item.isFile
+    ? ArticleIcon
+    : getIconFromFileTypeAndDepth(item, children.length);
+
+    const handleClick = () => {
+      if (icon === FolderCopyIcon) {
+        showModal(true);
+        selectGroup(itemId)
+      }
+      onItemSelect(itemId);
+    };
 
   return (
     <TreeItem2Provider itemId={itemId}>
@@ -224,9 +227,9 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   );
 });
 
-export default function FileExplorer({ date, select }) {
+export default function FileExplorer({ date, selectIdFolder, showCreateFolder, selectGroupId }) {
   const handleItemSelect = (selectedItemId) => {
-    select(selectedItemId);
+    selectIdFolder(selectedItemId);
   };
 
   return (
@@ -241,7 +244,7 @@ export default function FileExplorer({ date, select }) {
       }}
       slots={{
         item: (props) => (
-          <CustomTreeItem {...props} onItemSelect={handleItemSelect} />
+            <CustomTreeItem {...props} showModal={showCreateFolder} selectGroup={selectGroupId} onItemSelect={handleItemSelect} />
         ),
       }}
     />

@@ -1,44 +1,128 @@
 import React, { useEffect, useState } from "react";
-
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./register-folder";
 import { RegisterGroup } from "./register-group";
 import "./style-file-manager.scss";
 import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
+import { useToast } from "../../../../hooks/useToast";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchGroups,
+  addFile,
+} from "../../../../store/slices/fileManager/fileManagerSlice";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
-  const permission = localStorage.getItem("rol");
-  const permissions = usePermission.getPermissionLevel()
+  const permissions = usePermission.getPermissionLevel();
+  const { showToast, ToastComponent } = useToast();
 
-  const handleChange = (selectedFiles) => {
+  const dispatch = useDispatch();
+
+  const groups = useSelector((state) =>
+    state.FileManager.groups.map((item) => ({
+      id: item.id,
+      label: item.name,
+      father: true,
+      children: item?.folders
+        ? item.folders.map((folder) => {
+            const documents = folder.documents.map((doc) => ({
+              id: doc.uuid,
+              label: doc.filename,
+              mimetype: doc.mimetype,
+              tags: doc.tags,
+              isFile: true,
+            }));
+            let children = [];
+            if (folder.label3) {
+              children = [
+                {
+                  id: `${item.id}-${folder.id}-3`,
+                  label: folder.label3,
+                  children: documents,
+                },
+              ];
+            }
+            if (folder.label2) {
+              children = [
+                {
+                  id: `${item.id}-${folder.id}-2`,
+                  label: folder.label2,
+                  children: children.length > 0 ? children : documents,
+                },
+              ];
+            }
+            return {
+              id: `${item.id}-${folder.id}-1`,
+              label: folder.label1,
+              children: children.length > 0 ? children : documents,
+            };
+          })
+        : [],
+    }))
+  );
+
+  const fetch = async () => {
+    dispatch(fetchGroups());
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(",")[1]); // Remueve el prefijo data
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleChange = async (selectedFiles) => {
     const selectedFilesArray = Array.from(selectedFiles);
     const pdfFiles = selectedFilesArray.filter(
       (file) => file.type === "application/pdf"
     );
+
     if (pdfFiles.length > 0) {
-      setFiles((prevFiles) => [...prevFiles, ...pdfFiles]);
+      const pdfFilesWithBase64 = await Promise.all(
+        pdfFiles.map(async (file) => {
+          const base64Content = await convertToBase64(file);
+          return {
+            mimetype: file.type,
+            filename: file.name,
+            base64Content: base64Content,
+            tags: ["tag1", "tag2", "tag3"],
+          };
+        })
+      );
+
+      setFiles((prevFiles) => [...prevFiles, ...pdfFilesWithBase64]);
     } else {
       alert("Solo se permiten archivos PDF.");
     }
   };
-  const handleItemClick = (itemId) => {
-    const selectedItem = ITEMS.find((item) => item.id === itemId);
 
-    if (selectedItem && selectedItem.father === true) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-    setSelectedItemId(itemId);
+const createFolder = ((value) => {
+  setShowModal(value);
+})
+
+  const handleFolderId = (itemId) => {
+    const rootItemId = parseInt(itemId.split('-')[1]);
+    setSelectedItemId(rootItemId);
+  };
+
+  const handleGroupId = (itemId) => {
+    setSelectedGroupId(parseInt(itemId));
   };
 
   useEffect(() => {
-    const select = ITEMS.filter((item) =>
+    const select = groups.filter((item) =>
       item.id === selectedItemId ? item.label : ""
     );
     const name = select.map((itemName) => itemName.label);
@@ -47,109 +131,36 @@ export default function FileManager() {
 
   const fileTypes = ["pdf"];
 
-  const ITEMS = [
-    {
-      id: 13,
-      label: "Grupo test",
-      father: true,
-      children: [
-        {
-          id: 1,
-          label: "item-father-1",
-          children: [
-            {
-              id: 2,
-              label: "second-level-1",
-              children: [
-                { id: 3, label: "Ultimo nivel1-item1" },
-                { id: 4, label: "Ultimo nivel1-item2" },
-                { id: 5, label: "Ultimo nivel1-item3" },
-              ],
-            },
-          ],
-        },
-        {
-          id: 6,
-          label: "Bookmarked",
-          fileType: "pinned",
-          children: [
-            {
-              id: 7,
-              label: "Learning materials",
-            },
-            { id: 8, label: "News" },
-            { id: 9, label: "Forums" },
-            { id: 10, label: "Travel documents" },
-          ],
-        },
-        { id: 11, label: "History" },
-        { id: 12, label: "Trash" },
-      ],
-    },
-    {
-      id: 14,
-      label: "Grupo provicional",
-      father: true,
-      children: [
-        {
-          id: 15,
-          label: "item-father-2",
-          children: [
-            {
-              id: 16,
-              label: "second-level-2",
-              children: [
-                { id: 17, label: "Ultimo nivel2-item1" },
-                { id: 18, label: "Ultimo nivel2-item2" },
-                { id: 19, label: "Ultimo nivel2-item3" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 20,
-      label: "Grupo de prueba",
-      father: true,
-      children: [
-        {
-          id: 21,
-          label: "Item-test-father",
-          children: [
-            {
-              id: 22,
-              label: "Item-test-father-2",
-              children: [
-                { id: 23, label: "Ultimo nivel3-item1" },
-                { id: 24, label: "Ultimo nivel3-item2" },
-                { id: 25, label: "Ultimo nivel3-item3" },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const handleSubmit = async () => {
+    const payload = {
+      files: [...files],
+      idFolder: selectedItemId,
+    };
+    try {
+      const resultAction = await dispatch(addFile(payload));
+      if (resultAction.error) {
+        showToast("error", "Error al subir archivos");
+      } else {
+        setFiles([]);
+        showToast("success", "Archivos subidos con éxito");
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   return (
     <div className="container">
       <div className="row">
         <div className="col-12 d-flex">
-          {permissions === 2 ? (<RegisterGroup />) : (<></>)}
+          {permissions === 2 && <RegisterGroup />}
 
-          {showModal ? (
-            permissions >= 2 ? (
-              <RegisterFolder groupName={nameItem} groupID={selectedItemId} />
-            ) : (
-              <></>
-            )
-          ) : (
-            <></>
+          {showModal && (
+            <RegisterFolder groupName={nameItem} groupID={selectedGroupId} />
           )}
         </div>
         <div className="col-6">
-          <FileExplorer date={ITEMS} select={handleItemClick} />
+          <FileExplorer date={groups} showCreateFolder={createFolder} selectGroupId={handleGroupId} selectIdFolder={handleFolderId} />
         </div>
 
         <div className="col-6 d-grid w-50 h-50 justify-content-start">
@@ -176,31 +187,39 @@ export default function FileManager() {
               types={fileTypes}
             />
           </div>
+
           <div
             className={`col-12 align-items-start mt-4 ${
               files.length < 5 ? "d-flex" : "row"
             }`}
           >
-            {files.length > 0
-              ? files.map((file, index) => (
-                  <div
-                    key={index}
-                    className="col-2 card w-card d-flex align-items-center justify-content-center ms-2 me-4"
-                  >
-                    <div className="file-item d-grid justify-content-center">
-                      <i className="pi pi-file text-center size-file-card" />
-                      <p className="ms-2 w-p-card fs-5 text-center">
-                        {file.name.length > 22
-                          ? file.name.slice(0, 22) + "... pdf"
-                          : file.name}
-                      </p>
-                    </div>
+            {files.length > 0 &&
+              files.map((file, index) => (
+                <div
+                  key={index}
+                  className="col-2 card w-card d-flex align-items-center justify-content-center ms-2 me-4"
+                >
+                  <div className="file-item d-grid justify-content-center">
+                    <i className="pi pi-file text-center size-file-card" />
+                    <p className="ms-2 w-p-card fs-5 text-center">
+                      {file.filename.length > 22
+                        ? file.filename.slice(0, 22) + "... pdf"
+                        : file.filename}
+                    </p>
                   </div>
-                ))
-              : ""}
+                </div>
+              ))}
+          </div>
+          <div className="col-12 d-flex justify-content-end">
+            {files.length > 0 && (
+              <button className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button " onClick={handleSubmit}>
+                Enviar
+              </button>
+            )}
           </div>
         </div>
       </div>
+      {ToastComponent}
     </div>
   );
 }

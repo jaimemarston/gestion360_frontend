@@ -44,6 +44,7 @@ import {
 } from "./Components/Sistema/Menu";
 import { RegistroPresupuestoFinanciero } from "./Components/Sistema/Menu/RegistroPresupuestoFinanciero";
 import FileManager from "./Components/Sistema/Menu/FileManager";
+import { useToast } from "./hooks/useToast";
 
 function App() {
   const [isDarkMode, setDarkMode] = useState(false);
@@ -57,10 +58,11 @@ function App() {
     }
   }, [localStorage.getItem("token")]);
 
-  console.log(isDarkMode);
+ 
 
   return (
     <div className={isDarkMode ? "body-dark " : ""}>
+ 
       <Routes>
         <Route exact path={"/"} element={<Login />} />
 
@@ -175,7 +177,8 @@ function App() {
           />
         </Route>
       </Routes>
-    </div>
+
+     </div>
   );
 }
 
