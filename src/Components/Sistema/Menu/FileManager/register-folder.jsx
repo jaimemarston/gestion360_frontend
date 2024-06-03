@@ -73,7 +73,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
       usersId: selectedUsers.map((item) => item.id),
     };
     try {
-      const resultAction = await dispatch(addGroup(data));
+      const resultAction = await dispatch(addFolder(payload));
       if (resultAction.error) {
         showToast('error', 'Error al intentar crear una carpeta')
       } else {
@@ -313,7 +313,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
         label='Guardar'
         icon='pi pi-check'
         className='p-button-text'
-        onClick={save}
+        onClick={()=> {save(), setData({})}}
       />
     </>
   );
