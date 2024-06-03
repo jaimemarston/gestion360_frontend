@@ -209,7 +209,7 @@ const createFolder = ((value) => {
           </div>
           <div className="col-12 d-flex justify-content-end">
             {files.length > 0 && (
-              <button className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button p-component p-button-text" onClick={handleSubmit}>
+              <button className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button " onClick={handleSubmit}>
                 Enviar
               </button>
             )}

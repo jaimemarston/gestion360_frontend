@@ -75,7 +75,7 @@ const RegisterGroup = ({ isDarkMode }) => {
           setData({});
         }}
       />
-      <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={save} />
+      <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={()=> {save(), setData({})}} />
     </>
   );
 

@@ -37,10 +37,6 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
 
   const dispatch = useDispatch();
 
-  const refetch = async () => {
-    dispatch(fetchGroups());
-  };
-
   const switchFondo = (e) => {
     setValue(e);
   };
@@ -79,14 +75,11 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
 
     try {
       dispatch(addFolder(payload));
-      await refetch()
-
       showToast('success', 'Carpeta creada con éxito');
-
       closeModal();
     } catch (error) {
       console.log("error", error)
-      showToast('error', 'Error al crear la carpeta')
+/*       showToast('error', 'Error al crear la carpeta') */
     } finally {
       setSubmitted(false);
     }

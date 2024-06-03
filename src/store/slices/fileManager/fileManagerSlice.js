@@ -60,6 +60,8 @@ export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
         const response = await folderService.createFolder(removeEmptyStringProperties(folder));
+       
+        thunkAPI.dispatch(fetchGroups());
 
         return response;
     }
