@@ -7,10 +7,14 @@ import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
 import { useToast } from "../../../../hooks/useToast";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGroups, addFile } from "../../../../store/slices/fileManager/fileManagerSlice";
+import {
+  fetchGroups,
+  addFile,
+} from "../../../../store/slices/fileManager/fileManagerSlice";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
@@ -19,40 +23,48 @@ export default function FileManager() {
 
   const dispatch = useDispatch();
 
-  const groups = useSelector((state) => state.FileManager.groups.map(item => ({
-    id: item.id,
-    label: item.name,
-    father: true,
-    children: item?.folders ? item.folders.map((folder) => {
-      const documents = folder.documents.map((doc) => ({
-        id: doc.uuid,
-        label: doc.filename,
-        mimetype: doc.mimetype,
-        tags: doc.tags,
-        isFile: true
-      }));
-      let children = [];
-      if (folder.label3) {
-        children = [{
-          id: `${item.id}-${folder.id}-3`,
-          label: folder.label3,
-          children: documents,
-        }];
-      }
-      if (folder.label2) {
-        children = [{
-          id: `${item.id}-${folder.id}-2`,
-          label: folder.label2,
-          children: children.length > 0 ? children : documents,
-        }];
-      }
-      return {
-        id: `${item.id}-${folder.id}-1`,
-        label: folder.label1,
-        children: children.length > 0 ? children : documents,
-      };
-    }) : [],
-  }))); 
+  const groups = useSelector((state) =>
+    state.FileManager.groups.map((item) => ({
+      id: item.id,
+      label: item.name,
+      father: true,
+      children: item?.folders
+        ? item.folders.map((folder) => {
+            const documents = folder.documents.map((doc) => ({
+              id: doc.uuid,
+              label: doc.filename,
+              mimetype: doc.mimetype,
+              tags: doc.tags,
+              isFile: true,
+            }));
+            let children = [];
+            if (folder.label3) {
+              children = [
+                {
+                  id: `${item.id}-${folder.id}-3`,
+                  label: folder.label3,
+                  children: documents,
+                },
+              ];
+            }
+            if (folder.label2) {
+              children = [
+                {
+                  id: `${item.id}-${folder.id}-2`,
+                  label: folder.label2,
+                  children: children.length > 0 ? children : documents,
+                },
+              ];
+            }
+            return {
+              id: `${item.id}-${folder.id}-1`,
+              label: folder.label1,
+              children: children.length > 0 ? children : documents,
+            };
+          })
+        : [],
+    }))
+  );
 
   const fetch = async () => {
     dispatch(fetchGroups());
@@ -66,7 +78,7 @@ export default function FileManager() {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(',')[1]); // Remueve el prefijo data
+      reader.onload = () => resolve(reader.result.split(",")[1]); // Remueve el prefijo data
       reader.onerror = (error) => reject(error);
     });
   };
@@ -85,7 +97,7 @@ export default function FileManager() {
             mimetype: file.type,
             filename: file.name,
             base64Content: base64Content,
-            tags: ["tag1", "tag2", "tag3"]
+            tags: ["tag1", "tag2", "tag3"],
           };
         })
       );
@@ -96,16 +108,17 @@ export default function FileManager() {
     }
   };
 
-  const handleItemClick = (itemId) => {
-    const rootItemId = parseInt(itemId); // Extraer el ID raíz
-    console.log(rootItemId, "items")
-    const selectedItem = groups.find((item) => item.id === rootItemId);
-    if (selectedItem) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-    setSelectedItemId(rootItemId); // Guardar solo el ID raíz
+const createFolder = ((value) => {
+  setShowModal(value);
+})
+
+  const handleFolderId = (itemId) => {
+    const rootItemId = parseInt(itemId.split('-')[1]);
+    setSelectedItemId(rootItemId);
+  };
+
+  const handleGroupId = (itemId) => {
+    setSelectedGroupId(parseInt(itemId));
   };
 
   useEffect(() => {
@@ -118,20 +131,19 @@ export default function FileManager() {
 
   const fileTypes = ["pdf"];
 
-  const handleSubmit = async ()  => {
+  const handleSubmit = async () => {
     const payload = {
       files: [...files],
       idFolder: selectedItemId,
-    }
+    };
     try {
       dispatch(addFile(payload));
-      setFiles([])
-      showToast('success', 'Archivos subidos con éxito');
+      setFiles([]);
+      showToast("success", "Archivos subidos con éxito");
     } catch (error) {
-      console.log("error", error)
-      showToast('error', 'Error al subir archivos');
+      console.log("error", error);
+      showToast("error", "Error al subir archivos");
     }
-    console.log(files, selectedItemId);
   };
 
   return (
@@ -140,10 +152,12 @@ export default function FileManager() {
         <div className="col-12 d-flex">
           {permissions === 2 && <RegisterGroup />}
 
-          {showModal && <RegisterFolder groupName={nameItem} groupID={selectedItemId} />}
+          {showModal && (
+            <RegisterFolder groupName={nameItem} groupID={selectedGroupId} />
+          )}
         </div>
         <div className="col-6">
-          <FileExplorer date={groups} select={handleItemClick} />
+          <FileExplorer date={groups} showCreateFolder={createFolder} selectGroupId={handleGroupId} selectIdFolder={handleFolderId} />
         </div>
 
         <div className="col-6 d-grid w-50 h-50 justify-content-start">
@@ -172,11 +186,12 @@ export default function FileManager() {
           </div>
 
           <div
-            className={`col-12 align-items-start mt-4 ${files.length < 5 ? "d-flex" : "row"
-              }`}
+            className={`col-12 align-items-start mt-4 ${
+              files.length < 5 ? "d-flex" : "row"
+            }`}
           >
-            {files.length > 0
-              ? files.map((file, index) => (
+            {files.length > 0 &&
+              files.map((file, index) => (
                 <div
                   key={index}
                   className="col-2 card w-card d-flex align-items-center justify-content-center ms-2 me-4"
@@ -190,9 +205,14 @@ export default function FileManager() {
                     </p>
                   </div>
                 </div>
-              ))
-              : ""}
-            <button className="btn btn-primary" onClick={handleSubmit}>Enviar</button>
+              ))}
+          </div>
+          <div className="col-12 d-flex justify-content-end">
+            {files.length > 0 && (
+              <button className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button p-component p-button-text" onClick={handleSubmit}>
+                Enviar
+              </button>
+            )}
           </div>
         </div>
       </div>

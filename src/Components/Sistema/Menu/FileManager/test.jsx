@@ -168,7 +168,7 @@ const getIconFromFileTypeAndDepth = (item, depth) => {
 };
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
-  const { id, itemId, label, disabled, children, onItemSelect, ...other } =
+  const { id, itemId, label, disabled, children, showModal, selectGroup, onItemSelect, ...other } =
     props;
 
   const {
@@ -190,8 +190,10 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
     const handleClick = () => {
       if (icon === FolderCopyIcon) {
-        onItemSelect(itemId);
+        showModal(true);
+        selectGroup(itemId)
       }
+      onItemSelect(itemId);
     };
 
   return (
@@ -225,9 +227,9 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   );
 });
 
-export default function FileExplorer({ date, select }) {
+export default function FileExplorer({ date, selectIdFolder, showCreateFolder, selectGroupId }) {
   const handleItemSelect = (selectedItemId) => {
-    select(selectedItemId);
+    selectIdFolder(selectedItemId);
   };
 
   return (
@@ -242,7 +244,7 @@ export default function FileExplorer({ date, select }) {
       }}
       slots={{
         item: (props) => (
-            <CustomTreeItem {...props} onItemSelect={handleItemSelect} />
+            <CustomTreeItem {...props} showModal={showCreateFolder} selectGroup={selectGroupId} onItemSelect={handleItemSelect} />
         ),
       }}
     />
