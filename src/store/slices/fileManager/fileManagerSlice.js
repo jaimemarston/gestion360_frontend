@@ -4,6 +4,7 @@ import groupService from '../../../api/services/fileManager/group.service';
 import fileService from '../../../api/services/fileManager/file.service';
 
 const initialState = {
+    isLoadingFile: false,
     isLoading: false,
     groups: [],
     folders: [],
@@ -55,6 +56,18 @@ export const addFile = createAsyncThunk(
     }
 );
 
+export const fetchFiles = createAsyncThunk(
+    'FileManagerSlice/fetchFile',
+    async (folderId, thunkAPI) => {
+
+        const { idFolder } = folderId;
+
+        const response = await fileService.getFileFolder(idFolder);
+
+        return response;
+    }
+);
+
 export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
@@ -95,6 +108,9 @@ export const FileManagerSlice = createSlice({
         },
         getFolders: (state) => {
             return state.folders;
+        },
+        getFiles: (state) => {
+            return state.files;
         }
     },
     extraReducers: (builder) => {
@@ -137,8 +153,19 @@ export const FileManagerSlice = createSlice({
                 state.isLoading = false;
             });
 
+        builder
+        .addCase(fetchFiles.pending, (state) => {
+            state.isLoadingFile = true;
+        })
+        .addCase(fetchFiles.fulfilled, (state, action) => {
+            state.files = action.payload;
+            state.isLoadingFile = false;
+        })
+        .addCase(fetchFiles.rejected, (state, action) => {
+            state.isLoadingFile = false;
+        });
 
     },
 });
 
-export const { getGroups } = FileManagerSlice.actions;
+export const { getGroups, getFiles } = FileManagerSlice.actions;
