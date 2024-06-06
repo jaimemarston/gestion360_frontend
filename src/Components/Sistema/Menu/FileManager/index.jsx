@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchGroups,
   addFile,
+  fetchFiles,
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 
 export default function FileManager() {
@@ -31,7 +32,7 @@ export default function FileManager() {
       children: item?.folders
         ? item.folders.map((folder) => {
             const documents = folder.documents.map((doc) => ({
-              id: doc.uuid,
+              id: `${item.id}-${folder.id}-${doc.uuid}`,
               label: doc.filename,
               mimetype: doc.mimetype,
               tags: doc.tags,
@@ -108,13 +109,17 @@ export default function FileManager() {
     }
   };
 
-const createFolder = ((value) => {
-  setShowModal(value);
-})
+  const createFolder = (value) => {
+    setShowModal(value);
+  };
 
   const handleFolderId = (itemId) => {
-    const rootItemId = parseInt(itemId.split('-')[1]);
+    if (typeof itemId === 'string') {
+    const rootItemId = parseInt(itemId.split("-")[1]);
+    const groupId = parseInt(itemId.split("-")[0]);
+    setSelectedGroupId(groupId);
     setSelectedItemId(rootItemId);
+    }
   };
 
   const handleGroupId = (itemId) => {
@@ -123,11 +128,11 @@ const createFolder = ((value) => {
 
   useEffect(() => {
     const select = groups.filter((item) =>
-      item.id === selectedItemId ? item.label : ""
+      item.id === selectedGroupId ? item.label : ""
     );
     const name = select.map((itemName) => itemName.label);
     setNameItem(name);
-  }, [selectedItemId]);
+  }, [selectedGroupId]);
 
   const fileTypes = ["pdf"];
 
@@ -149,6 +154,26 @@ const createFolder = ((value) => {
     }
   };
 
+  const uploadedFiles = useSelector((state) => state.FileManager.files);
+  const isLoading = useSelector((state) => state.FileManager.isLoadingFile);
+
+  const getFiles = async () => {
+    const payload = {
+      idFolder: selectedItemId,
+    };
+    dispatch(fetchFiles(payload));
+  };
+
+  const handleDownload = (url) => {
+    if (url) {
+      window.location.href = url;
+    }
+  };
+
+  useEffect(() => {
+      getFiles();
+    }, [selectedItemId]);
+
   return (
     <div className="container">
       <div className="row">
@@ -160,7 +185,12 @@ const createFolder = ((value) => {
           )}
         </div>
         <div className="col-6">
-          <FileExplorer date={groups} showCreateFolder={createFolder} selectGroupId={handleGroupId} selectIdFolder={handleFolderId} />
+          <FileExplorer
+            date={groups}
+            showCreateFolder={createFolder}
+            selectGroupId={handleGroupId}
+            selectIdFolder={handleFolderId}
+          />
         </div>
 
         <div className="col-6 d-grid w-50 h-50 justify-content-start">
@@ -188,6 +218,43 @@ const createFolder = ((value) => {
             />
           </div>
 
+          {uploadedFiles.data && uploadedFiles.data.length > 0 && (
+            <h1>Archivos subidos</h1>
+          )}
+          {isLoading && selectedItemId !== null && (<h2>Cargando...</h2>)}
+
+          <div
+            className={`col-12 align-items-start mt-4 ${
+              uploadedFiles.data && uploadedFiles.data.length < 5
+                ? "d-flex"
+                : "row"
+            }`}
+          >
+            {uploadedFiles.data &&
+              uploadedFiles.data.length > 0 && !isLoading ?
+              uploadedFiles.data.map((file, index) => (
+                <div
+                  onClick={()=> handleDownload(file.url)}
+                  key={index}
+                  className="col-2 card w-card pe-auto d-flex align-items-center justify-content-center ms-2 me-4"
+                >
+                  <div className="file-item d-grid justify-content-center">
+                    <i className="pi pi-file text-center size-file-card" />
+                    <p className="ms-2 w-p-card fs-5 text-center">
+                      {file.filename.length > 22
+                        ? file.filename.slice(0, 22) + "... pdf"
+                        : file.filename}
+                    </p>
+                  </div>
+                </div>
+              )) : selectedItemId !== null && !isLoading && uploadedFiles.data ?
+              (
+               <h2>Esta carpeta no contiene archivos</h2>
+             ) : <></>}
+          </div>
+
+          {files.length > 0 && (<h1>Archivos por subir</h1>)}
+
           <div
             className={`col-12 align-items-start mt-4 ${
               files.length < 5 ? "d-flex" : "row"
@@ -212,7 +279,10 @@ const createFolder = ((value) => {
           </div>
           <div className="col-12 d-flex justify-content-end">
             {files.length > 0 && (
-              <button className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button " onClick={handleSubmit}>
+              <button
+                className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button "
+                onClick={handleSubmit}
+              >
                 Enviar
               </button>
             )}
