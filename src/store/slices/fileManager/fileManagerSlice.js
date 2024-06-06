@@ -43,19 +43,6 @@ export const addGroup = createAsyncThunk(
     }
 );
 
-export const addFile = createAsyncThunk(
-    'FileManagerSlice/addFile',
-    async ( files, thunkAPI) => {
-
-        const { idFolder, ...formattedFiles } = files;
-
-        const response = await fileService.createFile(idFolder, formattedFiles);
-
-        thunkAPI.dispatch(fetchGroups());
-        return response;
-    }
-);
-
 export const fetchFiles = createAsyncThunk(
     'FileManagerSlice/fetchFile',
     async (folderId, thunkAPI) => {
@@ -64,6 +51,20 @@ export const fetchFiles = createAsyncThunk(
 
         const response = await fileService.getFileFolder(idFolder);
 
+        return response;
+    }
+);
+
+export const addFile = createAsyncThunk(
+    'FileManagerSlice/addFile',
+    async ( files, thunkAPI) => {
+
+        const { idFolder, ...formattedFiles } = files;
+
+        const response = await fileService.createFile(idFolder, formattedFiles);
+
+        thunkAPI.dispatch(fetchFiles());
+        thunkAPI.dispatch(fetchGroups());
         return response;
     }
 );

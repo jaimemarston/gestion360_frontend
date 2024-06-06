@@ -32,7 +32,7 @@ export default function FileManager() {
       children: item?.folders
         ? item.folders.map((folder) => {
             const documents = folder.documents.map((doc) => ({
-              id: doc.uuid,
+              id: `${item.id}-${folder.id}-${doc.uuid}`,
               label: doc.filename,
               mimetype: doc.mimetype,
               tags: doc.tags,
@@ -164,6 +164,12 @@ export default function FileManager() {
     dispatch(fetchFiles(payload));
   };
 
+  const handleDownload = (url) => {
+    if (url) {
+      window.location.href = url;
+    }
+  };
+
   useEffect(() => {
       getFiles();
     }, [selectedItemId]);
@@ -215,7 +221,7 @@ export default function FileManager() {
           {uploadedFiles.data && uploadedFiles.data.length > 0 && (
             <h1>Archivos subidos</h1>
           )}
-          {isLoading && (<h2>Cargando...</h2>)}
+          {isLoading && selectedItemId !== null && (<h2>Cargando...</h2>)}
 
           <div
             className={`col-12 align-items-start mt-4 ${
@@ -228,8 +234,9 @@ export default function FileManager() {
               uploadedFiles.data.length > 0 && !isLoading ?
               uploadedFiles.data.map((file, index) => (
                 <div
+                  onClick={()=> handleDownload(file.url)}
                   key={index}
-                  className="col-2 card w-card d-flex align-items-center justify-content-center ms-2 me-4"
+                  className="col-2 card w-card pe-auto d-flex align-items-center justify-content-center ms-2 me-4"
                 >
                   <div className="file-item d-grid justify-content-center">
                     <i className="pi pi-file text-center size-file-card" />
@@ -240,7 +247,7 @@ export default function FileManager() {
                     </p>
                   </div>
                 </div>
-              )) : selectedItemId !== undefined && !isLoading && uploadedFiles.data ?
+              )) : selectedItemId !== null && !isLoading && uploadedFiles.data ?
               (
                <h2>Esta carpeta no contiene archivos</h2>
              ) : <></>}

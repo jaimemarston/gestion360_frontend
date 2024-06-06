@@ -197,7 +197,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
     };
 
   return (
-    <TreeItem2Provider itemId={itemId}>
+    <TreeItem2Provider itemId={itemId.toString()}>
       <StyledTreeItemRoot {...getRootProps(other)}>
         <CustomTreeItemContent
           {...getContentProps({
