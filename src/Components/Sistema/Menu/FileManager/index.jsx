@@ -123,11 +123,11 @@ const createFolder = ((value) => {
 
   useEffect(() => {
     const select = groups.filter((item) =>
-      item.id === selectedItemId ? item.label : ""
+      item.id === selectedGroupId ? item.label : ""
     );
     const name = select.map((itemName) => itemName.label);
     setNameItem(name);
-  }, [selectedItemId]);
+  }, [selectedGroupId]);
 
   const fileTypes = ["pdf"];
 
