@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchGroups,
   addFile,
+  fetchFile,
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 
 export default function FileManager() {
@@ -114,6 +115,8 @@ const createFolder = ((value) => {
 
   const handleFolderId = (itemId) => {
     const rootItemId = parseInt(itemId.split('-')[1]);
+    const groupId = parseInt(itemId.split('-')[0]);
+    setSelectedGroupId(groupId)
     setSelectedItemId(rootItemId);
   };
 
