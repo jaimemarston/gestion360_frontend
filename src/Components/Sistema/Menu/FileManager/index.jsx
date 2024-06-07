@@ -171,7 +171,9 @@ export default function FileManager() {
   };
 
   useEffect(() => {
+    if(selectedItemId !== null){
       getFiles();
+    }
     }, [selectedItemId]);
 
   return (
