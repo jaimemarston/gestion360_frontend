@@ -20,6 +20,7 @@
     "@react-pdf/renderer": "^3.1.9",
     "@react-spring/web": "^9.7.3",
     "@reduxjs/toolkit": "^1.9.0",
+    "axios": "^1.7.1",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.2",
     "events": "^3.3.0",
