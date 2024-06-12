@@ -13,7 +13,13 @@ const createFile = async (idFolder, files: Files) => {
     return data
 }
 
+const deleteFile = async (idFolder, fileId) => {
+    const { data } = await http.delete(`minio/${idFolder}/${fileId}`)
+    return data
+}
+
 export default {
     getFileFolder,
-    createFile
+    createFile,
+    deleteFile
 }

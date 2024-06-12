@@ -11,6 +11,7 @@ import {
   fetchGroups,
   addFile,
   fetchFiles,
+  removeFile
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { PDFViewer } from "@react-pdf/renderer";
 import { Image } from "primereact/image";
@@ -166,6 +167,23 @@ export default function FileManager() {
     dispatch(fetchFiles(payload));
   };
 
+  const deleteFile = async (idFile) => {
+    const payload = {
+      idFolder: selectedItemId,
+      idFile: idFile
+    };
+    try{
+      const resultAction = await dispatch(removeFile(payload));
+      if (resultAction.error) {
+        showToast("error", "Error eliminar un archivo");
+      } else {
+        showToast("success", "Archivo eliminado con éxito");
+      }
+    }catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const handleDownload = (url) => {
     if (url) {
       window.location.href = url;
@@ -250,7 +268,7 @@ export default function FileManager() {
                       </div>
                     )}
                     <p className="ms-2 w-p-card fs-5 text-center">
-                      {file.filename.length > 14
+                      {file.filename.length > 19
                         ? file.filename.slice(0, 14) +  "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
@@ -261,7 +279,7 @@ export default function FileManager() {
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
                         ></div>{" "}
-                        <div className="bg-trash size-icon-card pi pi-trash"></div>
+                        <div onClick={()=> deleteFile(file.id)} className="bg-trash size-icon-card pi pi-trash"></div>
                       </div>
                     </div>
                   </div>
