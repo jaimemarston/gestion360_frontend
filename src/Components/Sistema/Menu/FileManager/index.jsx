@@ -12,6 +12,8 @@ import {
   addFile,
   fetchFiles,
 } from "../../../../store/slices/fileManager/fileManagerSlice";
+import { PDFViewer } from "@react-pdf/renderer";
+import { Image } from "primereact/image";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -19,6 +21,8 @@ export default function FileManager() {
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
+  const [pdfUrl, setPdfUrl] = useState();
+
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
 
@@ -86,9 +90,7 @@ export default function FileManager() {
 
   const handleChange = async (selectedFiles) => {
     const selectedFilesArray = Array.from(selectedFiles);
-    const pdfFiles = selectedFilesArray.filter(
-      (file) => file.type === "application/pdf"
-    );
+    const pdfFiles = selectedFilesArray;
 
     if (pdfFiles.length > 0) {
       const pdfFilesWithBase64 = await Promise.all(
@@ -114,11 +116,11 @@ export default function FileManager() {
   };
 
   const handleFolderId = (itemId) => {
-    if (typeof itemId === 'string') {
-    const rootItemId = parseInt(itemId.split("-")[1]);
-    const groupId = parseInt(itemId.split("-")[0]);
-    setSelectedGroupId(groupId);
-    setSelectedItemId(rootItemId);
+    if (typeof itemId === "string") {
+      const rootItemId = parseInt(itemId.split("-")[1]);
+      const groupId = parseInt(itemId.split("-")[0]);
+      setSelectedGroupId(groupId);
+      setSelectedItemId(rootItemId);
     }
   };
 
@@ -134,7 +136,7 @@ export default function FileManager() {
     setNameItem(name);
   }, [selectedGroupId]);
 
-  const fileTypes = ["pdf"];
+  const fileTypes = ["pdf", "jpg", "jpeg", "png"];
 
   const handleSubmit = async () => {
     const payload = {
@@ -171,10 +173,10 @@ export default function FileManager() {
   };
 
   useEffect(() => {
-    if(selectedItemId !== null){
+    if (selectedItemId !== null) {
       getFiles();
     }
-    }, [selectedItemId]);
+  }, [selectedItemId]);
 
   return (
     <div className="container">
@@ -201,7 +203,7 @@ export default function FileManager() {
               multiple={true}
               children={
                 <div className="upload-file">
-                  <div className="d-flex align-items-center col-10">
+                  <div className="d-flex align-items-center col-8">
                     <i className="pi pi-file" style={{ fontSize: "30px" }} />
                     <p className="ms-2 fw-bolder fs-3">
                       {files.length > 0
@@ -209,8 +211,8 @@ export default function FileManager() {
                         : "Subir o soltar un archivo aquí"}
                     </p>
                   </div>
-                  <div className="d-flex justify-content-end col-2">
-                    <p className="fs-4">{fileTypes}</p>
+                  <div className="d-flex justify-content-end col-4">
+                    <p className="fs-4">pdf, jpg, jpeg, png</p>
                   </div>
                 </div>
               }
@@ -223,8 +225,7 @@ export default function FileManager() {
           {uploadedFiles.data && uploadedFiles.data.length > 0 && (
             <h1>Archivos subidos</h1>
           )}
-          {isLoading && selectedItemId !== null && (<h2>Cargando...</h2>)}
-
+          {isLoading && selectedItemId !== null && <h2>Cargando...</h2>}
           <div
             className={`col-12 align-items-start mt-4 ${
               uploadedFiles.data && uploadedFiles.data.length < 5
@@ -233,29 +234,47 @@ export default function FileManager() {
             }`}
           >
             {uploadedFiles.data &&
-              uploadedFiles.data.length > 0 && !isLoading ?
+            uploadedFiles.data.length > 0 &&
+            !isLoading ? (
               uploadedFiles.data.map((file, index) => (
                 <div
-                  onClick={()=> handleDownload(file.url)}
                   key={index}
                   className="col-2 card w-card pe-auto d-flex align-items-center justify-content-center ms-2 me-4"
                 >
                   <div className="file-item d-grid justify-content-center">
-                    <i className="pi pi-file text-center size-file-card" />
+                    {file.mimetype === "application/pdf" ? (
+                      <i className="pi pi-file text-center size-file-card" />
+                    ) : (
+                      <div className="d-flex justify-content-center">
+                        <Image width="60px" height="60px" src={file.url} />
+                      </div>
+                    )}
                     <p className="ms-2 w-p-card fs-5 text-center">
-                      {file.filename.length > 22
-                        ? file.filename.slice(0, 22) + "... pdf"
+                      {file.filename.length > 14
+                        ? file.filename.slice(0, 14) +  "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
+                    <div className="d-flex justify-content-center">
+                      <div className="w-full w-p-card-icon justify-content-between d-flex pb-2">
+                        <div className="size-icon-card pi pi-eye"></div>{" "}
+                        <div
+                          onClick={() => handleDownload(file.url)}
+                          className="size-icon-card pi pi-download"
+                        ></div>{" "}
+                        <div className="bg-trash size-icon-card pi pi-trash"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )) : selectedItemId !== null && !isLoading && uploadedFiles.data ?
-              (
-               <h2>Esta carpeta no contiene archivos</h2>
-             ) : <></>}
+              ))
+            ) : selectedItemId !== null && !isLoading && uploadedFiles.data ? (
+              <h2>Esta carpeta no contiene archivos</h2>
+            ) : (
+              <></>
+            )}
           </div>
 
-          {files.length > 0 && (<h1>Archivos por subir</h1>)}
+          {files.length > 0 && <h1>Archivos por subir</h1>}
 
           <div
             className={`col-12 align-items-start mt-4 ${
@@ -279,6 +298,7 @@ export default function FileManager() {
                 </div>
               ))}
           </div>
+
           <div className="col-12 d-flex justify-content-end">
             {files.length > 0 && (
               <button

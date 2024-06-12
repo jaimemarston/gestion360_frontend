@@ -1,6 +1,6 @@
 .w-card{
     width: 100px;
-    height: 120px;
+    height: 135px;
 }
 
 .card{
@@ -15,6 +15,18 @@
     max-width: 80px;
 }
 
+.w-p-card-icon{
+    max-width: 60px;
+}
+
 .pe-auto{
     cursor: pointer !important;
+}
+
+.size-icon-card{
+    font-size: 11px;
+}
+
+.bg-trash{
+    color: red;
 }
