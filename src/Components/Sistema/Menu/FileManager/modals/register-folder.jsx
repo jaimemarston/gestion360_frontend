@@ -1,13 +1,13 @@
-import { addFolder, fetchGroups } from '../../../../store/slices/fileManager/fileManagerSlice';
+import { addFolder, fetchGroups } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import { fetchGet, } from '../../../../api';
+import { fetchGet, } from '../../../../../api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { useDispatch } from 'react-redux';
-import { useToast } from '../../../../hooks/useToast';
+import { useToast } from '../../../../../hooks/useToast';
 import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';

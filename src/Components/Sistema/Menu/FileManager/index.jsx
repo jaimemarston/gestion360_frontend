@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import { RegisterFolder } from "./register-folder";
-import { RegisterGroup } from "./register-group";
+import { RegisterFolder } from "./modals/register-folder";
+import { RegisterGroup } from "./modals/register-group";
 import "./style-file-manager.scss";
 import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
@@ -15,7 +15,7 @@ import {
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { PDFViewer } from "@react-pdf/renderer";
 import { Image } from "primereact/image";
-import { ViewFile } from "./view-file";
+import { ViewFile } from "./modals/view-file";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -274,7 +274,7 @@ export default function FileManager() {
                       <i className="pi pi-file text-center size-file-card" />
                     ) : (
                       <div className="d-flex justify-content-center">
-                        <Image width="60px" height="60px" src={file.url} />
+                        <Image width="98px" height="65px" src={file.url} />
                       </div>
                     )}
                     <p className="ms-2 w-p-card fs-5 text-center">
