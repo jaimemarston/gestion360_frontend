@@ -15,6 +15,7 @@ import {
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { PDFViewer } from "@react-pdf/renderer";
 import { Image } from "primereact/image";
+import { ViewFile } from "./view-file";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -272,9 +273,9 @@ export default function FileManager() {
                         ? file.filename.slice(0, 14) +  "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
-                    <div className="d-flex justify-content-center">
-                      <div className="w-full w-p-card-icon justify-content-between d-flex pb-2">
-                        <div className="size-icon-card pi pi-eye"></div>{" "}
+                    <div className="d-flex w-full justify-content-center">
+                      <div className="w-p-card-icon justify-content-between d-flex pb-2">
+                        <ViewFile />
                         <div
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
