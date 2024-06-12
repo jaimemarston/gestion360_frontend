@@ -77,7 +77,6 @@ export const removeFile = createAsyncThunk(
 
         const response = await fileService.deleteFile(idFolder, idFile);
 
-        thunkAPI.dispatch(fetchFiles());
         return response;
     }
 );

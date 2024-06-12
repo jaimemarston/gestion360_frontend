@@ -151,6 +151,7 @@ export default function FileManager() {
         showToast("error", "Error al subir archivos");
       } else {
         setFiles([]);
+        dispatch(fetchFiles(payload));
         showToast("success", "Archivos subidos con éxito");
       }
     } catch (error) {
@@ -185,6 +186,8 @@ export default function FileManager() {
         showToast("error", "Error eliminar un archivo");
       } else {
         showToast("success", "Archivo eliminado con éxito");
+        dispatch(fetchFiles(payload));
+        dispatch(fetchGroups());
       }
     }catch (error) {
       console.log("error", error);
