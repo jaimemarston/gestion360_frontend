@@ -158,6 +158,12 @@ export default function FileManager() {
     }
   };
 
+  const deleteFileArray = (Files, idFileDelete) => {
+      const newArray = [...Files];
+      newArray.splice(idFileDelete, 1);
+      setFiles(newArray);
+  }
+
   const uploadedFiles = useSelector((state) => state.FileManager.files);
   const isLoading = useSelector((state) => state.FileManager.isLoadingFile);
 
@@ -275,11 +281,11 @@ export default function FileManager() {
                     </p>
                     <div className="d-flex w-full justify-content-center">
                       <div className="w-p-card-icon justify-content-between d-flex pb-2">
-                        <ViewFile />
+                        <ViewFile urlFile={file.url} />
                         <div
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
-                        ></div>{" "}
+                        ></div>
                         <div onClick={()=> deleteFile(file.id)} className="bg-trash size-icon-card pi pi-trash"></div>
                       </div>
                     </div>
@@ -309,10 +315,15 @@ export default function FileManager() {
                   <div className="file-item d-grid justify-content-center">
                     <i className="pi pi-file text-center size-file-card" />
                     <p className="ms-2 w-p-card fs-5 text-center">
-                      {file.filename.length > 22
-                        ? file.filename.slice(0, 22) + "... pdf"
+                      {file.filename.length > 19
+                        ? file.filename.slice(0, 14) + "..."+file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
+                    <div className="d-flex w-full justify-content-center">
+                      <div className="w-p-card-icon justify-content-between d-flex pb-2">
+                        <div onClick={()=> deleteFileArray(files, index)} className="bg-trash cursor-pointer size-icon-card pi pi-trash"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
