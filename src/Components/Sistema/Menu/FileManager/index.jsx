@@ -256,7 +256,7 @@ export default function FileManager() {
                       <i className="pi pi-file text-center size-file-card" />
                     ) : (
                       <div className="d-flex justify-content-center">
-                        <image className="img-card-file" src={file.url} />
+                        <img className="img-card-file" src={file.url} />
                       </div>
                     )}
                     <Tooltip position="top" target=".text" />
