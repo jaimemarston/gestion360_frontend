@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import { DeleteFile } from "./delete-file";
 import { PDFViewer } from "@react-pdf/renderer";
 
-const ViewFile = ({ idFile, folderId, urlFile, mimetype }) => {
+const ViewFile = ({ idFile, folderId, urlFile, mimetype, objectFile }) => {
   const [isModalView, setIsModalView] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
 
@@ -38,7 +38,7 @@ const ViewFile = ({ idFile, folderId, urlFile, mimetype }) => {
   const Print = () => (
     <div>
       <PDFViewer
-        height={600}
+        height={570}
         width={"100%"}
         src={`${pdfUrl}`}
         style={{ display: "block" }}
@@ -78,6 +78,7 @@ const ViewFile = ({ idFile, folderId, urlFile, mimetype }) => {
         footer={productDialogFooter}
         onHide={openModal}
       >
+        <h2 className="fw-bold">{objectFile.filename}</h2>
         {mimetype !== "application/pdf" ? (
           <>
             <div className="d-flex justify-content-center">
