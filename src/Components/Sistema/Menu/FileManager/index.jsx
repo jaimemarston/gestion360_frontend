@@ -24,8 +24,6 @@ export default function FileManager() {
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
   const [pdfUrl, setPdfUrl] = useState();
-  const [confirmDelete, setConfirmDelete] = useState(false);
-
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -267,12 +265,12 @@ export default function FileManager() {
                     </p>
                     <div className="d-flex w-full justify-content-center">
                       <div className="w-p-card-icon justify-content-between d-flex pb-2">
-                        <ViewFile urlFile={file.url} />
+                        <ViewFile idFile={file.id} folderId={selectedFolderId} urlFile={file.url} />
                         <div
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
                         ></div>
-                        <DeleteFile folderId={selectedFolderId} fileId={file.id} confirmDelete={setConfirmDelete} />
+                        <DeleteFile buttonIcon={true} folderId={selectedFolderId} fileId={file.id} />
                       </div>
                     </div>
                   </div>

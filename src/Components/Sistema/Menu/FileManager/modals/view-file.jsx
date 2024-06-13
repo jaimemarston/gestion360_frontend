@@ -2,8 +2,9 @@ import { Button } from "@mui/material";
 import { Dialog } from "primereact/dialog";
 import { Toolbar } from "primereact/toolbar";
 import React, { useState } from "react";
+import { DeleteFile } from "./delete-file";
 
-const ViewFile = ({ idFile, urlFile }) => {
+const ViewFile = ({ idFile, folderId, urlFile }) => {
   const [isModalView, setIsModalView] = useState(false);
 
   const openModal = () => {
@@ -21,20 +22,14 @@ const ViewFile = ({ idFile, urlFile }) => {
   );
 
   const productDialogFooter = (
-    <>
-      <div
-        icon="size-icon-card pi pi-eye"
-        className="p-button-text"
-        onClick={() => {
-          openModal();
-        }}
-      />
+    <div className="d-flex justify-content-center">
+     <DeleteFile folderId={folderId} fileId={idFile} />
       <button onClick={handleDownload} className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button ">
         Descargar
         <div
           className="ml-2 size-icon-card pi pi-download"/>
       </button>
-    </>
+    </div>
   );
 
   const Handler = ({ isModalView, productDialogFooter, openModal }) => {
