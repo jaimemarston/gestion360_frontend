@@ -18,7 +18,7 @@ import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
 
 export default function FileManager() {
-  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [selectedFolderId, setselectedFolderId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
@@ -124,7 +124,7 @@ export default function FileManager() {
       const rootItemId = parseInt(itemId.split("-")[1]);
       const groupId = parseInt(itemId.split("-")[0]);
       setSelectedGroupId(groupId);
-      setSelectedItemId(rootItemId);
+      setselectedFolderId(rootItemId);
       setFiles([])
     }
   };
@@ -146,7 +146,7 @@ export default function FileManager() {
   const handleSubmit = async () => {
     const payload = {
       files: [...files],
-      idFolder: selectedItemId,
+      idFolder: selectedFolderId,
     };
     try {
       const resultAction = await dispatch(addFile(payload));
@@ -173,7 +173,7 @@ export default function FileManager() {
 
   const getFiles = async () => {
     const payload = {
-      idFolder: selectedItemId,
+      idFolder: selectedFolderId,
     };
     dispatch(fetchFiles(payload));
   };
@@ -185,10 +185,10 @@ export default function FileManager() {
   };
 
   useEffect(() => {
-    if (selectedItemId !== null) {
+    if (selectedFolderId !== null) {
       getFiles();
     }
-  }, [selectedItemId]);
+  }, [selectedFolderId]);
 
   return (
     <div className="container">
@@ -237,7 +237,7 @@ export default function FileManager() {
           {uploadedFiles.data && uploadedFiles.data.length > 0 && (
             <h1>Archivos subidos</h1>
           )}
-          {isLoading && selectedItemId !== null && <h2>Cargando...</h2>}
+          {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
           <div
             className={`col-12 align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.length < 5
               ? "d-flex"
@@ -272,13 +272,13 @@ export default function FileManager() {
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
                         ></div>
-                        <DeleteFile fileId={file.id} confirmDelete={setConfirmDelete} />
+                        <DeleteFile folderId={selectedFolderId} fileId={file.id} confirmDelete={setConfirmDelete} />
                       </div>
                     </div>
                   </div>
                 </div>
               ))
-            ) : selectedItemId !== null && !isLoading && uploadedFiles.data ? (
+            ) : selectedFolderId !== null && !isLoading && uploadedFiles.data ? (
               <h2>Esta carpeta no contiene archivos</h2>
             ) : (
               <></>

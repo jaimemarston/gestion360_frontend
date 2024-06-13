@@ -7,31 +7,29 @@ import {
     fetchFiles,
     removeFile
   } from "../../../../../store/slices/fileManager/fileManagerSlice";
+  import { useToast } from "../../../../../hooks/useToast";
 
-const DeleteFile = ({ confirmDelete, fileId }) => {
+const DeleteFile = ({ confirmDelete, fileId, folderId }) => {
     const [isModalView, setIsModalView] = useState(false);
 
     const dispatch = useDispatch();
+    const { showToast, ToastComponent } = useToast();
 
     const openModal = () => {
         setIsModalView(!isModalView);
     };
 
-    const Delete = (confirm) => {
-        confirmDelete(confirm);
-        setIsModalView(!isModalView);
-    };
-
     const deleteFile = async () => {
         const payload = {
-          idFolder: selectedItemId,
+          idFolder: folderId,
           idFile: fileId
         };
         try {
-            resultAction = await dispatch(removeFile(payload));
+            const resultAction = await dispatch(removeFile(payload));
           if (resultAction.error) {
             showToast("error", "Error eliminar un archivo");
           } else {
+            openModal();
             showToast("success", "Archivo eliminado con éxito");
             dispatch(fetchFiles(payload));
             dispatch(fetchGroups());
