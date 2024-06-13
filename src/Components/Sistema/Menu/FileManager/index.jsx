@@ -23,9 +23,10 @@ export default function FileManager() {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
-  const [nameItem, setNameItem] = useState();
   const [pdfUrl, setPdfUrl] = useState();
-
+  const [nameGroup, setNameGroup] = useState();
+  const [nameFolder, setNameFolder] = useState();
+  
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
 
@@ -125,6 +126,9 @@ export default function FileManager() {
       setSelectedGroupId(groupId);
       setselectedFolderId(rootItemId);
       setFiles([])
+      }
+    if(typeof itemId === "number"){
+      setSelectedGroupId(itemId)
     }
   };
 
@@ -137,7 +141,9 @@ export default function FileManager() {
       item.id === selectedGroupId ? item.label : ""
     );
     const name = select.map((itemName) => itemName.label);
-    setNameItem(name);
+
+
+    setNameGroup(name);
   }, [selectedGroupId]);
 
   const fileTypes = ["pdf", "jpg", "jpeg", "png"];
@@ -196,7 +202,7 @@ export default function FileManager() {
           {permissions === 2 && <RegisterGroup />}
 
           {showModal && (
-            <RegisterFolder groupName={nameItem} groupID={selectedGroupId} />
+            <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
           )}
         </div>
         <div className="col-6">
@@ -208,8 +214,12 @@ export default function FileManager() {
           />
         </div>
 
-        <div className="col-6 d-grid w-50 h-50 justify-content-start">
+        <div className={`col-6 d-grid w-50 h-50 ${selectedFolderId ? "justify-content-start" : "justify-content-center"}`}>
           <div className="col-12">
+            <h3>{nameGroup} {nameFolder && " > " + nameFolder}</h3>
+            {!selectedFolderId ? (
+              <h1>Seleccione una carpeta</h1>
+            ) : (
             <FileUploader
               multiple={true}
               children={
@@ -231,6 +241,7 @@ export default function FileManager() {
               name="file"
               types={fileTypes}
             />
+            )}
           </div>
 
           {uploadedFiles.data && uploadedFiles.data.length > 0 && (
