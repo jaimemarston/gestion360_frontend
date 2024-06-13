@@ -71,7 +71,7 @@ const ViewFile = ({ idFile, folderId, urlFile, mimetype, objectFile }) => {
     return (
       <Dialog
         visible={isModalView}
-        style={mimetype === "application/pdf" ? { width: "900px", height: "730px" } : { width: "650px", height: "530px" }}
+        style={mimetype === "application/pdf" ? { width: "900px", height: "730px" } : { width: "650px", height: "600px" }}
         header="Crear grupo"
         modal
         className="p-fluid"
