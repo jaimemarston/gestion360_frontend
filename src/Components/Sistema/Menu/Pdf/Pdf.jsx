@@ -19,7 +19,6 @@ const Pdf = (match) => {
   const data2 = localStorage.getItem('visor');
   //const data3 = localStorage.getItem('pass');
   const origen = localStorage.getItem('origen');
-  console.log(origen);
   const { VITE_API_URL }  = import.meta.env;
   const pdfdetalle = JSON.parse(data1);
  const mainUrlmin = VITE_API_URL.slice(0, -4);
@@ -115,7 +114,6 @@ navigate('/visor-documento')
   const getPdfUrl = async () => {
     const res = await fetch(path)
     const { url } = await res.json()
-
     const response = await fetch(url); // Reemplaza con la ruta correcta
     const arrayBuffer = await response.arrayBuffer();
     const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
@@ -172,8 +170,6 @@ useEffect(() => {
 
     setViewFoto(dataUser?.imgfirma); 
   };
-  console.log(viewFoto);
-  console.log(match);
   return (
     <div
       className='mt-11 mx-11 w-full '

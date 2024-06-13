@@ -267,7 +267,7 @@ export default function FileManager() {
                     </p>
                     <div className="d-flex w-full justify-content-center">
                       <div className="w-p-card-icon justify-content-between d-flex pb-2">
-                        <ViewFile idFile={file.id} folderId={selectedFolderId} urlFile={file.url} />
+                        <ViewFile idFile={file.id} folderId={selectedFolderId} mimetype={file.mimetype} urlFile={file.url} />
                         <div
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
