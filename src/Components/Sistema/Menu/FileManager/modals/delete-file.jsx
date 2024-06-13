@@ -87,7 +87,7 @@ const Handler = ({ isModalView, productDialogFooter, openModal }) => {
 };
 
 return (
-    <div className="size-icon-card">
+    <div className={buttonIcon && "size-icon-card"}>
         <Toolbar
             style={{ background: "transparent", border: "none", padding: "0px" }}
             left={leftToolbarTemplate}
