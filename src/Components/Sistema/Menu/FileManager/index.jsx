@@ -27,6 +27,8 @@ export default function FileManager() {
   const [pdfUrl, setPdfUrl] = useState();
   const [nameGroup, setNameGroup] = useState();
   const [nameFolder, setNameFolder] = useState();
+  const [nameFolder2, setNameFolder2] = useState();
+  const [nameFolder3, setNameFolder3] = useState();
   
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -203,6 +205,8 @@ export default function FileManager() {
     
         if (selectedFolder) {
           setNameFolder(selectedFolder.label1)
+          setNameFolder2(selectedFolder.label2 ? selectedFolder.label2 : "")
+          setNameFolder3(selectedFolder.label3 ? selectedFolder.label3 : "")
         }
       }
     }
@@ -261,7 +265,7 @@ export default function FileManager() {
             )}
           </div>
 
-          {uploadedFiles.data && uploadedFiles.data.length > 0 && (
+          {selectedFolderId !== null &&uploadedFiles.data && uploadedFiles.data.length > 0 && (
             <h1>Archivos subidos</h1>
           )}
           {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
@@ -271,7 +275,7 @@ export default function FileManager() {
               : "row"
               }`}
           >
-            {uploadedFiles.data &&
+            {selectedFolderId !== null && uploadedFiles.data &&
               uploadedFiles.data.length > 0 &&
               !isLoading ? (
               uploadedFiles.data.map((file, index) => (
