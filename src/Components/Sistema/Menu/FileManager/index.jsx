@@ -17,6 +17,7 @@ import { Image } from "primereact/image";
 import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
 import { Tooltip } from 'primereact/tooltip';
+import { EditFolder } from "./modals/edit-folder";
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -136,16 +137,6 @@ export default function FileManager() {
     setSelectedGroupId(parseInt(itemId));
   };
 
-  useEffect(() => {
-    const select = groups.filter((item) =>
-      item.id === selectedGroupId ? item.label : ""
-    );
-    const name = select.map((itemName) => itemName.label);
-
-
-    setNameGroup(name);
-  }, [selectedGroupId]);
-
   const fileTypes = ["pdf", "jpg", "jpeg", "png"];
 
   const handleSubmit = async () => {
@@ -174,6 +165,7 @@ export default function FileManager() {
   }
 
   const uploadedFiles = useSelector((state) => state.FileManager.files);
+  const uploadedGroups = useSelector((state) => state.FileManager.groups);
   const isLoading = useSelector((state) => state.FileManager.isLoadingFile);
 
   const getFiles = async () => {
@@ -195,6 +187,28 @@ export default function FileManager() {
     }
   }, [selectedFolderId]);
 
+  useEffect(() => {
+    const select = groups.filter((item) =>
+      item.id === selectedGroupId ? item.label : ""
+    );
+    const name = select.map((itemName) => itemName.label);
+
+    if (selectedGroupId && selectedFolderId) {
+      const selectedGroup = uploadedGroups && uploadedGroups.find((group) => group.id === selectedGroupId);
+    
+      if (selectedGroup) {
+        const selectedFolder = selectedGroup.folders.find(
+          (folder) => folder.id === selectedFolderId
+        );
+    
+        if (selectedFolder) {
+          setNameFolder(selectedFolder.label1)
+        }
+      }
+    }
+    setNameGroup(name);
+  }, [selectedGroupId, selectedFolderId]);
+
   return (
     <div className="container">
       <div className="row">
@@ -203,6 +217,9 @@ export default function FileManager() {
 
           {showModal && (
             <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
+          )}
+           {showModal && permissions === 2 && (
+            <EditFolder groupName={nameGroup} groupID={selectedGroupId} />
           )}
         </div>
         <div className="col-6">
