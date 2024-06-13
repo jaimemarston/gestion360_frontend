@@ -62,7 +62,7 @@ const productDialogFooter = (
         <button onClick={() => openModal()} className="btn me-5 fs-5 pe-5 pt-3 pb-3 ps-5 p-button ">
             No
         </button>
-        <button onClick={() => deleteFile()} className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button ">
+        <button onClick={() => deleteFile()} className="btn bg-button-trash fs-5 pe-5 pt-3 pb-3 ps-5 ">
             Si
         </button>
     </div>
@@ -72,14 +72,13 @@ const Handler = ({ isModalView, productDialogFooter, openModal }) => {
     return (
         <Dialog
             visible={isModalView}
-            style={{ width: "650px", height: "400px" }}
-            header="Crear grupo"
+            style={{ width: "650px", height: "260px" }}
             modal
             className="p-fluid"
             footer={productDialogFooter}
             onHide={openModal}
         >
-            <h1 className="text-center mt-8 d-flex align-items-center">
+            <h1 className="text-center mt-4 d-flex align-items-center">
                 Deseas eliminar este archivo? <br /> Si deseas eliminar este archivo sera eliminado definitivamente
             </h1>
         </Dialog>
