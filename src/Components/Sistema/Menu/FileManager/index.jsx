@@ -16,6 +16,7 @@ import { PDFViewer } from "@react-pdf/renderer";
 import { Image } from "primereact/image";
 import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
+import { Tooltip } from 'primereact/tooltip';
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -255,12 +256,13 @@ export default function FileManager() {
                       <i className="pi pi-file text-center size-file-card" />
                     ) : (
                       <div className="d-flex justify-content-center">
-                        <Image width="98px" height="65px" src={file.url} />
+                        <image className="img-card-file" src={file.url} />
                       </div>
                     )}
-                    <p className="ms-2 w-p-card fs-5 text-center">
-                      {file.filename.length > 19
-                        ? file.filename.slice(0, 14) + "..." + file.mimetype.split("/")[1]
+                    <Tooltip position="top" target=".text" />
+                    <p data-pr-tooltip={file.filename} className="w-p-card text fs-5 d-flex m-auto text-center">
+                      {file.filename.length > 11
+                        ? file.filename.slice(0, 5) + "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
@@ -297,9 +299,10 @@ export default function FileManager() {
                 >
                   <div className="file-item d-grid justify-content-center">
                     <i className="pi pi-file text-center size-file-card" />
-                    <p className="ms-2 w-p-card fs-5 text-center">
-                      {file.filename.length > 19
-                        ? file.filename.slice(0, 14) + "..." + file.mimetype.split("/")[1]
+                    <Tooltip position="top" target=".text-center" />
+                    <p data-pr-tooltip={file.filename} className="ms-2 w-p-card fs-5 text-center">
+                      {file.filename.length > 11
+                        ? file.filename.slice(0, 5) + "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
