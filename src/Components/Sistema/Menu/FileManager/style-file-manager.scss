@@ -1,33 +1,41 @@
-.w-card{
-    width: 100px;
-    height: 135px;
+.w-card {
+  width: 100px;
+  height: 135px;
 }
 
-.card{
-    padding: 0.5rem !important;
+.card {
+  padding: 0.5rem !important;
 }
 
-.size-file-card{
-    font-size: 5em;
+.size-file-card {
+  font-size: 5em;
 }
 
-.w-p-card{
-    max-width: 80px;
+.w-p-card {
+  max-width: 80px;
 }
 
-.w-p-card-icon{
-    max-width: 60px;
+.w-p-card-icon {
+  max-width: 60px;
 }
 
-.pe-auto{
-    cursor: pointer !important;
+.pe-auto {
+  cursor: pointer !important;
 }
 
-.size-icon-card{
-    font-size: 11px;
-    width: 19%;
+.size-icon-card {
+  font-size: 11px;
+  width: 19%;
 }
 
-.bg-trash{
-    color: red;
+.bg-trash {
+  color: red;
+}
+
+.img-card-file {
+    width: 98px;
+    height: 100%;
+    max-height: 83px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }

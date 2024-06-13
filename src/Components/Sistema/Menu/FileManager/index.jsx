@@ -11,11 +11,11 @@ import {
   fetchGroups,
   addFile,
   fetchFiles,
-  removeFile
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { PDFViewer } from "@react-pdf/renderer";
 import { Image } from "primereact/image";
 import { ViewFile } from "./modals/view-file";
+import { DeleteFile } from "./modals/delete-file";
 
 export default function FileManager() {
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -24,6 +24,8 @@ export default function FileManager() {
   const [files, setFiles] = useState([]);
   const [nameItem, setNameItem] = useState();
   const [pdfUrl, setPdfUrl] = useState();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -37,38 +39,38 @@ export default function FileManager() {
       father: true,
       children: item?.folders
         ? item.folders.map((folder) => {
-            const documents = folder.documents.map((doc) => ({
-              id: `${item.id}-${folder.id}-${doc.uuid}`,
-              label: doc.filename,
-              mimetype: doc.mimetype,
-              tags: doc.tags,
-              isFile: true,
-            }));
-            let children = [];
-            if (folder.label3) {
-              children = [
-                {
-                  id: `${item.id}-${folder.id}-3`,
-                  label: folder.label3,
-                  children: documents,
-                },
-              ];
-            }
-            if (folder.label2) {
-              children = [
-                {
-                  id: `${item.id}-${folder.id}-2`,
-                  label: folder.label2,
-                  children: children.length > 0 ? children : documents,
-                },
-              ];
-            }
-            return {
-              id: `${item.id}-${folder.id}-1`,
-              label: folder.label1,
-              children: children.length > 0 ? children : documents,
-            };
-          })
+          const documents = folder.documents.map((doc) => ({
+            id: `${item.id}-${folder.id}-${doc.uuid}`,
+            label: doc.filename,
+            mimetype: doc.mimetype,
+            tags: doc.tags,
+            isFile: true,
+          }));
+          let children = [];
+          if (folder.label3) {
+            children = [
+              {
+                id: `${item.id}-${folder.id}-3`,
+                label: folder.label3,
+                children: documents,
+              },
+            ];
+          }
+          if (folder.label2) {
+            children = [
+              {
+                id: `${item.id}-${folder.id}-2`,
+                label: folder.label2,
+                children: children.length > 0 ? children : documents,
+              },
+            ];
+          }
+          return {
+            id: `${item.id}-${folder.id}-1`,
+            label: folder.label1,
+            children: children.length > 0 ? children : documents,
+          };
+        })
         : [],
     }))
   );
@@ -123,6 +125,7 @@ export default function FileManager() {
       const groupId = parseInt(itemId.split("-")[0]);
       setSelectedGroupId(groupId);
       setSelectedItemId(rootItemId);
+      setFiles([])
     }
   };
 
@@ -160,9 +163,9 @@ export default function FileManager() {
   };
 
   const deleteFileArray = (Files, idFileDelete) => {
-      const newArray = [...Files];
-      newArray.splice(idFileDelete, 1);
-      setFiles(newArray);
+    const newArray = [...Files];
+    newArray.splice(idFileDelete, 1);
+    setFiles(newArray);
   }
 
   const uploadedFiles = useSelector((state) => state.FileManager.files);
@@ -173,25 +176,6 @@ export default function FileManager() {
       idFolder: selectedItemId,
     };
     dispatch(fetchFiles(payload));
-  };
-
-  const deleteFile = async (idFile) => {
-    const payload = {
-      idFolder: selectedItemId,
-      idFile: idFile
-    };
-    try{
-      const resultAction = await dispatch(removeFile(payload));
-      if (resultAction.error) {
-        showToast("error", "Error eliminar un archivo");
-      } else {
-        showToast("success", "Archivo eliminado con éxito");
-        dispatch(fetchFiles(payload));
-        dispatch(fetchGroups());
-      }
-    }catch (error) {
-      console.log("error", error);
-    }
   };
 
   const handleDownload = (url) => {
@@ -255,15 +239,14 @@ export default function FileManager() {
           )}
           {isLoading && selectedItemId !== null && <h2>Cargando...</h2>}
           <div
-            className={`col-12 align-items-start mt-4 ${
-              uploadedFiles.data && uploadedFiles.data.length < 5
-                ? "d-flex"
-                : "row"
-            }`}
+            className={`col-12 align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.length < 5
+              ? "d-flex"
+              : "row"
+              }`}
           >
             {uploadedFiles.data &&
-            uploadedFiles.data.length > 0 &&
-            !isLoading ? (
+              uploadedFiles.data.length > 0 &&
+              !isLoading ? (
               uploadedFiles.data.map((file, index) => (
                 <div
                   key={index}
@@ -279,7 +262,7 @@ export default function FileManager() {
                     )}
                     <p className="ms-2 w-p-card fs-5 text-center">
                       {file.filename.length > 19
-                        ? file.filename.slice(0, 14) +  "..." + file.mimetype.split("/")[1]
+                        ? file.filename.slice(0, 14) + "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
@@ -289,7 +272,7 @@ export default function FileManager() {
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
                         ></div>
-                        <div onClick={()=> deleteFile(file.id)} className="bg-trash size-icon-card pi pi-trash"></div>
+                        <DeleteFile fileId={file.id} confirmDelete={setConfirmDelete} />
                       </div>
                     </div>
                   </div>
@@ -305,9 +288,8 @@ export default function FileManager() {
           {files.length > 0 && <h1>Archivos por subir</h1>}
 
           <div
-            className={`col-12 align-items-start mt-4 ${
-              files.length < 5 ? "d-flex" : "row"
-            }`}
+            className={`col-12 align-items-start mt-4 ${files.length < 5 ? "d-flex" : "row"
+              }`}
           >
             {files.length > 0 &&
               files.map((file, index) => (
@@ -319,12 +301,13 @@ export default function FileManager() {
                     <i className="pi pi-file text-center size-file-card" />
                     <p className="ms-2 w-p-card fs-5 text-center">
                       {file.filename.length > 19
-                        ? file.filename.slice(0, 14) + "..."+file.mimetype.split("/")[1]
+                        ? file.filename.slice(0, 14) + "..." + file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
                       <div className="w-p-card-icon justify-content-between d-flex pb-2">
-                        <div onClick={()=> deleteFileArray(files, index)} className="bg-trash cursor-pointer size-icon-card pi pi-trash"></div>
+                        <div onClick={() => deleteFileArray(files, index)} className="bg-trash cursor-pointer size-icon-card pi pi-trash"></div>
+
                       </div>
                     </div>
                   </div>
