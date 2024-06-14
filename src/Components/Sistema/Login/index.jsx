@@ -43,12 +43,12 @@ export default function Login() {
     <section id="login">
       <div className={`containerLogin`}>
         <div className={`imgLogin`}>
-          <div class="img-login"></div>
+          <div className="img-login"></div>
         </div>
         <div className={`formLogin`}>
           <form onSubmit={handleSubmit} className="p-fluid">
             <center>
-              <img src={logo} alt="hyper" class="mb-1 img-logo" />
+              <img src={logo} alt="hyper" className="mb-1 img-logo" />
             </center>
 
             <div className="field">
@@ -77,7 +77,7 @@ export default function Login() {
             </div>
             <Button type="submit" label={"Ingreso"} className="inputs" />
 
-              <button type="button" class="login-with-google-btn mt-5">
+              <button type="button" className="login-with-google-btn mt-5">
                 Sign in with Google
               </button>
           </form>

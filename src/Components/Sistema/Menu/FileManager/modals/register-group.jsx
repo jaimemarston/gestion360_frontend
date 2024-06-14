@@ -1,10 +1,10 @@
-import { addGroup, fetchGroups } from "../../../../store/slices/fileManager/fileManagerSlice";
+import { addGroup, fetchGroups } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toolbar } from "primereact/toolbar";
 import { useDispatch } from "react-redux";
-import { useToast } from "../../../../hooks/useToast";
+import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useState } from "react";
 

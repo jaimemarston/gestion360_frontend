@@ -1,16 +1,17 @@
-import { addFolder, fetchGroups } from '../../../../store/slices/fileManager/fileManagerSlice';
+import { addFolder, fetchGroups } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
-import { fetchGet, } from '../../../../api';
+import { fetchGet, } from '../../../../../api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { useDispatch } from 'react-redux';
-import { useToast } from '../../../../hooks/useToast';
+import { useToast } from '../../../../../hooks/useToast';
 import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
   const [usersId, setUsersId] = useState([]);
@@ -18,7 +19,6 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
     label1: '',
     label2: '',
     label3: '',
-    usersId,
     groupId: groupID,
   };
   const [listProduct, setlistProduct] = useState([]);
@@ -70,7 +70,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
     const payload = {
      ...data,
       groupId: groupID,
-      usersId: selectedUsers.map((item) => item.id),
+      user_ids: selectedUsers.map((item) => item.id),
     };
     try {
       const resultAction = await dispatch(addFolder(payload));
@@ -102,15 +102,6 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    if (selectedUsers !== null) {
-      const id = selectedUsers.map((item) => item.id);
-      setUsersId(id)
-      empty.usersId = id;
-    }
-  }, [selectedUsers])
-
-
   const leftToolbarTemplate = () => (
     <>
       <div className='my-2'>
@@ -118,7 +109,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
           className='p-button-success d-flex justify-content-center mr-2'
           onClick={openModal}
         >
-          <FolderIcon className='me-2' />
+          <CreateNewFolderIcon className='me-2 mb-1' />
           Crear carpeta
         </Button>
       </div>

@@ -69,10 +69,49 @@ export const addFile = createAsyncThunk(
     }
 );
 
+export const removeFile = createAsyncThunk(
+    'FileManagerSlice/removeFile',
+    async ( files, thunkAPI) => {
+
+        const { idFolder, idFile } = files;
+
+        const response = await fileService.deleteFile(idFolder, idFile);
+
+        return response;
+    }
+);
+
 export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
         const response = await folderService.createFolder(removeEmptyStringProperties(folder));
+        thunkAPI.dispatch(fetchGroups());
+
+        return response;
+    }
+);
+
+export const editFolder = createAsyncThunk(
+    'FileManagerSlice/editFolder',
+    async (folder, thunkAPI) => {
+
+        const {label1, label2, label3, folderId} = folder;
+
+        const response = await folderService.updateFolder(folderId, label1, label2, label3);
+        thunkAPI.dispatch(fetchGroups());
+
+        return response;
+    }
+);
+
+export const removeFolder = createAsyncThunk(
+    'FileManagerSlice/removeFolder',
+    async (idFolder, thunkAPI) => {
+
+        const {folderId} = idFolder;
+
+        const response = await folderService.deleteFolder(folderId);
+
         thunkAPI.dispatch(fetchGroups());
 
         return response;
