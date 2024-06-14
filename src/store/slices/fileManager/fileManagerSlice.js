@@ -104,6 +104,18 @@ export const editFolder = createAsyncThunk(
     }
 );
 
+export const removeFolder = createAsyncThunk(
+    'FileManagerSlice/removeFolder',
+    async (folderId, thunkAPI) => {
+
+        const response = await folderService.deleteFolder(folderId);
+
+        thunkAPI.dispatch(fetchGroups());
+
+        return response;
+    }
+);
+
 export const updateGroup = createAsyncThunk(
     'FileManagerSlice/updateGroup',
     async (group, thunkAPI) => {

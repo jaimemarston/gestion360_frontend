@@ -23,8 +23,14 @@ const updateFolder = async (folderId: number, label1: string, label2: string, la
     return data
 }
 
+const deleteFolder = async (folderId: number) => {
+    const { data } = await http.delete(`/folders/${folderId}`)
+    return data
+}
+
 export default {
     getAllFolder,
     createFolder,
-    updateFolder
+    updateFolder,
+    deleteFolder
 }
