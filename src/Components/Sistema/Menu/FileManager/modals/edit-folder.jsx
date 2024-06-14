@@ -12,12 +12,12 @@ import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
 
-const EditFolder = ({ isDarkMode, label1, label2, label3, groupName, groupID }) => {
+const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupName, groupID }) => {
   const [usersId, setUsersId] = useState([]);
   let empty = {
-    label1: label1,
-    label2: label2,
-    label3: label3,
+    label1: folderName1,
+    label2: folderName2,
+    label3: folderName3,
   };
   const [listProduct, setlistProduct] = useState([]);
   const [isModal, setIsModal] = useState(false);
@@ -125,19 +125,20 @@ const EditFolder = ({ isDarkMode, label1, label2, label3, groupName, groupID }) 
     return (
       <Dialog
         visible={isModal}
-        style={{ width: '700px', height: "320px" }}
+        style={{ width: '700px', height: "350px" }}
         header={`Grupo seleccionado: ${groupName}`}
         modal
         className='p-fluid'
         footer={productDialogFooter}
         onHide={openModal}
       >
+        <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: ${folderName1}</h5>
         <div className='field'>
           <label htmlFor='label1'>Carpeta principal</label>
           <InputText
             id='label1'
             name='label1'
-            value={data?.label1?.trim()}
+            value={folderName1}
             onChange={(e) => onInputChange(e, 'label1')}
             required
             autoFocus
@@ -155,7 +156,7 @@ const EditFolder = ({ isDarkMode, label1, label2, label3, groupName, groupID }) 
           <InputText
             id='label2'
             name='label2'
-            value={data?.label2?.trim()}
+            value={folderName2}
             onChange={(e) => onInputChange(e, 'label2')}
             required
             autoFocus
@@ -168,7 +169,7 @@ const EditFolder = ({ isDarkMode, label1, label2, label3, groupName, groupID }) 
             id='label3'
             name='label3'
             type='text'
-            value={data?.label3?.trim()}
+            value={folderName3}
             onChange={(e) => onInputChange(e, 'label3')}
             required
             autoFocus
