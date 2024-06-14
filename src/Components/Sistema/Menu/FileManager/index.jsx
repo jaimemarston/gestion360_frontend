@@ -222,7 +222,7 @@ export default function FileManager() {
           {showModal && (
             <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
           )}
-           {selectedFolderId && showModal && permissions === 2 && (
+           {selectedFolderId && showModal && (
             <EditFolder folderName1={nameFolder} folderName2={nameFolder2} folderName3={nameFolder3} groupName={nameGroup} folderId={selectedFolderId} />
           )}
         </div>
