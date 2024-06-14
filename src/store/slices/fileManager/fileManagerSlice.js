@@ -97,9 +97,7 @@ export const editFolder = createAsyncThunk(
 
         const {label1, label2, label3, folderId} = folder;
 
-        const data = {label1: label1, label2: label2, label3: label3}
-
-        const response = await folderService.updateFolder(folderId, removeEmptyStringProperties(data));
+        const response = await folderService.updateFolder(folderId, label1, label2, label3);
         thunkAPI.dispatch(fetchGroups());
 
         return response;

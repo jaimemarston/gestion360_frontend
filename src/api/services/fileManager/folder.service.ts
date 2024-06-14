@@ -4,6 +4,7 @@ type Folder = {
     label1: string,
     label2: string,
     label3: string,
+    user_ids: number[]
 }
 
 const getAllFolder = async () => {
@@ -17,8 +18,8 @@ const createFolder = async (folder: Folder) => {
     return data
 }
 
-const updateFolder = async (folderId: number, folder: Folder) => {
-    const { data } = await http.patch(`/folders/${folderId}`, {folder})
+const updateFolder = async (folderId: number, label1: string, label2: string, label3: string) => {
+    const { data } = await http.patch(`/folders/${folderId}`, {label1, label2, label3})
     return data
 }
 
