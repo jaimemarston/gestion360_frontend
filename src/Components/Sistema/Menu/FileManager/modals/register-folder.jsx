@@ -19,7 +19,6 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
     label1: '',
     label2: '',
     label3: '',
-    usersId,
     groupId: groupID,
   };
   const [listProduct, setlistProduct] = useState([]);
@@ -102,15 +101,6 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
   const onInputChange = (e, name) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
-
-  useEffect(() => {
-    if (selectedUsers !== null) {
-      const id = selectedUsers.map((item) => item.id);
-      setUsersId(id)
-      empty.usersId = id;
-    }
-  }, [selectedUsers])
-
 
   const leftToolbarTemplate = () => (
     <>
