@@ -11,6 +11,7 @@ import { useToast } from '../../../../../hooks/useToast';
 import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
   const [usersId, setUsersId] = useState([]);
@@ -70,7 +71,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
     const payload = {
      ...data,
       groupId: groupID,
-      usersId: selectedUsers.map((item) => item.id),
+      user_ids: selectedUsers.map((item) => item.id),
     };
     try {
       const resultAction = await dispatch(addFolder(payload));
@@ -118,7 +119,7 @@ const RegisterFolder = ({ isDarkMode, groupName, groupID }) => {
           className='p-button-success d-flex justify-content-center mr-2'
           onClick={openModal}
         >
-          <FolderIcon className='me-2' />
+          <CreateNewFolderIcon className='me-2 mb-1' />
           Crear carpeta
         </Button>
       </div>

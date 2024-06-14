@@ -11,6 +11,7 @@ import { useToast } from '../../../../../hooks/useToast';
 import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 
 const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupName, folderId }) => {
   const [usersId, setUsersId] = useState([]);
@@ -67,7 +68,6 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
         showToast('error', 'Error al intentar editar la carpeta')
       } else {
         showToast('success', 'Carpeta editada con éxito');
-        setData({})
         closeModal();
       }
     } catch (error) {
@@ -89,7 +89,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
           className='p-button-success d-flex justify-content-center mr-2'
           onClick={openModal}
         >
-          <FolderIcon className='me-2' />
+          <BorderColorIcon className='me-2 mb-2' />
           Editar carpeta
         </Button>
       </div>
@@ -180,7 +180,6 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
         className='p-button-text'
         onClick={() => {
           openModal();
-          setData({});
         }}
       />
       <Button
