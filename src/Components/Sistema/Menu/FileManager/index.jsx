@@ -12,12 +12,12 @@ import {
   addFile,
   fetchFiles,
 } from "../../../../store/slices/fileManager/fileManagerSlice";
-import { PDFViewer } from "@react-pdf/renderer";
-import { Image } from "primereact/image";
 import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
-import { Tooltip } from 'primereact/tooltip';
+import { Tooltip } from "primereact/tooltip";
 import { EditFolder } from "./modals/edit-folder";
+import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -25,11 +25,11 @@ export default function FileManager() {
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState([]);
   const [pdfUrl, setPdfUrl] = useState();
-  const [nameGroup, setNameGroup] = useState();
+  const [nameGroup, setNameGroup] = useState("");
   const [nameFolder, setNameFolder] = useState();
   const [nameFolder2, setNameFolder2] = useState("");
   const [nameFolder3, setNameFolder3] = useState("");
-  
+
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
 
@@ -42,38 +42,38 @@ export default function FileManager() {
       father: true,
       children: item?.folders
         ? item.folders.map((folder) => {
-          const documents = folder.documents.map((doc) => ({
-            id: `${item.id}-${folder.id}-${doc.uuid}`,
-            label: doc.filename,
-            mimetype: doc.mimetype,
-            tags: doc.tags,
-            isFile: true,
-          }));
-          let children = [];
-          if (folder.label3) {
-            children = [
-              {
-                id: `${item.id}-${folder.id}-3`,
-                label: folder.label3,
-                children: documents,
-              },
-            ];
-          }
-          if (folder.label2) {
-            children = [
-              {
-                id: `${item.id}-${folder.id}-2`,
-                label: folder.label2,
-                children: children.length > 0 ? children : documents,
-              },
-            ];
-          }
-          return {
-            id: `${item.id}-${folder.id}-1`,
-            label: folder.label1,
-            children: children.length > 0 ? children : documents,
-          };
-        })
+            const documents = folder.documents.map((doc) => ({
+              id: `${item.id}-${folder.id}-${doc.uuid}`,
+              label: doc.filename,
+              mimetype: doc.mimetype,
+              tags: doc.tags,
+              isFile: true,
+            }));
+            let children = [];
+            if (folder.label3) {
+              children = [
+                {
+                  id: `${item.id}-${folder.id}-3`,
+                  label: folder.label3,
+                  children: documents,
+                },
+              ];
+            }
+            if (folder.label2) {
+              children = [
+                {
+                  id: `${item.id}-${folder.id}-2`,
+                  label: folder.label2,
+                  children: children.length > 0 ? children : documents,
+                },
+              ];
+            }
+            return {
+              id: `${item.id}-${folder.id}-1`,
+              label: folder.label1,
+              children: children.length > 0 ? children : documents,
+            };
+          })
         : [],
     }))
   );
@@ -128,10 +128,10 @@ export default function FileManager() {
       const groupId = parseInt(itemId.split("-")[0]);
       setSelectedGroupId(groupId);
       setselectedFolderId(rootItemId);
-      setFiles([])
-      }
-    if(typeof itemId === "number"){
-      setSelectedGroupId(itemId)
+      setFiles([]);
+    }
+    if (typeof itemId === "number") {
+      setSelectedGroupId(itemId);
     }
   };
 
@@ -164,7 +164,7 @@ export default function FileManager() {
     const newArray = [...Files];
     newArray.splice(idFileDelete, 1);
     setFiles(newArray);
-  }
+  };
 
   const uploadedFiles = useSelector((state) => state.FileManager.files);
   const uploadedGroups = useSelector((state) => state.FileManager.groups);
@@ -196,17 +196,19 @@ export default function FileManager() {
     const name = select.map((itemName) => itemName.label);
 
     if (selectedGroupId && selectedFolderId) {
-      const selectedGroup = uploadedGroups && uploadedGroups.find((group) => group.id === selectedGroupId);
-    
+      const selectedGroup =
+        uploadedGroups &&
+        uploadedGroups.find((group) => group.id === selectedGroupId);
+
       if (selectedGroup) {
         const selectedFolder = selectedGroup.folders.find(
           (folder) => folder.id === selectedFolderId
         );
-    
+
         if (selectedFolder) {
-          setNameFolder(selectedFolder.label1)
-          setNameFolder2(selectedFolder.label2 ? selectedFolder.label2 : "")
-          setNameFolder3(selectedFolder.label3 ? selectedFolder.label3 : "")
+          setNameFolder(selectedFolder.label1);
+          setNameFolder2(selectedFolder.label2 ? selectedFolder.label2 : "");
+          setNameFolder3(selectedFolder.label3 ? selectedFolder.label3 : "");
         }
       }
     }
@@ -222,8 +224,14 @@ export default function FileManager() {
           {showModal && (
             <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
           )}
-           {selectedFolderId && showModal && (
-            <EditFolder folderName1={nameFolder} folderName2={nameFolder2} folderName3={nameFolder3} groupName={nameGroup} folderId={selectedFolderId} />
+          {selectedFolderId && showModal && (
+            <EditFolder
+              folderName1={nameFolder}
+              folderName2={nameFolder2}
+              folderName3={nameFolder3}
+              groupName={nameGroup}
+              folderId={selectedFolderId}
+            />
           )}
         </div>
         <div className="col-6">
@@ -235,49 +243,63 @@ export default function FileManager() {
           />
         </div>
 
-        <div className={`col-6 d-grid w-50 h-50 ${selectedFolderId ? "justify-content-start" : "justify-content-center"}`}>
+        <div
+          className={`col-6 d-grid w-50 h-50 ${
+            selectedFolderId
+              ? "justify-content-start"
+              : "justify-content-center"
+          }`}
+        >
           <div className="col-12">
-            <h3>{nameGroup} {nameFolder && " > " + nameFolder}</h3>
+            <Breadcrumbs className="mb-3"  aria-label="breadcrumb">
+              <Typography className="cursor-none" color="text.primary">{nameGroup}</Typography>
+              {nameFolder && 
+              <Typography className="cursor-none" color="text.primary">{nameFolder}</Typography>
+              }
+            </Breadcrumbs>
+
             {!selectedFolderId ? (
               <h1>Seleccione una carpeta</h1>
             ) : (
-            <FileUploader
-              multiple={true}
-              children={
-                <div className="upload-file">
-                  <div className="d-flex align-items-center col-8">
-                    <i className="pi pi-file" style={{ fontSize: "30px" }} />
-                    <p className="ms-2 fw-bolder fs-3">
-                      {files.length > 0
-                        ? "Precione para subir otro archivo"
-                        : "Subir o soltar un archivo aquí"}
-                    </p>
+              <FileUploader
+                multiple={true}
+                children={
+                  <div className="upload-file">
+                    <div className="d-flex align-items-center col-8">
+                      <i className="pi pi-file" style={{ fontSize: "30px" }} />
+                      <p className="ms-2 fw-bolder fs-3">
+                        {files.length > 0
+                          ? "Precione para subir otro archivo"
+                          : "Subir o soltar un archivo aquí"}
+                      </p>
+                    </div>
+                    <div className="d-flex justify-content-end col-4">
+                      <p className="fs-4">pdf, jpg, jpeg, png</p>
+                    </div>
                   </div>
-                  <div className="d-flex justify-content-end col-4">
-                    <p className="fs-4">pdf, jpg, jpeg, png</p>
-                  </div>
-                </div>
-              }
-              handleChange={handleChange}
-              name="file"
-              types={fileTypes}
-            />
+                }
+                handleChange={handleChange}
+                name="file"
+                types={fileTypes}
+              />
             )}
           </div>
 
-          {selectedFolderId !== null &&uploadedFiles.data && uploadedFiles.data.length > 0 && (
-            <h1>Archivos subidos</h1>
-          )}
+          {selectedFolderId !== null &&
+            uploadedFiles.data &&
+            uploadedFiles.data.length > 0 && <h1>Archivos subidos</h1>}
           {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
           <div
-            className={`col-12 align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.length < 5
-              ? "d-flex"
-              : "row"
-              }`}
+            className={`col-12 align-items-start mt-4 ${
+              uploadedFiles.data && uploadedFiles.data.length < 5
+                ? "d-flex"
+                : "row"
+            }`}
           >
-            {selectedFolderId !== null && uploadedFiles.data &&
-              uploadedFiles.data.length > 0 &&
-              !isLoading ? (
+            {selectedFolderId !== null &&
+            uploadedFiles.data &&
+            uploadedFiles.data.length > 0 &&
+            !isLoading ? (
               uploadedFiles.data.map((file, index) => (
                 <div
                   key={index}
@@ -292,25 +314,42 @@ export default function FileManager() {
                       </div>
                     )}
                     <Tooltip position="top" target=".text" />
-                    <p data-pr-tooltip={file.filename} className="w-p-card text fs-5 d-flex m-auto text-center">
+                    <p
+                      data-pr-tooltip={file.filename}
+                      className="w-p-card text fs-5 d-flex m-auto text-center"
+                    >
                       {file.filename.length > 11
-                        ? file.filename.slice(0, 5) + "..." + file.mimetype.split("/")[1]
+                        ? file.filename.slice(0, 5) +
+                          "..." +
+                          file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
                       <div className="w-p-card-icon justify-content-between d-flex pb-2">
-                        <ViewFile objectFile={file} idFile={file.id} folderId={selectedFolderId} mimetype={file.mimetype} urlFile={file.url} />
+                        <ViewFile
+                          objectFile={file}
+                          idFile={file.id}
+                          folderId={selectedFolderId}
+                          mimetype={file.mimetype}
+                          urlFile={file.url}
+                        />
                         <div
                           onClick={() => handleDownload(file.url)}
                           className="size-icon-card pi pi-download"
                         ></div>
-                        <DeleteFile buttonIcon={true} folderId={selectedFolderId} fileId={file.id} />
+                        <DeleteFile
+                          buttonIcon={true}
+                          folderId={selectedFolderId}
+                          fileId={file.id}
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               ))
-            ) : selectedFolderId !== null && !isLoading && uploadedFiles.data ? (
+            ) : selectedFolderId !== null &&
+              !isLoading &&
+              uploadedFiles.data ? (
               <h2>Esta carpeta no contiene archivos</h2>
             ) : (
               <></>
@@ -320,8 +359,9 @@ export default function FileManager() {
           {files.length > 0 && <h1>Archivos por subir</h1>}
 
           <div
-            className={`col-12 align-items-start mt-4 ${files.length < 5 ? "d-flex" : "row"
-              }`}
+            className={`col-12 align-items-start mt-4 ${
+              files.length < 5 ? "d-flex" : "row"
+            }`}
           >
             {files.length > 0 &&
               files.map((file, index) => (
@@ -332,15 +372,22 @@ export default function FileManager() {
                   <div className="file-item d-grid justify-content-center">
                     <i className="pi pi-file text-center size-file-card" />
                     <Tooltip position="top" target=".text-center" />
-                    <p data-pr-tooltip={file.filename} className="ms-2 w-p-card fs-5 text-center">
+                    <p
+                      data-pr-tooltip={file.filename}
+                      className="ms-2 w-p-card fs-5 text-center"
+                    >
                       {file.filename.length > 11
-                        ? file.filename.slice(0, 5) + "..." + file.mimetype.split("/")[1]
+                        ? file.filename.slice(0, 5) +
+                          "..." +
+                          file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
                       <div className="w-p-card-icon justify-content-between d-flex pb-2">
-                        <div onClick={() => deleteFileArray(files, index)} className="bg-trash cursor-pointer size-icon-card pi pi-trash"></div>
-
+                        <div
+                          onClick={() => deleteFileArray(files, index)}
+                          className="bg-trash cursor-pointer size-icon-card pi pi-trash"
+                        ></div>
                       </div>
                     </div>
                   </div>
