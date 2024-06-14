@@ -27,8 +27,8 @@ export default function FileManager() {
   const [pdfUrl, setPdfUrl] = useState();
   const [nameGroup, setNameGroup] = useState();
   const [nameFolder, setNameFolder] = useState();
-  const [nameFolder2, setNameFolder2] = useState();
-  const [nameFolder3, setNameFolder3] = useState();
+  const [nameFolder2, setNameFolder2] = useState("");
+  const [nameFolder3, setNameFolder3] = useState("");
   
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -223,7 +223,7 @@ export default function FileManager() {
             <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
           )}
            {selectedFolderId && showModal && permissions === 2 && (
-            <EditFolder folderName1={nameFolder} folderName2={nameFolder2} folderName3={nameFolder3} groupName={nameGroup} groupID={selectedGroupId} />
+            <EditFolder folderName1={nameFolder} folderName2={nameFolder2} folderName3={nameFolder3} groupName={nameGroup} folderId={selectedFolderId} />
           )}
         </div>
         <div className="col-6">

@@ -17,8 +17,13 @@ const createFolder = async (folder: Folder) => {
     return data
 }
 
+const updateFolder = async (folderId: number, folder: Folder) => {
+    const { data } = await http.patch(`/folders/${folderId}`, {folder})
+    return data
+}
 
 export default {
     getAllFolder,
-    createFolder
+    createFolder,
+    updateFolder
 }

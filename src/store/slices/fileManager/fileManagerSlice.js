@@ -91,6 +91,21 @@ export const addFolder = createAsyncThunk(
     }
 );
 
+export const editFolder = createAsyncThunk(
+    'FileManagerSlice/editFolder',
+    async (folder, thunkAPI) => {
+
+        const {label1, label2, label3, folderId} = folder;
+
+        const data = {label1: label1, label2: label2, label3: label3}
+
+        const response = await folderService.updateFolder(folderId, removeEmptyStringProperties(data));
+        thunkAPI.dispatch(fetchGroups());
+
+        return response;
+    }
+);
+
 export const updateGroup = createAsyncThunk(
     'FileManagerSlice/updateGroup',
     async (group, thunkAPI) => {

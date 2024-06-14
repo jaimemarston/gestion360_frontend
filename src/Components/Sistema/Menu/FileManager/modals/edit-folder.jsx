@@ -1,4 +1,4 @@
-import { addFolder, fetchGroups } from '../../../../../store/slices/fileManager/fileManagerSlice';
+import { editFolder } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -12,21 +12,27 @@ import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
 
-const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupName, groupID }) => {
+const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupName, folderId }) => {
   const [usersId, setUsersId] = useState([]);
-  let empty = {
-    label1: folderName1,
-    label2: folderName2,
-    label3: folderName3,
-  };
+
+  useEffect(()=>{
+    let empty = {
+      label1: folderName1,
+      label2: folderName2,
+      label3: folderName3,
+      folderId: folderId
+    }
+
+    setData(empty)
+  }, [folderName1, folderName2, folderName3, folderId])
+
   const [listProduct, setlistProduct] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [newData, setNewData] = useState(null);
   const [isCloseModal, setIsCloseModal] = useState(false);
-  const [value, setValue] = useState(empty.estado);
   const [selectedUsers, setSelectedProducts] = useState([]);
 
-  const [data, setData] = useState(empty);
+  const [data, setData] = useState();
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const dt = useRef(null);
@@ -39,22 +45,8 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
     setValue(e);
   };
 
-  const listarUsuarios = () => {
-    fetchGet('usuario').then((data) => {
-      setlistProduct(data.usuario)
-    })
-  };
-
-  useEffect(() => {
-    listarUsuarios();
-  }, []);
-
   const openModal = () => {
     setIsModal(!isModal);
-
-    if (data.length === 0) {
-      setData({});
-    }
   };
 
   const closeModal = () => {
@@ -67,15 +59,15 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
   
     const payload = {
      ...data,
-      groupId: groupID,
-      usersId: selectedUsers.map((item) => item.id),
     };
+
     try {
-      const resultAction = await dispatch(addFolder(payload));
+      const resultAction = await dispatch(editFolder(payload));
       if (resultAction.error) {
-        showToast('error', 'Error al intentar crear una carpeta')
+        showToast('error', 'Error al intentar editar la carpeta')
       } else {
-        showToast('success', 'Carpeta creada con éxito');
+        showToast('success', 'Carpeta editada con éxito');
+        setData({})
         closeModal();
       }
     } catch (error) {
@@ -88,14 +80,6 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
   const onInputChange = (e, name) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
-
-  useEffect(() => {
-    if (selectedUsers !== null) {
-      const id = selectedUsers.map((item) => item.id);
-      setUsersId(id)
-      empty.usersId = id;
-    }
-  }, [selectedUsers])
 
 
   const leftToolbarTemplate = () => (
@@ -132,13 +116,13 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
         footer={productDialogFooter}
         onHide={openModal}
       >
-        <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: ${folderName1}</h5>
+        <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName1}</h5>
         <div className='field'>
           <label htmlFor='label1'>Carpeta principal</label>
           <InputText
             id='label1'
             name='label1'
-            value={folderName1}
+            value={data?.label1?.trim()}
             onChange={(e) => onInputChange(e, 'label1')}
             required
             autoFocus
@@ -156,7 +140,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
           <InputText
             id='label2'
             name='label2'
-            value={folderName2}
+            value={data?.label2?.trim()}
             onChange={(e) => onInputChange(e, 'label2')}
             required
             autoFocus
@@ -169,7 +153,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
             id='label3'
             name='label3'
             type='text'
-            value={folderName3}
+            value={data?.label3?.trim()}
             onChange={(e) => onInputChange(e, 'label3')}
             required
             autoFocus
@@ -203,7 +187,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
         label='Guardar'
         icon='pi pi-check'
         className='p-button-text'
-        onClick={()=> {save(), setData({})}}
+        onClick={()=> {save()}}
       />
     </>
   );
@@ -224,8 +208,6 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
               onInputChange,
               submitted,
               switchFondo,
-              value,
-              setValue,
             })}
         </div>
       </div>
