@@ -18,6 +18,7 @@ import { Tooltip } from "primereact/tooltip";
 import { EditFolder } from "./modals/edit-folder";
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
+import { DeleteFolder } from "./modals/delete-folder";
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -230,6 +231,11 @@ export default function FileManager() {
               folderName2={nameFolder2}
               folderName3={nameFolder3}
               groupName={nameGroup}
+              folderId={selectedFolderId}
+            />
+          )}
+           {selectedFolderId && showModal && (
+            <DeleteFolder
               folderId={selectedFolderId}
             />
           )}

@@ -106,7 +106,9 @@ export const editFolder = createAsyncThunk(
 
 export const removeFolder = createAsyncThunk(
     'FileManagerSlice/removeFolder',
-    async (folderId, thunkAPI) => {
+    async (idFolder, thunkAPI) => {
+
+        const {folderId} = idFolder;
 
         const response = await folderService.deleteFolder(folderId);
 
