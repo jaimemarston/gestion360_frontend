@@ -87,7 +87,14 @@ export default function AppMenu({ isOpen }) {
             navigate('/permiso-vacacional');
           },
         },
-
+        {
+          label: 'Gestor de archivos',
+          icon: 'pi pi-folder me-2',
+          to: '/file-manager',
+          command: () => {
+            navigate('/file-manager');
+          },
+        },
 
       ],
     },
