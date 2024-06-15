@@ -19,6 +19,7 @@ import { EditFolder } from "./modals/edit-folder";
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { DeleteFolder } from "./modals/delete-folder";
+import AddTags from "./modals/add-tags"
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -236,7 +237,7 @@ export default function FileManager() {
           )}
            {selectedFolderId && showModal &&
               !isLoading &&
-              uploadedFiles.data.length === 0 && (
+              uploadedFiles.data && uploadedFiles.data.length === 0 && (
             <DeleteFolder
               folderId={selectedFolderId}
             />
@@ -258,6 +259,9 @@ export default function FileManager() {
               : "justify-content-center"
           }`}
         >
+          
+          <AddTags />
+
           <div className="col-12">
             <Breadcrumbs className="mb-3"  aria-label="breadcrumb">
               <Typography className="cursor-none" color="text.primary">{nameGroup}</Typography>
@@ -385,8 +389,8 @@ export default function FileManager() {
                       data-pr-tooltip={file.filename}
                       className="ms-2 w-p-card fs-5 text-center"
                     >
-                      {file.filename.length > 11
-                        ? file.filename.slice(0, 5) +
+                    {file.filename.length > 18
+                      ? file.filename.slice(0, 15) +
                           "..." +
                           file.mimetype.split("/")[1]
                         : file.filename}
