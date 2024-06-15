@@ -47,7 +47,7 @@ const DeleteFolder = ({ folderId }) => {
           onClick={openModal}
         >
           <DeleteIcon className="me-2 mb-2" />
-          Eliminar
+          Eliminar carpeta
         </Button>
       </div>
     </>

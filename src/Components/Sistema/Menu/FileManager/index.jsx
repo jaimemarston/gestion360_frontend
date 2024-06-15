@@ -234,7 +234,9 @@ export default function FileManager() {
               folderId={selectedFolderId}
             />
           )}
-           {selectedFolderId && showModal && (
+           {selectedFolderId && showModal &&
+              !isLoading &&
+              uploadedFiles.data.length === 0 && (
             <DeleteFolder
               folderId={selectedFolderId}
             />
