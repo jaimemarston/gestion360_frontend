@@ -5,6 +5,10 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
 import { autocompleteClasses } from "@mui/material/Autocomplete";
+import { Dialog } from "primereact/dialog";
+import { useToast } from "../../../../../hooks/useToast";
+import { Toolbar } from "primereact/toolbar";
+import { Button } from "primereact/button";
 
 const Root = styled("div")(
   ({ theme }) => `
@@ -161,6 +165,8 @@ const Listbox = styled("ul")(
 export default function AddTags() {
   const [inputValue, setInputValue] = React.useState("");
   const [tags, setTags] = React.useState([]);
+  const { showToast, ToastComponent } = useToast()
+  const [isModal, setIsModal] = React.useState(false);
 
   const {
     getRootProps,
@@ -181,6 +187,44 @@ export default function AddTags() {
     onChange: (event, newValue) => setTags(newValue),
   });
 
+  const openModal = () => {
+    setIsModal(!isModal);
+  };
+
+  const closeModal = () => {
+    setIsCloseModal(!isCloseModal);
+    setIsModal(!isModal);
+  };
+
+  const leftToolbarTemplate = () => (
+    <>
+      <div className="my-2">
+        <Button
+          className='p-button-success d-flex align-items-center mr-2'
+          onClick={openModal}
+        >
+          Agregar tags
+        </Button>
+      </div>
+    </>
+  );
+
+  const productDialogFooter = (
+    <>
+      <Button
+        label="Cancelar"
+        icon="pi pi-times"
+        className="p-button-text"
+        onClick={() => {
+          openModal();
+          setData({});
+        }}
+      />
+      <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={()=> {save(), setData({})}} />
+    </>
+  );
+
+
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
@@ -200,46 +244,95 @@ export default function AddTags() {
     const payload = {
       tags: [...tags],
     };
-    console.log(payload)
-    setTags([])
+    console.log(payload);
+    setTags([]);
+  };
+
+  const Handler = ({
+    isModal,
+    productDialogFooter,
+    openModal,
+    data,
+    onInputChange,
+  }) => {
+    return (
+      <Dialog
+        visible={isModal}
+        style={{ width: "600px", height: "300px" }}
+        header="Agregar tags"
+        modal
+        className="p-fluid"
+        footer={productDialogFooter}
+        onHide={openModal}
+      >
+        <Root>
+          <div {...getRootProps()}>
+            <Label {...getInputLabelProps()}>Agregale tags a tu archivo</Label>
+            <InputWrapper
+              ref={setAnchorEl}
+              className={focused ? "focused" : ""}
+            >
+              {tags.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <StyledTag key={key} {...tagProps} label={option.title} />
+                );
+              })}
+              <input
+                {...getInputProps()}
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+              />
+            </InputWrapper>
+          </div>
+          {groupedOptions.length > 0 ? (
+            <Listbox {...getListboxProps()}>
+              {groupedOptions.map((option, index) => {
+                const { key, ...optionProps } = getOptionProps({
+                  option,
+                  index,
+                });
+                return (
+                  <li key={key} {...optionProps}>
+                    <span>{option.title}</span>
+                    <CheckIcon fontSize="small" />
+                  </li>
+                );
+              })}
+            </Listbox>
+          ) : null}
+          <div className="d-flex mt-6 justify-content-end">
+            <button
+              onClick={handleSubmit}
+              className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button "
+            >
+              Enviar
+            </button>
+          </div>
+        </Root>
+      </Dialog>
+    );
   };
 
   return (
-    <Root>
-      <div {...getRootProps()}>
-        <Label {...getInputLabelProps()}>Agregale tags a tu archivo</Label>
-        <InputWrapper ref={setAnchorEl} className={focused ? "focused" : ""}>
-          {tags.map((option, index) => {
-            const { key, ...tagProps } = getTagProps({ index });
-            return <StyledTag key={key} {...tagProps} label={option.title} />;
-          })}
-          <input
-            {...getInputProps()}
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-          />
-        </InputWrapper>
+    <div className="grid crud-demo">
+      <div className="col-12">
+        <div>
+          <Toolbar
+            style={{ background: "transparent", border: "none" }}
+            left={leftToolbarTemplate}
+          ></Toolbar>
+          {isModal &&
+            Handler({
+              isModal,
+              openModal,
+              productDialogFooter,
+            })}
+        </div>
       </div>
-      {groupedOptions.length > 0 ? (
-        <Listbox {...getListboxProps()}>
-          {groupedOptions.map((option, index) => {
-            const { key, ...optionProps } = getOptionProps({ option, index });
-            return (
-              <li key={key} {...optionProps}>
-                <span>{option.title}</span>
-                <CheckIcon fontSize="small" />
-              </li>
-            );
-          })}
-        </Listbox>
-      ) : null}
-      <div className="d-flex mt-6 justify-content-end">
-        <button onClick={handleSubmit} className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button ">
-          Enviar
-        </button>
-      </div>
-    </Root>
+      {ToastComponent}
+    </div>
   );
 }
 
