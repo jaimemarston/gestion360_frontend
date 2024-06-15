@@ -324,8 +324,8 @@ export default function FileManager() {
                       data-pr-tooltip={file.filename}
                       className="w-p-card text fs-5 d-flex m-auto text-center"
                     >
-                      {file.filename.length > 11
-                        ? file.filename.slice(0, 5) +
+                      {file.filename.length > 18
+                        ? file.filename.slice(0, 15) +
                           "..." +
                           file.mimetype.split("/")[1]
                         : file.filename}
@@ -350,6 +350,7 @@ export default function FileManager() {
                         />
                       </div>
                     </div>
+                    {file.filename.length < 12 && <><p className="mb-4"></p></>}
                   </div>
                 </div>
               ))
