@@ -22,36 +22,31 @@ import { TreeItem2Icon } from "@mui/x-tree-view/TreeItem2Icon";
 import { TreeItem2Provider } from "@mui/x-tree-view/TreeItem2Provider";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 
-function DotIcon() {
-  return (
-    <Box
-      sx={{
-        width: 6,
-        height: 6,
-        borderRadius: "70%",
-        bgcolor: "warning.main",
-        display: "inline-block",
-        verticalAlign: "middle",
-        zIndex: 1,
-        mx: 1,
-      }}
-    />
-  );
-}
+const DotIcon = () => (
+  <Box
+    sx={{
+      width: 6,
+      height: 6,
+      borderRadius: '70%',
+      bgcolor: 'warning.main',
+      display: 'inline-block',
+      verticalAlign: 'middle',
+      zIndex: 1,
+      mx: 1,
+    }}
+  />
+);
 
 const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
-  color:
-    theme.palette.mode === "light"
-      ? theme.palette.grey[800]
-      : theme.palette.grey[400],
-  position: "relative",
+  color: theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.grey[400],
+  position: 'relative',
   [`& .${treeItemClasses.groupTransition}`]: {
     marginLeft: theme.spacing(3.5),
   },
 }));
 
 const CustomTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
-  flexDirection: "row-reverse",
+  flexDirection: 'row-reverse',
   borderRadius: theme.spacing(0.7),
   marginBottom: theme.spacing(0.5),
   marginTop: theme.spacing(0.5),
@@ -62,44 +57,33 @@ const CustomTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
     marginRight: theme.spacing(2),
   },
   [`&.Mui-expanded `]: {
-    "&:not(.Mui-focused, .Mui-selected, .Mui-selected.Mui-focused) .labelIcon":
-      {
-        color:
-          theme.palette.mode === "light"
-            ? theme.palette.primary.main
-            : theme.palette.primary.dark,
-      },
-    "&::before": {
+    '&:not(.Mui-focused, .Mui-selected, .Mui-selected.Mui-focused) .labelIcon': {
+      color: theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.primary.dark,
+    },
+    '&::before': {
       content: '""',
-      display: "block",
-      position: "absolute",
-      left: "16px",
-      top: "44px",
-      height: "calc(100% - 48px)",
-      width: "1.5px",
-      backgroundColor:
-        theme.palette.mode === "light"
-          ? theme.palette.grey[300]
-          : theme.palette.grey[700],
+      display: 'block',
+      position: 'absolute',
+      left: '16px',
+      top: '44px',
+      height: 'calc(100% - 48px)',
+      width: '1.5px',
+      backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
     },
   },
-  "&:hover": {
+  '&:hover': {
     backgroundColor: alpha(theme.palette.primary.main, 0.1),
-    color:
-      theme.palette.mode === "light" ? theme.palette.primary.main : "white",
+    color: theme.palette.mode === 'light' ? theme.palette.primary.main : 'white',
   },
   [`&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused`]: {
-    backgroundColor:
-      theme.palette.mode === "light"
-        ? theme.palette.primary.main
-        : theme.palette.primary.dark,
+    backgroundColor: theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.primary.dark,
     color: theme.palette.primary.contrastText,
   },
 }));
 
 const AnimatedCollapse = animated(Collapse);
 
-function TransitionComponent(props) {
+const TransitionComponent = (props) => {
   const style = useSpring({
     to: {
       opacity: props.in ? 1 : 0,
@@ -108,39 +92,29 @@ function TransitionComponent(props) {
   });
 
   return <AnimatedCollapse style={style} {...props} />;
-}
+};
 
 const StyledTreeItemLabelText = styled(Typography)({
-  color: "inherit",
-  fontFamily: "General Sans",
+  color: 'inherit',
+  fontFamily: 'General Sans',
   fontWeight: 500,
 });
 
-function CustomLabel({ icon: Icon, expandable, children, ...other }) {
-  return (
-    <TreeItem2Label
-      {...other}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      {Icon && (
-        <Box
-          component={Icon}
-          className="labelIcon"
-          color="inherit"
-          sx={{ mr: 1, fontSize: "2rem" }}
-        />
-      )}
-
-      <StyledTreeItemLabelText variant="body2">
-        {children}
-      </StyledTreeItemLabelText>
-      {expandable && <DotIcon id={children} />}
-    </TreeItem2Label>
-  );
-}
+const CustomLabel = ({ icon: Icon, expandable, children, ...other }) => (
+  <TreeItem2Label
+    {...other}
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+    }}
+  >
+    {Icon && (
+      <Box component={Icon} className="labelIcon" color="inherit" sx={{ mr: 1, fontSize: '2rem' }} />
+    )}
+    <StyledTreeItemLabelText variant="body2">{children}</StyledTreeItemLabelText>
+    {expandable && <DotIcon id={children} />}
+  </TreeItem2Label>
+);
 
 const isExpandable = (reactChildren) => {
   if (Array.isArray(reactChildren)) {
@@ -153,11 +127,9 @@ const getIconFromFileTypeAndDepth = (item, depth) => {
   if (item.father) {
     return FolderCopyIcon;
   }
-
   if (isExpandable(item.children)) {
     return FolderRounded;
   }
-
   if (!item.children && !item.fileType) {
     return ArticleIcon;
   }
@@ -168,8 +140,7 @@ const getIconFromFileTypeAndDepth = (item, depth) => {
 };
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
-  const { id, itemId, label, disabled, children, showModal, selectGroup, onItemSelect, ...other } =
-    props;
+  const { id, itemId, label, disabled, children, showModal, selectGroup, onItemSelect, setNameFolder, setNameGroup, ...other } = props;
 
   const {
     getRootProps,
@@ -184,35 +155,37 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   const item = publicAPI.getItem(itemId);
   const expandable = isExpandable(children);
 
-  const icon = item.isFile
-    ? ArticleIcon
-    : getIconFromFileTypeAndDepth(item, children.length);
+  const icon = item.isFile ? ArticleIcon : getIconFromFileTypeAndDepth(item, children.length);
 
-    const handleClick = () => {
-      if (icon === FolderCopyIcon) {
-        showModal(true);
-        selectGroup(itemId)
-      }
+  const handleClick = () => {
+    if (icon === FolderCopyIcon) {
+      showModal(true);
+      selectGroup(itemId);
+      setNameGroup(label)
+    }
+    if(icon === FolderRounded){
       onItemSelect(itemId);
-    };
+      setNameFolder(label)
+    }
+
+  };
 
   return (
     <TreeItem2Provider itemId={itemId.toString()}>
       <StyledTreeItemRoot {...getRootProps(other)}>
         <CustomTreeItemContent
           {...getContentProps({
-            className: clsx("content", {
-              "Mui-expanded": status.expanded,
-              "Mui-selected": status.selected,
-              "Mui-focused": status.focused,
-              "Mui-disabled": status.disabled,
+            className: clsx('content', {
+              'Mui-expanded': status.expanded,
+              'Mui-selected': status.selected,
+              'Mui-focused': status.focused,
+              'Mui-disabled': status.disabled,
             }),
           })}
         >
           <TreeItem2IconContainer {...getIconContainerProps()}>
             <TreeItem2Icon status={status} />
           </TreeItem2IconContainer>
-
           <CustomLabel
             onClick={handleClick}
             {...getLabelProps({
@@ -227,26 +200,34 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
   );
 });
 
-export default function FileExplorer({ date, selectIdFolder, showCreateFolder, selectGroupId }) {
+export default function FileExplorer({ selectIdFolder, groups, showCreateFolder, selectGroupId, setNameFolder, setNameGroup }) {
   const handleItemSelect = (selectedItemId) => {
     selectIdFolder(selectedItemId);
   };
 
   return (
     <RichTreeView
-      items={date}
+      items={groups}
       aria-label="file explorer"
       sx={{
-        height: "fit-content",
+        height: 'fit-content',
         flexGrow: 1,
         maxWidth: 400,
-        overflowY: "auto",
+        overflowY: 'auto',
       }}
       slots={{
         item: (props) => (
-            <CustomTreeItem {...props} showModal={showCreateFolder} selectGroup={selectGroupId} onItemSelect={handleItemSelect} />
+          <CustomTreeItem
+            {...props}
+            showModal={showCreateFolder}
+            selectGroup={selectGroupId}
+            setNameGroup={setNameGroup}
+            setNameFolder={setNameFolder}
+            onItemSelect={handleItemSelect}
+          />
         ),
       }}
     />
   );
 }
+

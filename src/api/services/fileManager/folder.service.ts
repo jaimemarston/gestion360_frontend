@@ -1,10 +1,10 @@
 import http from '../axios'
 
 type Folder = {
-    label1: string,
-    label2: string,
-    label3: string,
-    user_ids: number[]
+    label: string, // Required
+    groupId: number | null, 
+    parent: number | null, // ID || null
+    user_ids: number[] | null
 }
 
 const getAllFolder = async () => {

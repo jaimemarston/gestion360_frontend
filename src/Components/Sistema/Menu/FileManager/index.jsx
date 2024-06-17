@@ -16,9 +16,10 @@ import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
 import { Tooltip } from "primereact/tooltip";
 import { EditFolder } from "./modals/edit-folder";
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { DeleteFolder } from "./modals/delete-folder";
+import AddTags from "./modals/add-tags";
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -28,56 +29,43 @@ export default function FileManager() {
   const [pdfUrl, setPdfUrl] = useState();
   const [nameGroup, setNameGroup] = useState("");
   const [nameFolder, setNameFolder] = useState();
-  const [nameFolder2, setNameFolder2] = useState("");
-  const [nameFolder3, setNameFolder3] = useState("");
+  const [parentFolder, setParentFolder] = useState(false);
+  const [folderSe, setFolderSe] = useState();
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
 
   const dispatch = useDispatch();
 
-  const groups = useSelector((state) =>
-    state.FileManager.groups.map((item) => ({
-      id: item.id,
-      label: item.name,
-      father: true,
-      children: item?.folders
-        ? item.folders.map((folder) => {
-            const documents = folder.documents.map((doc) => ({
-              id: `${item.id}-${folder.id}-${doc.uuid}`,
-              label: doc.filename,
-              mimetype: doc.mimetype,
-              tags: doc.tags,
-              isFile: true,
-            }));
-            let children = [];
-            if (folder.label3) {
-              children = [
-                {
-                  id: `${item.id}-${folder.id}-3`,
-                  label: folder.label3,
-                  children: documents,
-                },
-              ];
-            }
-            if (folder.label2) {
-              children = [
-                {
-                  id: `${item.id}-${folder.id}-2`,
-                  label: folder.label2,
-                  children: children.length > 0 ? children : documents,
-                },
-              ];
-            }
-            return {
-              id: `${item.id}-${folder.id}-1`,
-              label: folder.label1,
-              children: children.length > 0 ? children : documents,
-            };
-          })
-        : [],
-    }))
-  );
+  const transformFolder = (folder) => {
+    const children = folder.children.map(transformFolder);
+    const documents = folder.documents?.map((doc) => ({
+      id: doc.uuid,
+      label: doc.filename,
+      mimetype: doc.mimetype,
+      tags: doc.tags,
+      isFile: true,
+    })) || [];
+    
+    return {
+      id: folder.id,
+      label: folder.label,
+      children: [...children, ...documents],
+    };
+  };
+  
+  const useTransformedGroups = () => {
+    return useSelector((state) =>
+      state.FileManager.groups.map((group) => ({
+        id: group.id,
+        label: group.name,
+        father: true,
+        children: group.folders?.map(transformFolder),
+      }))
+    );
+  };
+
+  const groups = useTransformedGroups();
 
   const fetch = async () => {
     dispatch(fetchGroups());
@@ -124,19 +112,13 @@ export default function FileManager() {
   };
 
   const handleFolderId = (itemId) => {
-    if (typeof itemId === "string") {
-      const rootItemId = parseInt(itemId.split("-")[1]);
-      const groupId = parseInt(itemId.split("-")[0]);
-      setSelectedGroupId(groupId);
-      setselectedFolderId(rootItemId);
+      setselectedFolderId(itemId);
       setFiles([]);
-    }
-    if (typeof itemId === "number") {
-      setSelectedGroupId(itemId);
-    }
+      setParentFolder(false);
   };
 
   const handleGroupId = (itemId) => {
+    setParentFolder(true);
     setSelectedGroupId(parseInt(itemId));
   };
 
@@ -190,32 +172,6 @@ export default function FileManager() {
     }
   }, [selectedFolderId]);
 
-  useEffect(() => {
-    const select = groups.filter((item) =>
-      item.id === selectedGroupId ? item.label : ""
-    );
-    const name = select.map((itemName) => itemName.label);
-
-    if (selectedGroupId && selectedFolderId) {
-      const selectedGroup =
-        uploadedGroups &&
-        uploadedGroups.find((group) => group.id === selectedGroupId);
-
-      if (selectedGroup) {
-        const selectedFolder = selectedGroup.folders.find(
-          (folder) => folder.id === selectedFolderId
-        );
-
-        if (selectedFolder) {
-          setNameFolder(selectedFolder.label1);
-          setNameFolder2(selectedFolder.label2 ? selectedFolder.label2 : "");
-          setNameFolder3(selectedFolder.label3 ? selectedFolder.label3 : "");
-        }
-      }
-    }
-    setNameGroup(name);
-  }, [selectedGroupId, selectedFolderId]);
-
   return (
     <div className="container">
       <div className="row">
@@ -223,29 +179,36 @@ export default function FileManager() {
           {permissions === 2 && <RegisterGroup />}
 
           {showModal && (
-            <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
+            <RegisterFolder
+              parentFolder={parentFolder}
+              folderId={selectedFolderId}
+              groupName={nameGroup}
+              groupID={selectedGroupId}
+            />
           )}
           {selectedFolderId && showModal && (
             <EditFolder
               folderName1={nameFolder}
-              folderName2={nameFolder2}
-              folderName3={nameFolder3}
               groupName={nameGroup}
               folderId={selectedFolderId}
             />
           )}
-           {selectedFolderId && showModal && (
-            <DeleteFolder
-              folderId={selectedFolderId}
-            />
-          )}
+          {selectedFolderId &&
+            showModal &&
+            !isLoading &&
+            uploadedFiles.data &&
+            uploadedFiles.data.length === 0 && (
+              <DeleteFolder folderId={selectedFolderId} />
+            )}
         </div>
         <div className="col-6">
           <FileExplorer
-            date={groups}
+            groups={groups}
             showCreateFolder={createFolder}
             selectGroupId={handleGroupId}
             selectIdFolder={handleFolderId}
+            setNameFolder={setNameFolder}
+            setNameGroup={setNameGroup}
           />
         </div>
 
@@ -257,11 +220,15 @@ export default function FileManager() {
           }`}
         >
           <div className="col-12">
-            <Breadcrumbs className="mb-3"  aria-label="breadcrumb">
-              <Typography className="cursor-none" color="text.primary">{nameGroup}</Typography>
-              {nameFolder && 
-              <Typography className="cursor-none" color="text.primary">{nameFolder}</Typography>
-              }
+            <Breadcrumbs className="mb-3" aria-label="breadcrumb">
+              <Typography className="cursor-none" color="text.primary">
+                {nameGroup}
+              </Typography>
+              {nameFolder && (
+                <Typography className="cursor-none" color="text.primary">
+                  {nameFolder}
+                </Typography>
+              )}
             </Breadcrumbs>
 
             {!selectedFolderId ? (
@@ -324,14 +291,14 @@ export default function FileManager() {
                       data-pr-tooltip={file.filename}
                       className="w-p-card text fs-5 d-flex m-auto text-center"
                     >
-                      {file.filename.length > 11
-                        ? file.filename.slice(0, 5) +
+                      {file.filename.length > 18
+                        ? file.filename.slice(0, 15) +
                           "..." +
                           file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
-                    <div className="d-flex w-full justify-content-center">
-                      <div className="w-p-card-icon justify-content-between d-flex pb-2">
+                    <div className="d-flex w-full align-items-center justify-content-center">
+                      <div className="w-p-card-icon justify-content-between d-flex pb-3 pt-2">
                         <ViewFile
                           objectFile={file}
                           idFile={file.id}
@@ -348,8 +315,14 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
+                  {/*       <AddTags /> */}
                       </div>
                     </div>
+                    {file.filename.length < 12 && (
+                      <>
+                        <p className="mb-4"></p>
+                      </>
+                    )}
                   </div>
                 </div>
               ))
@@ -382,8 +355,8 @@ export default function FileManager() {
                       data-pr-tooltip={file.filename}
                       className="ms-2 w-p-card fs-5 text-center"
                     >
-                      {file.filename.length > 11
-                        ? file.filename.slice(0, 5) +
+                      {file.filename.length > 18
+                        ? file.filename.slice(0, 15) +
                           "..." +
                           file.mimetype.split("/")[1]
                         : file.filename}
