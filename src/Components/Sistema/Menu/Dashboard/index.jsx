@@ -127,7 +127,7 @@ export default function Dashboard() {
   }, [props.colorMode]); */
   return (
     <div className="grid  crud-demo">
-      <div className="col-12 lg:col-6 xl:col-3">
+      <div className="col-12 col-lg-6 col-xl-3">
         <div name="bienvenida" className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
@@ -168,7 +168,7 @@ export default function Dashboard() {
           <span className="text-500">since last visit</span>
         </div>
       </div>
-      <div className="col-12 lg:col-6 xl:col-3">
+      <div className="col-12 col-lg-6 col-xl-3">
         <div className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
@@ -188,7 +188,7 @@ export default function Dashboard() {
           <span className="text-500">since last week</span>
         </div>
       </div>
-      <div className="col-12 lg:col-6 xl:col-3">
+      <div className="col-12 col-lg-6 col-xl-3">
         <div className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
@@ -208,7 +208,7 @@ export default function Dashboard() {
           <span className="text-500">newly registered</span>
         </div>
       </div>
-      <div className="col-12 lg:col-6 xl:col-3">
+      <div className="col-12 col-lg-6 col-xl-3">
         <div className="card mb-0">
           <div className="flex justify-content-between mb-3">
             <div>
@@ -229,13 +229,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="col-12 xl:col-6">
+      <div className="col-12 col-xl-6">
         <div className="card">
           <h5>Avalúos Aprobados vs Pendientes</h5>
           <Chart type="bar" data={lineData} options={lineOptions} />
         </div>
       </div>
-      <div className="col-12 xl:col-6">
+      <div className="col-12 col-xl-6">
         <div className="card">
           <div className="flex align-items-center justify-content-between mb-4">
             <h5>Mensajes  </h5>
