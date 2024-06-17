@@ -29,9 +29,8 @@ export default function FileManager() {
   const [pdfUrl, setPdfUrl] = useState();
   const [nameGroup, setNameGroup] = useState("");
   const [nameFolder, setNameFolder] = useState();
-  const [nameFolder2, setNameFolder2] = useState("");
-  const [nameFolder3, setNameFolder3] = useState("");
   const [parentFolder, setParentFolder] = useState(false);
+  const [folderSe, setFolderSe] = useState();
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -61,7 +60,7 @@ export default function FileManager() {
         id: group.id,
         label: group.name,
         father: true,
-        children: group.folders.map(transformFolder),
+        children: group.folders?.map(transformFolder),
       }))
     );
   };
@@ -173,32 +172,6 @@ export default function FileManager() {
     }
   }, [selectedFolderId]);
 
-/*   useEffect(() => {
-    const select = groups.filter((item) =>
-      item.id === selectedGroupId ? item.label : ""
-    );
-    const name = select.map((itemName) => itemName.label);
-
-    if (selectedGroupId && selectedFolderId) {
-      const selectedGroup =
-        uploadedGroups &&
-        uploadedGroups.find((group) => group.id === selectedGroupId);
-
-      if (selectedGroup) {
-        const selectedFolder = selectedGroup.folders.find(
-          (folder) => folder.id === selectedFolderId
-        );
-
-        if (selectedFolder) {
-          setNameFolder(selectedFolder.label1);
-          setNameFolder2(selectedFolder.label2 ? selectedFolder.label2 : "");
-          setNameFolder3(selectedFolder.label3 ? selectedFolder.label3 : "");
-        }
-      }
-    }
-    setNameGroup(name);
-  }, [selectedGroupId, selectedFolderId]); */
-
   return (
     <div className="container">
       <div className="row">
@@ -216,8 +189,6 @@ export default function FileManager() {
           {selectedFolderId && showModal && (
             <EditFolder
               folderName1={nameFolder}
-              folderName2={nameFolder2}
-              folderName3={nameFolder3}
               groupName={nameGroup}
               folderId={selectedFolderId}
             />
@@ -236,6 +207,8 @@ export default function FileManager() {
             showCreateFolder={createFolder}
             selectGroupId={handleGroupId}
             selectIdFolder={handleFolderId}
+            setNameFolder={setNameFolder}
+            setNameGroup={setNameGroup}
           />
         </div>
 
