@@ -9,6 +9,7 @@ import { Dialog } from "primereact/dialog";
 import { useToast } from "../../../../../hooks/useToast";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
+import EditIcon from '@mui/icons-material/Edit';
 
 const Root = styled("div")(
   ({ theme }) => `
@@ -224,16 +225,9 @@ export default function AddTags() {
   };
 
   const leftToolbarTemplate = () => (
-    <>
-      <div className="my-2">
-        <Button
-          className='p-button-success d-flex align-items-center mr-2'
-          onClick={openModal}
-        >
-          Agregar tags
-        </Button>
-      </div>
-    </>
+        <div
+          className='cursor-pointer pi pi-pencil'
+          onClick={openModal}></div>
   );
 
   const productDialogFooter = (
@@ -312,11 +306,9 @@ export default function AddTags() {
   };
 
   return (
-    <div className="grid crud-demo">
-      <div className="col-12">
-        <div>
+      <div className="size-icon-card">
           <Toolbar
-            style={{ background: "transparent", border: "none" }}
+            style={{ background: "transparent", border: "none", padding: "0px" }}
             left={leftToolbarTemplate}
           ></Toolbar>
           {isModal &&
@@ -325,8 +317,6 @@ export default function AddTags() {
               openModal,
               productDialogFooter,
             })}
-        </div>
-      </div>
       {ToastComponent}
     </div>
   );
