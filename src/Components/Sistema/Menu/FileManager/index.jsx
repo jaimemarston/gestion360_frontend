@@ -38,48 +38,35 @@ export default function FileManager() {
 
   const dispatch = useDispatch();
 
-  const groups = useSelector((state) =>
-    state.FileManager.groups.map((item) => ({
-      id: item.id,
-      label: item.name,
-      father: true,
-      children: item?.folders
-        ? item.folders.map((folder) => {
-            const documents = folder.documents.map((doc) => ({
-              id: `${item.id}-${folder.id}-${doc.uuid}`,
-              label: doc.filename,
-              mimetype: doc.mimetype,
-              tags: doc.tags,
-              isFile: true,
-            }));
-            let children = [];
-            if (folder.label3) {
-              children = [
-                {
-                  id: `${item.id}-${folder.id}-3`,
-                  label: folder.label3,
-                  children: documents,
-                },
-              ];
-            }
-            if (folder.label2) {
-              children = [
-                {
-                  id: `${item.id}-${folder.id}-2`,
-                  label: folder.label2,
-                  children: children.length > 0 ? children : documents,
-                },
-              ];
-            }
-            return {
-              id: `${item.id}-${folder.id}-1`,
-              label: folder.label1,
-              children: children.length > 0 ? children : documents,
-            };
-          })
-        : [],
-    }))
-  );
+  const transformFolder = (folder) => {
+    const children = folder.children.map(transformFolder);
+    const documents = folder.documents?.map((doc) => ({
+      id: doc.uuid,
+      label: doc.filename,
+      mimetype: doc.mimetype,
+      tags: doc.tags,
+      isFile: true,
+    })) || [];
+    
+    return {
+      id: folder.id,
+      label: folder.label,
+      children: [...children, ...documents],
+    };
+  };
+  
+  const useTransformedGroups = () => {
+    return useSelector((state) =>
+      state.FileManager.groups.map((group) => ({
+        id: group.id,
+        label: group.name,
+        father: true,
+        children: group.folders.map(transformFolder),
+      }))
+    );
+  };
+
+  const groups = useTransformedGroups();
 
   const fetch = async () => {
     dispatch(fetchGroups());
@@ -126,21 +113,13 @@ export default function FileManager() {
   };
 
   const handleFolderId = (itemId) => {
-    if (typeof itemId === "string") {
-      const rootItemId = parseInt(itemId.split("-")[1]);
-      const groupId = parseInt(itemId.split("-")[0]);
-      setSelectedGroupId(groupId);
-      setselectedFolderId(rootItemId);
+      setselectedFolderId(itemId);
       setFiles([]);
       setParentFolder(false);
-    }
-    if (typeof itemId === "number") {
-      setSelectedGroupId(itemId);
-      setParentFolder(true);
-    }
   };
 
   const handleGroupId = (itemId) => {
+    setParentFolder(true);
     setSelectedGroupId(parseInt(itemId));
   };
 
@@ -194,7 +173,7 @@ export default function FileManager() {
     }
   }, [selectedFolderId]);
 
-  useEffect(() => {
+/*   useEffect(() => {
     const select = groups.filter((item) =>
       item.id === selectedGroupId ? item.label : ""
     );
@@ -218,7 +197,7 @@ export default function FileManager() {
       }
     }
     setNameGroup(name);
-  }, [selectedGroupId, selectedFolderId]);
+  }, [selectedGroupId, selectedFolderId]); */
 
   return (
     <div className="container">
@@ -253,7 +232,7 @@ export default function FileManager() {
         </div>
         <div className="col-6">
           <FileExplorer
-            date={groups}
+            groups={groups}
             showCreateFolder={createFolder}
             selectGroupId={handleGroupId}
             selectIdFolder={handleFolderId}
