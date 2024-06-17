@@ -16,10 +16,10 @@ import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
 import { Tooltip } from "primereact/tooltip";
 import { EditFolder } from "./modals/edit-folder";
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { DeleteFolder } from "./modals/delete-folder";
-import AddTags from "./modals/add-tags"
+import AddTags from "./modals/add-tags";
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -31,6 +31,7 @@ export default function FileManager() {
   const [nameFolder, setNameFolder] = useState();
   const [nameFolder2, setNameFolder2] = useState("");
   const [nameFolder3, setNameFolder3] = useState("");
+  const [parentFolder, setParentFolder] = useState(false);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -131,9 +132,11 @@ export default function FileManager() {
       setSelectedGroupId(groupId);
       setselectedFolderId(rootItemId);
       setFiles([]);
+      setParentFolder(false);
     }
     if (typeof itemId === "number") {
       setSelectedGroupId(itemId);
+      setParentFolder(true);
     }
   };
 
@@ -224,7 +227,12 @@ export default function FileManager() {
           {permissions === 2 && <RegisterGroup />}
 
           {showModal && (
-            <RegisterFolder groupName={nameGroup} groupID={selectedGroupId} />
+            <RegisterFolder
+              parentFolder={parentFolder}
+              folderId={selectedFolderId}
+              groupName={nameGroup}
+              groupID={selectedGroupId}
+            />
           )}
           {selectedFolderId && showModal && (
             <EditFolder
@@ -235,13 +243,13 @@ export default function FileManager() {
               folderId={selectedFolderId}
             />
           )}
-           {selectedFolderId && showModal &&
-              !isLoading &&
-              uploadedFiles.data && uploadedFiles.data.length === 0 && (
-            <DeleteFolder
-              folderId={selectedFolderId}
-            />
-          )}
+          {selectedFolderId &&
+            showModal &&
+            !isLoading &&
+            uploadedFiles.data &&
+            uploadedFiles.data.length === 0 && (
+              <DeleteFolder folderId={selectedFolderId} />
+            )}
         </div>
         <div className="col-6">
           <FileExplorer
@@ -259,15 +267,16 @@ export default function FileManager() {
               : "justify-content-center"
           }`}
         >
-          
-          <AddTags />
-
           <div className="col-12">
-            <Breadcrumbs className="mb-3"  aria-label="breadcrumb">
-              <Typography className="cursor-none" color="text.primary">{nameGroup}</Typography>
-              {nameFolder && 
-              <Typography className="cursor-none" color="text.primary">{nameFolder}</Typography>
-              }
+            <Breadcrumbs className="mb-3" aria-label="breadcrumb">
+              <Typography className="cursor-none" color="text.primary">
+                {nameGroup}
+              </Typography>
+              {nameFolder && (
+                <Typography className="cursor-none" color="text.primary">
+                  {nameFolder}
+                </Typography>
+              )}
             </Breadcrumbs>
 
             {!selectedFolderId ? (
@@ -336,8 +345,8 @@ export default function FileManager() {
                           file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
-                    <div className="d-flex w-full justify-content-center">
-                      <div className="w-p-card-icon justify-content-between d-flex pb-2">
+                    <div className="d-flex w-full align-items-center justify-content-center">
+                      <div className="w-p-card-icon justify-content-between d-flex pb-3 pt-2">
                         <ViewFile
                           objectFile={file}
                           idFile={file.id}
@@ -354,9 +363,14 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
+                        <AddTags />
                       </div>
                     </div>
-                    {file.filename.length < 12 && <><p className="mb-4"></p></>}
+                    {file.filename.length < 12 && (
+                      <>
+                        <p className="mb-4"></p>
+                      </>
+                    )}
                   </div>
                 </div>
               ))
@@ -389,8 +403,8 @@ export default function FileManager() {
                       data-pr-tooltip={file.filename}
                       className="ms-2 w-p-card fs-5 text-center"
                     >
-                    {file.filename.length > 18
-                      ? file.filename.slice(0, 15) +
+                      {file.filename.length > 18
+                        ? file.filename.slice(0, 15) +
                           "..." +
                           file.mimetype.split("/")[1]
                         : file.filename}
