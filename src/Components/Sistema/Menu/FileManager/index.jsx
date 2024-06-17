@@ -201,7 +201,7 @@ export default function FileManager() {
               <DeleteFolder folderId={selectedFolderId} />
             )}
         </div>
-        <div className="col-6">
+        <div className="col-6 folder-list">
           <FileExplorer
             groups={groups}
             showCreateFolder={createFolder}

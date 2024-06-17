@@ -1,74 +1,80 @@
 .w-card {
-    width: 100px !important;
-    height: 150px;
+  width: 100px !important;
+  height: 150px;
 }
 
 .card {
-    padding: 0.5rem !important;
+  padding: 0.5rem !important;
 }
 
 .size-file-card {
-    font-size: 5em;
+  font-size: 5em;
 }
 
 .w-p-card {
-    max-width: 80px;
-    word-break: break-all}
+  max-width: 80px;
+  word-break: break-all;
+}
 
 .w-p-card-icon {
-    max-width: 60px;
+  max-width: 60px;
 }
 
 .pe-auto {
-    cursor: pointer !important;
+  cursor: pointer !important;
 }
 
 .size-icon-card {
-    font-size: 11px;
-    width: 19%;
+  font-size: 11px;
+  width: 19%;
 }
 
-.bg-button-trash{
-    color: white;
-    background: rgba(255, 0, 0, 0.741);
-    border-color: rgba(255, 0, 0, 0.741);
+.bg-button-trash {
+  color: white;
+  background: rgba(255, 0, 0, 0.741);
+  border-color: rgba(255, 0, 0, 0.741);
 }
 
-.bg-button-trash:hover{
-    color: white;
-    background: rgba(255, 0, 0, 0.600);
-    border-color: rgba(255, 0, 0, 0.600);
+.bg-button-trash:hover {
+  color: white;
+  background: rgba(255, 0, 0, 0.6);
+  border-color: rgba(255, 0, 0, 0.6);
 }
 
 .bg-trash {
-    color: red;
+  color: red;
 }
 
 .img-card-file {
-    width: 98px;
-    height: 80px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    margin-top: -5px;
-    margin-bottom: 8px;
+  width: 98px;
+  height: 80px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  margin-top: -5px;
+  margin-bottom: 8px;
 }
 
-.img-visualicer{
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    min-width: 600px;
-    min-height: 400px;
+.img-visualicer {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  min-width: 600px;
+  min-height: 400px;
 }
 
-.text-bold{
-    color: #343a40;
+.text-bold {
+  color: #343a40;
 }
 
-.cursor-none{
-    pointer-events: none;
+.cursor-none {
+  pointer-events: none;
 }
 
-.text-red{
-    color: #ea0707;
+.text-red {
+  color: #ea0707;
+}
+
+.folder-list {
+  max-height: 300px;
+  overflow-y: scroll;
 }
