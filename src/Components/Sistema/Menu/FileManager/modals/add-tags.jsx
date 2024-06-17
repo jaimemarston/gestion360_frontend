@@ -27,7 +27,7 @@ const Label = styled("label")`
 
 const InputWrapper = styled("div")(
   ({ theme }) => `
-  width: 500px;
+  width: 570px;
   border: 1px solid ${theme.palette.mode === "dark" ? "#434343" : "#d9d9d9"};
   background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
   border-radius: 4px;
@@ -117,7 +117,7 @@ const StyledTag = styled(Tag)(
 
 const Listbox = styled("ul")(
   ({ theme }) => `
-  width: 500px;
+  width: 700px;
   margin: 2px 0 0;
   padding: 0;
   position: absolute;
@@ -167,6 +167,7 @@ export default function AddTags() {
   const [tags, setTags] = React.useState([]);
   const { showToast, ToastComponent } = useToast()
   const [isModal, setIsModal] = React.useState(false);
+  const [requiredField, setRequiredField] = React.useState(false);
 
   const {
     getRootProps,
@@ -191,9 +192,35 @@ export default function AddTags() {
     setIsModal(!isModal);
   };
 
-  const closeModal = () => {
-    setIsCloseModal(!isCloseModal);
-    setIsModal(!isModal);
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && inputValue.trim() !== "") {
+      setRequiredField(false)
+      const newTag = { title: inputValue.trim() };
+      if (!tags.find((tag) => tag.title === newTag.title)) {
+        setTags((prev) => [...prev, newTag]);
+      }
+      setInputValue("");
+      event.preventDefault();
+    }
+  };
+
+  const handleSubmit = async () => {
+    if(tags.length){
+      const payload = {
+        tags: [...tags],
+      };
+      setRequiredField(false)
+      showToast('success', 'Las etiquetas se han agregado con exito');
+      setIsModal(!isModal);
+      setTags([]);
+    }else{
+      setRequiredField(true)      
+      /* showToast('error', 'Error al intentar agregar las etiquetas'); */
+    }
   };
 
   const leftToolbarTemplate = () => (
@@ -217,36 +244,12 @@ export default function AddTags() {
         className="p-button-text"
         onClick={() => {
           openModal();
-          setData({});
         }}
       />
-      <Button label="Guardar" icon="pi pi-check" className="p-button-text" onClick={()=> {save(), setData({})}} />
+      <Button label="Enviar" icon="pi pi-check" className="p-button-text" onClick={handleSubmit} />
     </>
   );
 
-
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && inputValue.trim() !== "") {
-      const newTag = { title: inputValue.trim() };
-      if (!tags.find((tag) => tag.title === newTag.title)) {
-        setTags((prev) => [...prev, newTag]);
-      }
-      setInputValue("");
-      event.preventDefault();
-    }
-  };
-
-  const handleSubmit = async () => {
-    const payload = {
-      tags: [...tags],
-    };
-    console.log(payload);
-    setTags([]);
-  };
 
   const Handler = ({
     isModal,
@@ -259,7 +262,7 @@ export default function AddTags() {
       <Dialog
         visible={isModal}
         style={{ width: "600px", height: "300px" }}
-        header="Agregar tags"
+        header="Agregar etiquetas"
         modal
         className="p-fluid"
         footer={productDialogFooter}
@@ -267,7 +270,7 @@ export default function AddTags() {
       >
         <Root>
           <div {...getRootProps()}>
-            <Label {...getInputLabelProps()}>Agregale tags a tu archivo</Label>
+            <Label {...getInputLabelProps()}>Agregale etiquetas a tu archivo</Label>
             <InputWrapper
               ref={setAnchorEl}
               className={focused ? "focused" : ""}
@@ -285,6 +288,7 @@ export default function AddTags() {
                 onKeyDown={handleKeyDown}
               />
             </InputWrapper>
+            {requiredField && <p className="text-red mt-3">Debes de agregarle mínimo una etiqueta</p>}
           </div>
           {groupedOptions.length > 0 ? (
             <Listbox {...getListboxProps()}>
@@ -302,14 +306,6 @@ export default function AddTags() {
               })}
             </Listbox>
           ) : null}
-          <div className="d-flex mt-6 justify-content-end">
-            <button
-              onClick={handleSubmit}
-              className="btn fs-5 pe-5 pt-3 pb-3 ps-5 p-button "
-            >
-              Enviar
-            </button>
-          </div>
         </Root>
       </Dialog>
     );
