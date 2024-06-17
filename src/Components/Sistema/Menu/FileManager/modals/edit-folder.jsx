@@ -18,9 +18,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
 
   useEffect(()=>{
     let empty = {
-      label1: folderName1,
-      label2: folderName2,
-      label3: folderName3,
+      label: folderName1,
       folderId: folderId
     }
 
@@ -109,7 +107,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
     return (
       <Dialog
         visible={isModal}
-        style={{ width: '700px', height: "350px" }}
+        style={{ width: '600px', height: "250px" }}
         header={`Grupo seleccionado: ${groupName}`}
         modal
         className='p-fluid'
@@ -118,55 +116,21 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
       >
         <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName1}</h5>
         <div className='field'>
-          <label htmlFor='label1'>Carpeta principal</label>
+          <label htmlFor='label'>Carpeta principal</label>
           <InputText
-            id='label1'
-            name='label1'
-            value={data?.label1?.trim()}
-            onChange={(e) => onInputChange(e, 'label1')}
+            id='label'
+            name='label'
+            value={data?.label?.trim()}
+            onChange={(e) => onInputChange(e, 'label')}
             required
             autoFocus
             className={classNames({
-              'p-invalid': submitted && !data.label1,
+              'p-invalid': submitted && !data.label,
             })}
           />
           {submitted && !data.codigo && (
             <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
           )}
-        </div>
-
-        <div className='field'>
-          <label htmlFor='label2'>Sub carpeta</label>
-          <InputText
-            id='label2'
-            name='label2'
-            value={data?.label2?.trim()}
-            onChange={(e) => onInputChange(e, 'label2')}
-            required
-            autoFocus
-          />
-        </div>
-
-        <div className='field'>
-          <label htmlFor='label3'>Ultima carpeta</label>
-          <InputText
-            id='label3'
-            name='label3'
-            type='text'
-            value={data?.label3?.trim()}
-            onChange={(e) => onInputChange(e, 'label3')}
-            required
-            autoFocus
-          />
-        </div>
-        <div
-          className='field'
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
         </div>
       </Dialog>
     );
