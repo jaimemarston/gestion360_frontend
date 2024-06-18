@@ -212,7 +212,6 @@ const filterFolders = (folders, searchText) => {
   });
 };
 
-
 const handleApplyFilter = (groups, filterText) => {
   if (filterText.trim() === "") {
     return groups;
@@ -227,17 +226,14 @@ const handleApplyFilter = (groups, filterText) => {
          const valueFilter = filteredFolders.length > 0 || group.label.toLowerCase().includes(filterText.toLowerCase())
           ? { ...group, folders: filteredFolders }
           : null;
-      
 
           return valueFilter
       })
       .filter(group => group !== null);
   };
 
-
   return filterGroups(groups);
 };
-
 
 export default function FileExplorer({ selectIdFolder, groups, showCreateFolder, selectGroupId, setNameFolder, setNameGroup }) {
   const [filterText, setFilterText] = useState("");
@@ -268,15 +264,14 @@ export default function FileExplorer({ selectIdFolder, groups, showCreateFolder,
     selectIdFolder(selectedItemId);
   };
 
-
   return (
     <div>
       <div>
         <InputText
           id="label"
           name="label"
-          className="mb-4"
-          placeholder="Buscar"
+          className="mb-4 w-input-filter"
+          placeholder="Buscar por nombre"
           value={filterText}
           onChange={handleFilterTextChange}
           autoFocus
