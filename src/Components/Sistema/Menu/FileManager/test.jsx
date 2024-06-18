@@ -202,10 +202,15 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 });
 
 const filterFolders = (folders, searchText) => {
+
+  console.log(folders, "folders")
+
   return folders.filter(folder => {
     const folderMatch = folder.label.toLowerCase().includes(searchText.toLowerCase());
 
+
     const childMatch = folder.children && folder.children.some(child => filterFolders([child], searchText).length > 0);
+
 
     return folderMatch || childMatch;
   });
@@ -221,11 +226,14 @@ const handleApplyFilter = (groups, filterText) => {
     return Object.values(groups)
       .map(group => {
         // Filter folders within the group
-        const filteredFolders = filterFolders(group.folders || [], filterText);
+        const filteredFolders = filterFolders(group.children, filterText);
 
-        return filteredFolders.length > 0 || group.label.toLowerCase().includes(filterText.toLowerCase())
+         const xs = filteredFolders.length > 0 || group.label.toLowerCase().includes(filterText.toLowerCase())
           ? { ...group, folders: filteredFolders }
           : null;
+      
+
+          return xs
       })
       .filter(group => group !== null);
   };
