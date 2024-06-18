@@ -315,7 +315,7 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
-                         <AddTags />
+                        {/*  <AddTags /> */}
                       </div>
                     </div>
                     {file.filename.length < 12 && (
