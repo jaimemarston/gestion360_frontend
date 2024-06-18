@@ -48,7 +48,7 @@ export default function FileManager() {
     })) || [];
     
     return {
-      id: folder.id,
+      id: folder.id + "-" + folder.uuid,
       label: folder.label,
       children: [...children, ...documents],
     };
@@ -315,7 +315,7 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
-                        {/*  <AddTags /> */}
+                         {/* <AddTags /> */}
                       </div>
                     </div>
                     {file.filename.length < 12 && (

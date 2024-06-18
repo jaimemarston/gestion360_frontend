@@ -166,7 +166,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
       setNameGroup(label);
     }
     if (icon === FolderRounded) {
-      onItemSelect(itemId);
+      onItemSelect(Number(itemId.split("-")[0]));
       setNameFolder(label);
     }
   };
