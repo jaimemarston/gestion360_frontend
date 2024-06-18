@@ -70,7 +70,7 @@ const blue = {
     }
   
     & .${classes.select}{
-      padding: 2px 0 2px 4px;
+      padding: 3px 2px 2px 10px;
       border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
       border-radius: 6px; 
       background-color: transparent;

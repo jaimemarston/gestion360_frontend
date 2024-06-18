@@ -371,6 +371,7 @@ export default function FileManager() {
                       count={totalElements}
                       rowsPerPage={rowsPerPage}
                       page={page}
+                      labelRowsPerPage="Archivos por página"
                       slotProps={{
                         select: {
                           'aria-label': 'Archivos por página',
