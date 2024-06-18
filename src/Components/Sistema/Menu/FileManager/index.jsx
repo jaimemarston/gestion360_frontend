@@ -188,7 +188,7 @@ export default function FileManager() {
           )}
           {selectedFolderId && showModal && (
             <EditFolder
-              folderName1={nameFolder}
+              folderName={nameFolder}
               groupName={nameGroup}
               folderId={selectedFolderId}
             />
