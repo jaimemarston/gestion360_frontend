@@ -188,7 +188,7 @@ export default function FileManager() {
           )}
           {selectedFolderId && showModal && (
             <EditFolder
-              folderName1={nameFolder}
+              folderName={nameFolder}
               groupName={nameGroup}
               folderId={selectedFolderId}
             />
@@ -201,7 +201,7 @@ export default function FileManager() {
               <DeleteFolder folderId={selectedFolderId} />
             )}
         </div>
-        <div className="col-6">
+        <div className="col-6 folder-list">
           <FileExplorer
             groups={groups}
             showCreateFolder={createFolder}
@@ -315,7 +315,7 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
-                  {/*       <AddTags /> */}
+                        {/*  <AddTags /> */}
                       </div>
                     </div>
                     {file.filename.length < 12 && (

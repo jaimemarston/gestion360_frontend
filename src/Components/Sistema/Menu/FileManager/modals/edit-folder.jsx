@@ -13,27 +13,23 @@ import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 
-const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupName, folderId }) => {
+const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   const [usersId, setUsersId] = useState([]);
 
   useEffect(()=>{
     let empty = {
-      label: folderName1,
+      label: folderName,
       folderId: folderId
     }
 
     setData(empty)
-  }, [folderName1, folderName2, folderName3, folderId])
+  }, [folderName, folderId])
 
-  const [listProduct, setlistProduct] = useState([]);
   const [isModal, setIsModal] = useState(false);
-  const [newData, setNewData] = useState(null);
   const [isCloseModal, setIsCloseModal] = useState(false);
-  const [selectedUsers, setSelectedProducts] = useState([]);
 
   const [data, setData] = useState();
   const [submitted, setSubmitted] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState(null);
   const dt = useRef(null);
 
   const { showToast, ToastComponent } = useToast()
@@ -114,7 +110,7 @@ const EditFolder = ({ isDarkMode, folderName1, folderName2, folderName3, groupNa
         footer={productDialogFooter}
         onHide={openModal}
       >
-        <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName1}</h5>
+        <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName}</h5>
         <div className='field'>
           <label htmlFor='label'>Carpeta principal</label>
           <InputText

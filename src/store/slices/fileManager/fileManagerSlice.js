@@ -95,9 +95,9 @@ export const editFolder = createAsyncThunk(
     'FileManagerSlice/editFolder',
     async (folder, thunkAPI) => {
 
-        const {label1, label2, label3, folderId} = folder;
+        const {label, folderId} = folder;
 
-        const response = await folderService.updateFolder(folderId, label1, label2, label3);
+        const response = await folderService.updateFolder(folderId, label);
         thunkAPI.dispatch(fetchGroups());
 
         return response;

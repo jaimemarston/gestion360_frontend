@@ -18,8 +18,8 @@ const createFolder = async (folder: Folder) => {
     return data
 }
 
-const updateFolder = async (folderId: number, label1: string, label2: string, label3: string) => {
-    const { data } = await http.patch(`/folders/${folderId}`, {label1, label2, label3})
+const updateFolder = async (folderId: number, label:string) => {
+    const { data } = await http.patch(`/folders/${folderId}`, {label})
     return data
 }
 

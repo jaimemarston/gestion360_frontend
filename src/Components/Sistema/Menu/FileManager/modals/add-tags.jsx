@@ -9,7 +9,8 @@ import { Dialog } from "primereact/dialog";
 import { useToast } from "../../../../../hooks/useToast";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
+import { InputText } from "primereact/inputtext";
 
 const Root = styled("div")(
   ({ theme }) => `
@@ -28,12 +29,13 @@ const Label = styled("label")`
 
 const InputWrapper = styled("div")(
   ({ theme }) => `
-  width: 570px;
+  width: 659px;
   border: 1px solid ${theme.palette.mode === "dark" ? "#434343" : "#d9d9d9"};
   background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
   border-radius: 4px;
   padding: 1px;
   display: flex;
+  margin-left: 5px;
   flex-wrap: wrap;
 
   &:hover {
@@ -166,9 +168,10 @@ const Listbox = styled("ul")(
 export default function AddTags() {
   const [inputValue, setInputValue] = React.useState("");
   const [tags, setTags] = React.useState([]);
-  const { showToast, ToastComponent } = useToast()
+  const { showToast, ToastComponent } = useToast();
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
+  const [data, setData] = React.useState("");
 
   const {
     getRootProps,
@@ -199,7 +202,7 @@ export default function AddTags() {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && inputValue.trim() !== "") {
-      setRequiredField(false)
+      setRequiredField(false);
       const newTag = { title: inputValue.trim() };
       if (!tags.find((tag) => tag.title === newTag.title)) {
         setTags((prev) => [...prev, newTag]);
@@ -210,24 +213,22 @@ export default function AddTags() {
   };
 
   const handleSubmit = async () => {
-    if(tags.length){
+    if (tags.length) {
       const payload = {
         tags: [...tags],
       };
-      setRequiredField(false)
-      showToast('success', 'Las etiquetas se han agregado con exito');
+      setRequiredField(false);
+      showToast("success", "Las etiquetas se han agregado con exito");
       setIsModal(!isModal);
       setTags([]);
-    }else{
-      setRequiredField(true)      
+    } else {
+      setRequiredField(true);
       /* showToast('error', 'Error al intentar agregar las etiquetas'); */
     }
   };
 
   const leftToolbarTemplate = () => (
-        <div
-          className='cursor-pointer pi pi-pencil'
-          onClick={openModal}></div>
+    <div className="cursor-pointer pi pi-pencil" onClick={openModal}></div>
   );
 
   const productDialogFooter = (
@@ -240,10 +241,14 @@ export default function AddTags() {
           openModal();
         }}
       />
-      <Button label="Enviar" icon="pi pi-check" className="p-button-text" onClick={handleSubmit} />
+      <Button
+        label="Enviar"
+        icon="pi pi-check"
+        className="p-button-text"
+        onClick={handleSubmit}
+      />
     </>
   );
-
 
   const Handler = ({
     isModal,
@@ -255,7 +260,7 @@ export default function AddTags() {
     return (
       <Dialog
         visible={isModal}
-        style={{ width: "600px", height: "300px" }}
+        style={{ width: "700px", height: "450px" }}
         header="Agregar etiquetas"
         modal
         className="p-fluid"
@@ -264,7 +269,9 @@ export default function AddTags() {
       >
         <Root>
           <div {...getRootProps()}>
-            <Label {...getInputLabelProps()}>Agregale etiquetas a tu archivo</Label>
+            <Label {...getInputLabelProps()}>
+              Escribe tu etiqueta y preciona Enter para listarla
+            </Label>
             <InputWrapper
               ref={setAnchorEl}
               className={focused ? "focused" : ""}
@@ -282,7 +289,11 @@ export default function AddTags() {
                 onKeyDown={handleKeyDown}
               />
             </InputWrapper>
-            {requiredField && <p className="text-red mt-3">Debes de agregarle mínimo una etiqueta</p>}
+            {requiredField && (
+              <p className="text-red mt-3">
+                Debes de agregarle mínimo una etiqueta
+              </p>
+            )}
           </div>
           {groupedOptions.length > 0 ? (
             <Listbox {...getListboxProps()}>
@@ -301,22 +312,91 @@ export default function AddTags() {
             </Listbox>
           ) : null}
         </Root>
+        <div className="d-flex">
+          <div className="col-6">
+            <InputText
+              id="label"
+              name="label"
+              className="mt-4"
+              placeholder="Titulo"
+              autoFocus
+            />
+          </div>
+          <div className="col-6">
+            <InputText
+              id="label"
+              name="label"
+              className="mt-4"
+              placeholder="Area"
+              autoFocus
+            />
+          </div>
+        </div>
+        <div className="d-flex">
+          <div className="col-6">
+            <InputText
+              id="label"
+              name="label"
+              className="mt-4"
+              placeholder="Proyecto"
+              autoFocus
+            />
+          </div>
+          <div className="col-6">
+            <InputText
+              id="label"
+              name="label"
+              className="mt-4"
+              placeholder="Financiera"
+              autoFocus
+            />
+          </div>
+        </div>
+        <div className="d-flex">
+          <div className="col-6">
+            <InputText
+              id="label"
+              name="label"
+              className="mt-4"
+              placeholder="Fecha desde, hasta"
+              autoFocus
+            />
+          </div>
+          <div className="col-6">
+            <InputText
+              id="label"
+              name="label"
+              className="mt-4"
+              placeholder="Moneda"
+              autoFocus
+            />
+          </div>
+        </div>
+        <div className="col-6">
+          <InputText
+            id="label"
+            name="label"
+            className="mt-4"
+            placeholder="Archivo relacionado"
+            autoFocus
+          />
+        </div>
       </Dialog>
     );
   };
 
   return (
-      <div className="size-icon-card">
-          <Toolbar
-            style={{ background: "transparent", border: "none", padding: "0px" }}
-            left={leftToolbarTemplate}
-          ></Toolbar>
-          {isModal &&
-            Handler({
-              isModal,
-              openModal,
-              productDialogFooter,
-            })}
+    <div className="size-icon-card">
+      <Toolbar
+        style={{ background: "transparent", border: "none", padding: "0px" }}
+        left={leftToolbarTemplate}
+      ></Toolbar>
+      {isModal &&
+        Handler({
+          isModal,
+          openModal,
+          productDialogFooter,
+        })}
       {ToastComponent}
     </div>
   );
