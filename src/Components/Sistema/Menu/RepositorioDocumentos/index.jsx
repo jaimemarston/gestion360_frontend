@@ -496,8 +496,8 @@ const [spinner, setSpinner] = useState(false)
   };
 
   const header = (
-    <div className='flex flex-column md:flex-row md:justify-content-between md:align-items-center'>
-      <span className='block mt-2 md:mt-0 p-input-icon-left'>
+    <div className='flex flex-column flex-md-row justify-content-md-between align-items-md-center'>
+      <span className='block mt-2 mt-md-0 p-input-icon-left'>
         <i className='pi pi-search' />
         <InputText
           type='search'

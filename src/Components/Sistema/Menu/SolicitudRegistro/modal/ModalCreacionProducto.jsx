@@ -183,7 +183,7 @@ export default function ModalCreacionProducto({
 
       <form onSubmit={formik.handleSubmit}>
         <div className='p-fluid formgrid grid'>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='descripcion'>Descripción</label>
             <InputText
               name='descripcion'
@@ -215,7 +215,7 @@ export default function ModalCreacionProducto({
             /> */}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='partidaPresupuestal'>Partida Presupuestal</label>
             <AutoComplete
                 value={project ? project : selectedCountry1}
@@ -247,7 +247,7 @@ export default function ModalCreacionProducto({
             />
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='importe'>Importe</label>
 
             <InputText

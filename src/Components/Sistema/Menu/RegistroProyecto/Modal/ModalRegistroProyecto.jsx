@@ -97,7 +97,7 @@ const ModalRegistroProyecto = ({ setView, view, listData, edit, setEdit }) => {
       <Toast ref={toast} />
       <form onSubmit={formik.handleSubmit}>
         <div className='p-fluid formgrid grid'>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='codigo'>Código</label>
 
             <InputText
@@ -111,7 +111,7 @@ const ModalRegistroProyecto = ({ setView, view, listData, edit, setEdit }) => {
             )}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreAbreviado'>Nombre Abreviado</label>
 
             <InputText
@@ -127,7 +127,7 @@ const ModalRegistroProyecto = ({ setView, view, listData, edit, setEdit }) => {
               )}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreCompleto'>Nombre Completo</label>
 
             <InputText

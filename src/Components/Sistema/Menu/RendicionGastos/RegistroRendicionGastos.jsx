@@ -640,7 +640,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
             </div>
 
             <div className='p-fluid formgrid grid'>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='numeroSolicitud' className='block'>
                   N.de Rendicion
                 </label>
@@ -658,7 +658,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                   </h5>
               </div>
 
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='proyecto' className='block'>
                   Proyecto
                 </label>
@@ -682,7 +682,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                   disabled={true}
                 />
               </div>
-              <div className='field col-12 md:col-12'>
+              <div className='field col-12 col-md-12'>
                 <label htmlFor='nombreApellido' className='block'>
                   Nombre y apellidos
                 </label>
@@ -705,7 +705,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                 />
               </div>
 
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='lugarComision' className='block'>
                   Lugar Comisión
                 </label>
@@ -757,7 +757,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='objetoComision' className='block'>
                   Objeto de la Comisión
                 </label>
@@ -784,7 +784,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaInicio'>Fecha inicio</label>
                 <Calendar
          
@@ -808,7 +808,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                   </span>
                 )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaFin'>Fecha fin</label>
                 <Calendar
                
@@ -836,7 +836,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
             </div>
             <h4>Resumen de la rendición de las cuentas</h4>
             <div className='p-fluid formgrid grid'>
-              <div className='field col-12 md:col-4'>
+              <div className='field col-12 col-md-4'>
                 <label htmlFor='recibido' className='block'>
                   Recibido $/
                 </label>
@@ -848,7 +848,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                   disabled
                 />
               </div>
-              <div className='field col-12 md:col-4'>
+              <div className='field col-12 col-md-4'>
                 <label htmlFor='rendido' className='block'>
                   Rendido $/
                 </label>
@@ -860,7 +860,7 @@ const RegistroRendicionGastos = ({isDarkMode}) => {
                   style={{ marginBottom: '5px' }}
                 />
               </div>
-              <div className='field col-12 md:col-4'>
+              <div className='field col-12 col-md-4'>
                 <label htmlFor='saldo' className='block'>
                   Saldo $/
                 </label>

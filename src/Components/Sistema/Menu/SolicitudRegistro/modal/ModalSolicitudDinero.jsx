@@ -85,7 +85,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
           <h4>Datos Personales</h4>
 
           <div className='p-fluid formgrid grid'>
-            <div className='field col-12 md:col-12'>
+            <div className='field col-12 col-md-12'>
               <label htmlFor='numeroSolicitud' className='block'>
                 N. solicitud
               </label>
@@ -104,7 +104,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
                   </span>
                 )}
             </div>
-            <div className='field col-12 md:col-12'>
+            <div className='field col-12 col-md-12'>
               <label htmlFor='fechaRegistro'>Fecha Registro</label>
               <Calendar
                 inputId='calendar'
@@ -116,7 +116,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
                 name='fechaRegistro'
               ></Calendar>
             </div>
-            <div className='field col-12 md:col-12'>
+            <div className='field col-12 col-md-12'>
               <label htmlFor='nombre' className='block'>
                 Nombre
               </label>
@@ -134,7 +134,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
             </div>
           </div>
           <h4>Informacion del proyecto</h4>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreProyecto' className='block'>
               Nombre del proyecto`
             </label>
@@ -152,7 +152,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
               </span>
             )}
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='lugarComision' className='block'>
               Lugar comisión
             </label>
@@ -170,7 +170,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
               </span>
             )}
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='itenerarioTransporte' className='block'>
               Itinerario de transporte
             </label>
@@ -189,7 +189,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
                 </span>
               )}
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='objetoComision' className='block'>
               Objeto de la comisión
             </label>
@@ -207,7 +207,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
             )}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='fechaInicio'>Fecha inicio</label>
             <Calendar
               inputId='calendar'
@@ -216,7 +216,7 @@ export default function ModalSolicitudDinero({ view, setView, setData }) {
               onChange={formik.handleChange}
             ></Calendar>
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='fechaFin'>Fecha fin</label>
             <Calendar
               inputId='calendar'

@@ -252,7 +252,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
       <Toast ref={toast} />
       <form onSubmit={formik.handleSubmit}>
         <div className='p-fluid formgrid grid'>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='codigo'>Código</label>
 
             <InputText
@@ -269,7 +269,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
           </div>
 
           <div
-            className='field col-12 md:col-12'
+            className='field col-12 col-md-12'
             style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -316,7 +316,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
             </div>
           </div>
           {/*  */}
-         {/*  <div className='field col-12 md:col-12'> */}
+         {/*  <div className='field col-12 col-md-12'> */}
             {/* <label htmlFor='nombreAbreviado'>Código Documento</label> */}
 {/*             <div
               style={{
@@ -395,7 +395,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
             </div>
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreAbreviado'>Dirección</label>
 
             <InputText
@@ -440,7 +440,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
               />
             </div>
           </div>
-           <div className='field col-12 md:col-12'>
+           <div className='field col-12 col-md-12'>
             <label htmlFor='nombreAbreviado'>Nombres</label>
 
             <InputText
@@ -482,7 +482,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
             </div>
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreAbreviado'>Regimen</label>
             <div
               style={{
@@ -505,7 +505,7 @@ const ModalRegistroCodigoReferencia = ({ setView, view, edit, setAddData, listDa
               />
             </div>
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreAbreviado'>CUPSS</label>
 
             <InputText

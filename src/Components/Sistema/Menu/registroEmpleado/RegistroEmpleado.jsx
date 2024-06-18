@@ -587,7 +587,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
   };
   console.log(globalFilter);
   const header = (
-    <div  className={isDarkMode ?  'dark-mode-table  flex flex-column md:flex-row md:justify-content-between md:align-items-center' : 'flex flex-column md:flex-row md:justify-content-between md:align-items-center'  }>
+    <div  className={isDarkMode ?  'dark-mode-table  flex flex-column flex-md-row justify-content-md-between align-items-md-center' : 'flex flex-column flex-md-row justify-content-md-between align-items-md-center'  }>
       
       <h5 className='m-0'>Lista de Empleados</h5>
       <Dropdown
@@ -598,7 +598,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
         optionLabel='name'
         placeholder='Seleccionar'
       />
-      <span className='block mt-2 md:mt-0 p-input-icon-left'>
+      <span className='block mt-2 mt-md-0 p-input-icon-left'>
         <i className='pi pi-search' />
         <InputText
           type='search'

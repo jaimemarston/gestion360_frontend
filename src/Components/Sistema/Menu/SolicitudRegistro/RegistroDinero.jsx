@@ -337,7 +337,7 @@ function RegistroDinero({isDarkMode}) {
             <h4>Datos de la solicitud</h4>
 
             <div className='p-fluid formgrid grid'>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='numeroSolicitud' className='block'>
                   N. solicitud
                 </label>
@@ -350,7 +350,7 @@ function RegistroDinero({isDarkMode}) {
                 /> */}
                 <h5>{dataLista ? dataLista.numeroSolicitud : ''}</h5>
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaRegistro'>Fecha Registro</label>
                 <Calendar
                 dateFormat="dd/mm/yy"
@@ -375,7 +375,7 @@ function RegistroDinero({isDarkMode}) {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-12'>
+              <div className='field col-12 col-md-12'>
                 <label htmlFor='nombre' className='block'>
                   Nombre
                 </label>
@@ -399,7 +399,7 @@ function RegistroDinero({isDarkMode}) {
             </div>
             <h4>Información del proyecto</h4>
             <div className='p-fluid formgrid grid'>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='nombreProyecto' className='block'>
                   Nombre del proyecto`
                 </label>
@@ -441,7 +441,7 @@ function RegistroDinero({isDarkMode}) {
                   ''
                 )} */}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='lugarComision' className='block'>
                   Lugar comisión
                 </label>
@@ -487,7 +487,7 @@ function RegistroDinero({isDarkMode}) {
                     </span>
                   )} 
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='itinerarioTransporte' className='block'>
                   Itinerario de transporte
                 </label>
@@ -507,7 +507,7 @@ function RegistroDinero({isDarkMode}) {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='objetoComision' className='block'>
                   Objeto de la comisión
                 </label>
@@ -527,7 +527,7 @@ function RegistroDinero({isDarkMode}) {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaInicio'>Fecha inicio</label>
                 <Calendar
                 dateFormat="dd/mm/yy"
@@ -546,7 +546,7 @@ function RegistroDinero({isDarkMode}) {
                   </span>
                 )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaFin'>Fecha fin</label>
                 <Calendar
                 dateFormat="dd/mm/yy"

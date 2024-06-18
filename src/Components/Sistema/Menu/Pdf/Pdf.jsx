@@ -185,15 +185,15 @@ useEffect(() => {
       
       <div className='card'>
         <div className='p-fluid grid'>
-          <div className='field col-12 md:col-4'>
+          <div className='field col-12 col-md-4'>
             <label htmlFor='nombre'>Nombre</label>
             <InputText disabled id='nombre' value={visor?.nombre} />
           </div>
-          <div className='field col-12 md:col-4'>
+          <div className='field col-12 col-md-4'>
             <label htmlFor='ndocumento'>N° Documento de Identidad</label>
             <InputText disabled id='ndocumento' value={visor?.ndocumento} />
           </div>
-          <div className='field col-12 md:col-4'>
+          <div className='field col-12 col-md-4'>
             <label htmlFor='ndocumento'>File:</label>
             <InputText disabled id='ndocumento' value={pdfdetalle?.nombredoc} />
           </div>
