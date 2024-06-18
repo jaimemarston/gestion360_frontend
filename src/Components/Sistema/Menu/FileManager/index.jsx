@@ -156,6 +156,9 @@ export default function FileManager() {
   const getFiles = async () => {
     const payload = {
       idFolder: selectedFolderId,
+      page: 1,
+      rowsPerPage: 10
+      
     };
     dispatch(fetchFiles(payload));
   };
@@ -260,7 +263,7 @@ export default function FileManager() {
 
           {selectedFolderId !== null &&
             uploadedFiles.data &&
-            uploadedFiles.data.length > 0 && <h1>Archivos subidos</h1>}
+            uploadedFiles.data.data.length > 0 && <h1>Archivos subidos</h1>}
           {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
           <div
             className={`col-12 align-items-start mt-4 ${
@@ -270,10 +273,10 @@ export default function FileManager() {
             }`}
           >
             {selectedFolderId !== null &&
-            uploadedFiles.data &&
-            uploadedFiles.data.length > 0 &&
+            uploadedFiles.data.data &&
+            uploadedFiles.data.data.length > 0 &&
             !isLoading ? (
-              uploadedFiles.data.map((file, index) => (
+              uploadedFiles.data.data.map((file, index) => (
                 <div
                   key={index}
                   className="col-2 card w-card pe-auto d-flex align-items-center justify-content-center ms-2 me-4"
@@ -324,6 +327,15 @@ export default function FileManager() {
                       </>
                     )}
                   </div>
+{/*                               <TablePagination
+                  component="div"
+                  count={totalElements}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  rowsPerPageOptions={[10, 20, 30]}
+                /> */}
                 </div>
               ))
             ) : selectedFolderId !== null &&

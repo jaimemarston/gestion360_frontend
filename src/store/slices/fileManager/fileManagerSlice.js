@@ -47,9 +47,9 @@ export const fetchFiles = createAsyncThunk(
     'FileManagerSlice/fetchFile',
     async (folderId, thunkAPI) => {
 
-        const { idFolder } = folderId;
+        const { idFolder, rowsPerPage, page } = folderId;
 
-        const response = await fileService.getFileFolder(idFolder);
+        const response = await fileService.getFileFolder(idFolder, rowsPerPage, page );
 
         return response;
     }
