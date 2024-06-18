@@ -14,10 +14,10 @@ COPY ["./", "./"]
 RUN rm -f ./yarn.lock
 RUN rm -f ./package-json.lock
 # Construye la aplicación React
-RUN npm run build
+RUN yarn build
 
 # Expone el puerto 5173 para la aplicación
 EXPOSE 3000
 
 # Establece el comando que se ejecutará cuando se inicie el contenedor
-CMD ["npm","run", "dev"]
+CMD ["yarn", "dev"]
