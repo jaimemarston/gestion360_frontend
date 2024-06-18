@@ -2,8 +2,8 @@ import http from '../axios'
 
 type Files = { mimetype: string, filename: string, base64Content: string, tags: string[] }
 
-const getFileFolder = async (folderId) => {
-    const { data } = await http.get(`minio/get-files-by-folder/${folderId}`)
+const getFileFolder = async (folderId, rowsPerPage, page) => {
+    const { data } = await http.get(`minio/get-files-by-folder/${folderId}?per_page=${rowsPerPage}&page=${page}`)
 
     return data
 }

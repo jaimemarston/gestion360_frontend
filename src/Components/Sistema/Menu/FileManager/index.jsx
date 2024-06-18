@@ -21,6 +21,10 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { DeleteFolder } from "./modals/delete-folder";
 import AddTags from "./modals/add-tags";
 
+import { CustomTablePagination, Root } from "./tablePagination/table-pagination";
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -31,6 +35,9 @@ export default function FileManager() {
   const [nameFolder, setNameFolder] = useState();
   const [parentFolder, setParentFolder] = useState(false);
   const [folderSe, setFolderSe] = useState();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalElements, setTotalElements] = useState(0);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -46,14 +53,14 @@ export default function FileManager() {
       tags: doc.tags,
       isFile: true,
     })) || [];
-    
+
     return {
-      id: folder.id,
+      id: folder.id + "-" + folder.uuid,
       label: folder.label,
       children: [...children, ...documents],
     };
   };
-  
+
   const useTransformedGroups = () => {
     return useSelector((state) =>
       state.FileManager.groups.map((group) => ({
@@ -112,9 +119,9 @@ export default function FileManager() {
   };
 
   const handleFolderId = (itemId) => {
-      setselectedFolderId(itemId);
-      setFiles([]);
-      setParentFolder(false);
+    setselectedFolderId(itemId);
+    setFiles([]);
+    setParentFolder(false);
   };
 
   const handleGroupId = (itemId) => {
@@ -156,9 +163,29 @@ export default function FileManager() {
   const getFiles = async () => {
     const payload = {
       idFolder: selectedFolderId,
+      page: page + 1,
+      rowsPerPage: rowsPerPage
+
     };
     dispatch(fetchFiles(payload));
   };
+
+  useEffect(() => {
+    if (uploadedFiles.data && uploadedFiles.data.totalRecords > 0) {
+      setRowsPerPage(uploadedFiles.data.per_page)
+      setTotalElements(uploadedFiles.data.totalRecords)
+    }
+  }, [uploadedFiles])
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
 
   const handleDownload = (url) => {
     if (url) {
@@ -170,7 +197,7 @@ export default function FileManager() {
     if (selectedFolderId !== null) {
       getFiles();
     }
-  }, [selectedFolderId]);
+  }, [selectedFolderId, page, rowsPerPage]);
 
   return (
     <div className="container">
@@ -197,7 +224,7 @@ export default function FileManager() {
             showModal &&
             !isLoading &&
             uploadedFiles.data &&
-            uploadedFiles.data.length === 0 && (
+            uploadedFiles.data.data.length === 0 && (
               <DeleteFolder folderId={selectedFolderId} />
             )}
         </div>
@@ -213,11 +240,10 @@ export default function FileManager() {
         </div>
 
         <div
-          className={`col-6 d-grid w-50 h-50 ${
-            selectedFolderId
-              ? "justify-content-start"
-              : "justify-content-center"
-          }`}
+          className={`col-6 d-grid w-50 h-50 ${selectedFolderId
+            ? "justify-content-start"
+            : "justify-content-center"
+            }`}
         >
           <div className="col-12">
             <Breadcrumbs className="mb-3" aria-label="breadcrumb">
@@ -260,20 +286,19 @@ export default function FileManager() {
 
           {selectedFolderId !== null &&
             uploadedFiles.data &&
-            uploadedFiles.data.length > 0 && <h1>Archivos subidos</h1>}
+            uploadedFiles.data.totalRecords > 0 && <h1>Archivos subidos</h1>}
           {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
           <div
-            className={`col-12 align-items-start mt-4 ${
-              uploadedFiles.data && uploadedFiles.data.length < 5
-                ? "d-flex"
-                : "row"
-            }`}
+            className={`col-12 h-group-file align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.totalRecords < 5
+              ? "d-flex"
+              : "row"
+              }`}
           >
             {selectedFolderId !== null &&
-            uploadedFiles.data &&
-            uploadedFiles.data.length > 0 &&
-            !isLoading ? (
-              uploadedFiles.data.map((file, index) => (
+              uploadedFiles.data &&
+              uploadedFiles.data.totalRecords > 0 &&
+              !isLoading ? (
+              uploadedFiles.data.data.map((file, index) => (
                 <div
                   key={index}
                   className="col-2 card w-card pe-auto d-flex align-items-center justify-content-center ms-2 me-4"
@@ -293,8 +318,8 @@ export default function FileManager() {
                     >
                       {file.filename.length > 18
                         ? file.filename.slice(0, 15) +
-                          "..." +
-                          file.mimetype.split("/")[1]
+                        "..." +
+                        file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full align-items-center justify-content-center">
@@ -315,7 +340,7 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
-                        {/*  <AddTags /> */}
+                        {/* <AddTags /> */}
                       </div>
                     </div>
                     {file.filename.length < 12 && (
@@ -324,23 +349,54 @@ export default function FileManager() {
                       </>
                     )}
                   </div>
+
                 </div>
               ))
             ) : selectedFolderId !== null &&
               !isLoading &&
-              uploadedFiles.data ? (
+              uploadedFiles.data && uploadedFiles.data.data ? (
               <h2>Esta carpeta no contiene archivos</h2>
             ) : (
               <></>
             )}
           </div>
+          {uploadedFiles.data && uploadedFiles.data.totalRecords > 0 &&
+            <Root sx={{ width: 540, maxWidth: '100%' }}>
+              <table className="border-table" aria-label="custom pagination table">
+                <tfoot>
+                  <tr>
+                    <CustomTablePagination
+                      rowsPerPageOptions={[5, 10, 20]}
+                      colSpan={3}
+                      count={totalElements}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      labelRowsPerPage="Archivos por página"
+                      slotProps={{
+                        select: {
+                          'aria-label': 'Archivos por página',
+                        },
+                        actions: {
+                          slots: {
+                            nextPageIcon: ChevronRightRoundedIcon,
+                            backPageIcon: ChevronLeftRoundedIcon,
+                          },
+                        },
+                      }}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </tr>
+                </tfoot>
+              </table>
+            </Root>
+          }
 
           {files.length > 0 && <h1>Archivos por subir</h1>}
 
           <div
-            className={`col-12 align-items-start mt-4 ${
-              files.length < 5 ? "d-flex" : "row"
-            }`}
+            className={`col-12 align-items-start mt-4 ${files.length < 5 ? "d-flex" : "row"
+              }`}
           >
             {files.length > 0 &&
               files.map((file, index) => (
@@ -357,8 +413,8 @@ export default function FileManager() {
                     >
                       {file.filename.length > 18
                         ? file.filename.slice(0, 15) +
-                          "..." +
-                          file.mimetype.split("/")[1]
+                        "..." +
+                        file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
