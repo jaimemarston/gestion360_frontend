@@ -21,6 +21,16 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { DeleteFolder } from "./modals/delete-folder";
 import AddTags from "./modals/add-tags";
 
+import { styled } from '@mui/system';
+import {
+  TablePagination,
+  tablePaginationClasses as classes,
+} from '@mui/base/TablePagination';
+import FirstPageRoundedIcon from '@mui/icons-material/FirstPageRounded';
+import LastPageRoundedIcon from '@mui/icons-material/LastPageRounded';
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -31,6 +41,9 @@ export default function FileManager() {
   const [nameFolder, setNameFolder] = useState();
   const [parentFolder, setParentFolder] = useState(false);
   const [folderSe, setFolderSe] = useState();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalElements, setTotalElements] = useState(0);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -46,14 +59,14 @@ export default function FileManager() {
       tags: doc.tags,
       isFile: true,
     })) || [];
-    
+
     return {
       id: folder.id + "-" + folder.uuid,
       label: folder.label,
       children: [...children, ...documents],
     };
   };
-  
+
   const useTransformedGroups = () => {
     return useSelector((state) =>
       state.FileManager.groups.map((group) => ({
@@ -112,9 +125,9 @@ export default function FileManager() {
   };
 
   const handleFolderId = (itemId) => {
-      setselectedFolderId(itemId);
-      setFiles([]);
-      setParentFolder(false);
+    setselectedFolderId(itemId);
+    setFiles([]);
+    setParentFolder(false);
   };
 
   const handleGroupId = (itemId) => {
@@ -156,12 +169,29 @@ export default function FileManager() {
   const getFiles = async () => {
     const payload = {
       idFolder: selectedFolderId,
-      page: 1,
-      rowsPerPage: 10
-      
+      page: page + 1,
+      rowsPerPage: rowsPerPage
+
     };
     dispatch(fetchFiles(payload));
   };
+
+  useEffect(() => {
+    if (uploadedFiles.data && uploadedFiles.data.totalRecords > 0) {
+      setRowsPerPage(uploadedFiles.data.per_page)
+      setTotalElements(uploadedFiles.data.totalRecords)
+    }
+  }, [uploadedFiles])
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
 
   const handleDownload = (url) => {
     if (url) {
@@ -173,7 +203,7 @@ export default function FileManager() {
     if (selectedFolderId !== null) {
       getFiles();
     }
-  }, [selectedFolderId]);
+  }, [selectedFolderId, page, rowsPerPage]);
 
   return (
     <div className="container">
@@ -200,7 +230,7 @@ export default function FileManager() {
             showModal &&
             !isLoading &&
             uploadedFiles.data &&
-            uploadedFiles.data.length === 0 && (
+            uploadedFiles.data.data.length === 0 && (
               <DeleteFolder folderId={selectedFolderId} />
             )}
         </div>
@@ -216,11 +246,10 @@ export default function FileManager() {
         </div>
 
         <div
-          className={`col-6 d-grid w-50 h-50 ${
-            selectedFolderId
+          className={`col-6 d-grid w-50 h-50 ${selectedFolderId
               ? "justify-content-start"
               : "justify-content-center"
-          }`}
+            }`}
         >
           <div className="col-12">
             <Breadcrumbs className="mb-3" aria-label="breadcrumb">
@@ -263,19 +292,18 @@ export default function FileManager() {
 
           {selectedFolderId !== null &&
             uploadedFiles.data &&
-            uploadedFiles.data.data.length > 0 && <h1>Archivos subidos</h1>}
+            uploadedFiles.data.totalRecords > 0 && <h1>Archivos subidos</h1>}
           {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
           <div
-            className={`col-12 align-items-start mt-4 ${
-              uploadedFiles.data && uploadedFiles.data.length < 5
+            className={`col-12 align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.totalRecords < 5
                 ? "d-flex"
                 : "row"
-            }`}
+              }`}
           >
             {selectedFolderId !== null &&
-            uploadedFiles.data.data &&
-            uploadedFiles.data.data.length > 0 &&
-            !isLoading ? (
+              uploadedFiles.data &&
+              uploadedFiles.data.totalRecords > 0 &&
+              !isLoading ? (
               uploadedFiles.data.data.map((file, index) => (
                 <div
                   key={index}
@@ -296,8 +324,8 @@ export default function FileManager() {
                     >
                       {file.filename.length > 18
                         ? file.filename.slice(0, 15) +
-                          "..." +
-                          file.mimetype.split("/")[1]
+                        "..." +
+                        file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full align-items-center justify-content-center">
@@ -318,7 +346,7 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
-                         {/* <AddTags /> */}
+                        {/* <AddTags /> */}
                       </div>
                     </div>
                     {file.filename.length < 12 && (
@@ -327,32 +355,48 @@ export default function FileManager() {
                       </>
                     )}
                   </div>
-{/*                               <TablePagination
-                  component="div"
-                  count={totalElements}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  rowsPerPage={rowsPerPage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  rowsPerPageOptions={[10, 20, 30]}
-                /> */}
+
                 </div>
               ))
             ) : selectedFolderId !== null &&
               !isLoading &&
-              uploadedFiles.data ? (
+              uploadedFiles.data && uploadedFiles.data.data ? (
               <h2>Esta carpeta no contiene archivos</h2>
             ) : (
               <></>
             )}
           </div>
+          {uploadedFiles.data && uploadedFiles.data.totalRecords > 0 && 
+          <CustomTablePagination
+              rowsPerPageOptions={[5, 10, 20, { label: 'All', value: -1 }]}
+              colSpan={3}
+              count={13}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              slotProps={{
+                select: {
+                  'aria-label': 'Rows per page',
+                },
+                actions: {
+                  showFirstButton: true,
+                  showLastButton: true,
+                  slots: {
+                    firstPageIcon: FirstPageRoundedIcon,
+                    lastPageIcon: LastPageRoundedIcon,
+                    nextPageIcon: ChevronRightRoundedIcon,
+                    backPageIcon: ChevronLeftRoundedIcon,
+                  },
+                },
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />}
 
           {files.length > 0 && <h1>Archivos por subir</h1>}
 
           <div
-            className={`col-12 align-items-start mt-4 ${
-              files.length < 5 ? "d-flex" : "row"
-            }`}
+            className={`col-12 align-items-start mt-4 ${files.length < 5 ? "d-flex" : "row"
+              }`}
           >
             {files.length > 0 &&
               files.map((file, index) => (
@@ -369,8 +413,8 @@ export default function FileManager() {
                     >
                       {file.filename.length > 18
                         ? file.filename.slice(0, 15) +
-                          "..." +
-                          file.mimetype.split("/")[1]
+                        "..." +
+                        file.mimetype.split("/")[1]
                         : file.filename}
                     </p>
                     <div className="d-flex w-full justify-content-center">
@@ -402,3 +446,142 @@ export default function FileManager() {
     </div>
   );
 }
+
+
+
+const blue = {
+  200: '#A5D8FF',
+  400: '#3399FF',
+};
+
+const grey = {
+  50: '#F3F6F9',
+  100: '#E5EAF2',
+  200: '#DAE2ED',
+  300: '#C7D0DD',
+  400: '#B0B8C4',
+  500: '#9DA8B7',
+  600: '#6B7A90',
+  700: '#434D5B',
+  800: '#303740',
+  900: '#1C2025',
+};
+
+const Root = styled('div')(
+  ({ theme }) => `
+  table {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    width: 100%;
+    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    box-shadow: 0px 4px 16px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : grey[200]
+    };
+    border-radius: 12px;
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+    overflow: hidden;
+  }
+
+  td,
+  th {
+    padding: 16px;
+  }
+
+  th {
+    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  }
+  `,
+);
+
+const CustomTablePagination = styled(TablePagination)(
+  ({ theme }) => `
+  & .${classes.spacer} {
+    display: none;
+  }
+
+  & .${classes.toolbar}  {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  & .${classes.selectLabel} {
+    margin: 0;
+  }
+
+  & .${classes.select}{
+    font-family: 'IBM Plex Sans', sans-serif;
+    padding: 2px 0 2px 4px;
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+    border-radius: 6px; 
+    background-color: transparent;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    transition: all 100ms ease;
+
+    &:hover {
+      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
+      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
+    }
+
+    &:focus {
+      outline: 3px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
+      border-color: ${blue[400]};
+    }
+  }
+
+  & .${classes.displayedRows} {
+    margin: 0;
+
+    @media (min-width: 768px) {
+      margin-left: auto;
+    }
+  }
+
+  & .${classes.actions} {
+    display: flex;
+    gap: 6px;
+    border: transparent;
+    text-align: center;
+  }
+
+  & .${classes.actions} > button {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: transparent;
+    border-radius: 50%; 
+    background-color: transparent;
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    transition: all 100ms ease;
+
+    > svg {
+      font-size: 22px;
+    }
+
+    &:hover {
+      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
+      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
+    }
+
+    &:focus {
+      outline: 3px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
+      border-color: ${blue[400]};
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      &:hover {
+        border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+        background-color: transparent;
+      }
+    }
+  }
+  `,
+);
