@@ -166,12 +166,22 @@ const Listbox = styled("ul")(
 );
 
 export default function AddTags() {
+  let empty = {
+    title: "Value",
+    area: "",
+    proyect: "",
+    financial: "",
+    date: "",
+    coin: "",
+    relatedFile: "",    
+  };
+
   const [inputValue, setInputValue] = React.useState("");
   const [tags, setTags] = React.useState([]);
   const { showToast, ToastComponent } = useToast();
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
-  const [data, setData] = React.useState("");
+  const [data, setData] = React.useState(empty);
 
   const {
     getRootProps,
@@ -212,13 +222,19 @@ export default function AddTags() {
     }
   };
 
+  const onInputChange = (e, name) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async () => {
     if (tags.length) {
       const payload = {
+        ...data,
         tags: [...tags],
       };
       setRequiredField(false);
       showToast("success", "Las etiquetas se han agregado con exito");
+      setData({})
       setIsModal(!isModal);
       setTags([]);
     } else {
@@ -315,19 +331,24 @@ export default function AddTags() {
         <div className="d-flex">
           <div className="col-6">
             <InputText
-              id="label"
-              name="label"
+              id="title"
+              name="title"
               className="mt-4"
               placeholder="Titulo"
+              value={data.title?.trim()}
+              onChange={(e) => onInputChange(e, "title")}
+              required
               autoFocus
             />
           </div>
           <div className="col-6">
             <InputText
-              id="label"
-              name="label"
+              id="area"
+              name="area"
               className="mt-4"
               placeholder="Area"
+              value={data.area?.trim()}
+              onChange={(e) => onInputChange(e, "area")}
               autoFocus
             />
           </div>
@@ -335,19 +356,23 @@ export default function AddTags() {
         <div className="d-flex">
           <div className="col-6">
             <InputText
-              id="label"
-              name="label"
+              id="proyect"
+              name="proyect"
               className="mt-4"
               placeholder="Proyecto"
+              value={data.proyect?.trim()}
+              onChange={(e) => onInputChange(e, "proyect")}
               autoFocus
             />
           </div>
           <div className="col-6">
             <InputText
-              id="label"
-              name="label"
+              id="financial"
+              name="financial"
               className="mt-4"
               placeholder="Financiera"
+              value={data.financial?.trim()}
+              onChange={(e) => onInputChange(e, "financial")}
               autoFocus
             />
           </div>
@@ -355,29 +380,35 @@ export default function AddTags() {
         <div className="d-flex">
           <div className="col-6">
             <InputText
-              id="label"
-              name="label"
+              id="date"
+              name="date"
               className="mt-4"
               placeholder="Fecha desde, hasta"
+              value={data.date?.trim()}
+              onChange={(e) => onInputChange(e, "date")}
               autoFocus
             />
           </div>
           <div className="col-6">
             <InputText
-              id="label"
-              name="label"
+              id="coin"
+              name="coin"
               className="mt-4"
               placeholder="Moneda"
+              value={data.coin?.trim()}
+              onChange={(e) => onInputChange(e, "coin")}
               autoFocus
             />
           </div>
         </div>
         <div className="col-6">
           <InputText
-            id="label"
-            name="label"
+            id="relatedFile"
+            name="relatedFile"
             className="mt-4"
             placeholder="Archivo relacionado"
+              value={data.relatedFile?.trim()}
+              onChange={(e) => onInputChange(e, "relatedFile")}
             autoFocus
           />
         </div>
@@ -394,8 +425,10 @@ export default function AddTags() {
       {isModal &&
         Handler({
           isModal,
+          data,
           openModal,
           productDialogFooter,
+          onInputChange
         })}
       {ToastComponent}
     </div>

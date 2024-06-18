@@ -125,7 +125,7 @@ const ModalRegistroUsuario = ({ setView, view, listData, edit, setEdit }) => {
       <Toast ref={toast} />
       <form onSubmit={formik.handleSubmit}>
         <div className='p-fluid formgrid grid'>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='codigo'>Nombre</label>
 
             <InputText
@@ -139,7 +139,7 @@ const ModalRegistroUsuario = ({ setView, view, listData, edit, setEdit }) => {
             )}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='codigo'>Apellido</label>
 
             <InputText
@@ -153,7 +153,7 @@ const ModalRegistroUsuario = ({ setView, view, listData, edit, setEdit }) => {
             )}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreCompleto'>Email</label>
 
             <InputText
@@ -168,7 +168,7 @@ const ModalRegistroUsuario = ({ setView, view, listData, edit, setEdit }) => {
             )}
           </div>
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='nombreCompleto'>Password</label>
 
             <InputText

@@ -235,9 +235,9 @@ const RegistroUsuario = ({isDarkMode}) => {
   };
 
   const header = (
-    <div className='flex flex-column md:flex-row md:justify-content-between md:align-items-center'>
+    <div className='flex flex-column flex-md-row justify-content-md-between align-items-md-center'>
       <h5 className='m-0'>Lista de Usuarios</h5>
-      <span className='block mt-2 md:mt-0 p-input-icon-left'>
+      <span className='block mt-2 mt-md-0 p-input-icon-left'>
         <i className='pi pi-search' />
         <InputText
           type='search'

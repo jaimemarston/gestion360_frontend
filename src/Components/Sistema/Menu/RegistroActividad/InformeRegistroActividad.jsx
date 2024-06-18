@@ -136,7 +136,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
             <h4>Datos Personales</h4>
 
             <div className='p-fluid formgrid grid'>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='nombreApellido' className='block'>
                   Nombre y apellidos
                 </label>
@@ -157,7 +157,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
                   )}
               </div>
 
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='destino' className='block'>
                   Destino
                 </label>
@@ -177,7 +177,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
                 )}
               </div>
 
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaInicio'>Fecha inicio</label>
                 <Calendar
 
@@ -198,7 +198,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
                   </span>
                 )}
               </div>
-              <div className='field col-12 md:col-6'>
+              <div className='field col-12 col-md-6'>
                 <label htmlFor='fechaFin'>Fecha fin</label>
                 <Calendar
                      {...formik.getFieldProps('fechaFin')} 
@@ -221,7 +221,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
             </div>
             <h4>Resumen de la rendición de las cuentas</h4>
             <div className='p-fluid formgrid grid'>
-              <div className='field col-12 md:col-12'>
+              <div className='field col-12 col-md-12'>
                 <label htmlFor='objetoComision' className='block'>
                   Objeto de la comisión:
                 </label>
@@ -243,7 +243,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-12'>
+              <div className='field col-12 col-md-12'>
                 <label htmlFor='detalleActividad' className='block'>
                   Detalle de actividad realizada:
                 </label>
@@ -265,7 +265,7 @@ const InformeRegistroActividad = ({isDarkMode}) => {
                     </span>
                   )}
               </div>
-              <div className='field col-12 md:col-12'>
+              <div className='field col-12 col-md-12'>
                 <label htmlFor='otros' className='block'>
                   Otros aspectos administrativos relevantes que afecten su
                   rendición de cuentas

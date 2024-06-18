@@ -191,7 +191,7 @@ export default function AppTopbar({isOpen, setMenuIsOpen, setIsDarkMode}) {
         <i className='pi pi-ellipsis-v' />
       </button>
       
-      <ul className='layout-topbar-menu lg:flex origin-top'>
+      <ul className='layout-topbar-menu flex-lg origin-top'>
         <li className='mr-5'>
         <InputSwitch checked={value} onChange={(e) => switchFondo()} />
         </li>

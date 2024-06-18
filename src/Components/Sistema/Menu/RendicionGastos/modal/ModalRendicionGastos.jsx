@@ -269,7 +269,7 @@ const ModalRendicionGastos = ({
 
       <form onSubmit={formik.handleSubmit}>
         <div className='p-fluid formgrid grid'>
-          <div className='field col-12 md:col-6'>
+          <div className='field col-12 col-md-6'>
             <label htmlFor='fecha'>Fecha</label>
             <Calendar
             dateFormat="dd/mm/yy"
@@ -285,7 +285,7 @@ const ModalRendicionGastos = ({
               <span style={{ color: '#e5432d' }}>{formik.errors.fecha}</span>
             )}
           </div>
-          <div className='field col-12 md:col-6'>
+          <div className='field col-12 col-md-6'>
             <label htmlFor='tipo'>Tipo</label>
             <AutoComplete
               value={selectedProyecto}
@@ -310,7 +310,7 @@ const ModalRendicionGastos = ({
               <span style={{ color: '#e5432d' }}>{formik.errors.tipo}</span>
             )} */}
           </div>{' '}
-          <div className='field col-12 md:col-6'>
+          <div className='field col-12 col-md-6'>
             <label htmlFor='serie'>Serie</label>
 
             <InputText
@@ -322,7 +322,7 @@ const ModalRendicionGastos = ({
               <span style={{ color: '#e5432d' }}>{formik.errors.serie}</span>
             )}
           </div>{' '}
-          <div className='field col-12 md:col-6'>
+          <div className='field col-12 col-md-6'>
             <label htmlFor='numero'>Número</label>
 
             <InputText
@@ -335,7 +335,7 @@ const ModalRendicionGastos = ({
             )}
           </div>{' '}
 
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='ruc'>RUC</label>
 
               <AutoComplete
@@ -356,7 +356,7 @@ const ModalRendicionGastos = ({
               <span style={{ color: '#e5432d' }}>{formik.errors.ruc}</span>
             )}
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='descripcion'>Descripcion</label>
 
             <InputText
@@ -370,7 +370,7 @@ const ModalRendicionGastos = ({
               </span>
             )}
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='partidaPresupuestal'>Partida Presupuestal</label>
             <AutoComplete
                 value={project ? project : selectedCountry1}
@@ -407,7 +407,7 @@ const ModalRendicionGastos = ({
                 </span>
               )}
           </div>
-          <div className='field col-12 md:col-12'>
+          <div className='field col-12 col-md-12'>
             <label htmlFor='importe'>Importe</label>
 
             <InputText
