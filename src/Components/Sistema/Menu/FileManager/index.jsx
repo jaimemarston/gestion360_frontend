@@ -21,13 +21,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { DeleteFolder } from "./modals/delete-folder";
 import AddTags from "./modals/add-tags";
 
-import { styled } from '@mui/system';
-import {
-  TablePagination,
-  tablePaginationClasses as classes,
-} from '@mui/base/TablePagination';
-import FirstPageRoundedIcon from '@mui/icons-material/FirstPageRounded';
-import LastPageRoundedIcon from '@mui/icons-material/LastPageRounded';
+import { CustomTablePagination, Root } from "./tablePagination/table-pagination";
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 
@@ -42,7 +36,7 @@ export default function FileManager() {
   const [parentFolder, setParentFolder] = useState(false);
   const [folderSe, setFolderSe] = useState();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
 
   const permissions = usePermission.getPermissionLevel();
@@ -247,8 +241,8 @@ export default function FileManager() {
 
         <div
           className={`col-6 d-grid w-50 h-50 ${selectedFolderId
-              ? "justify-content-start"
-              : "justify-content-center"
+            ? "justify-content-start"
+            : "justify-content-center"
             }`}
         >
           <div className="col-12">
@@ -295,9 +289,9 @@ export default function FileManager() {
             uploadedFiles.data.totalRecords > 0 && <h1>Archivos subidos</h1>}
           {isLoading && selectedFolderId !== null && <h2>Cargando...</h2>}
           <div
-            className={`col-12 align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.totalRecords < 5
-                ? "d-flex"
-                : "row"
+            className={`col-12 h-group-file align-items-start mt-4 ${uploadedFiles.data && uploadedFiles.data.totalRecords < 5
+              ? "d-flex"
+              : "row"
               }`}
           >
             {selectedFolderId !== null &&
@@ -366,31 +360,36 @@ export default function FileManager() {
               <></>
             )}
           </div>
-          {uploadedFiles.data && uploadedFiles.data.totalRecords > 0 && 
-          <CustomTablePagination
-              rowsPerPageOptions={[5, 10, 20, { label: 'All', value: -1 }]}
-              colSpan={3}
-              count={13}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              slotProps={{
-                select: {
-                  'aria-label': 'Rows per page',
-                },
-                actions: {
-                  showFirstButton: true,
-                  showLastButton: true,
-                  slots: {
-                    firstPageIcon: FirstPageRoundedIcon,
-                    lastPageIcon: LastPageRoundedIcon,
-                    nextPageIcon: ChevronRightRoundedIcon,
-                    backPageIcon: ChevronLeftRoundedIcon,
-                  },
-                },
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />}
+          {uploadedFiles.data && uploadedFiles.data.totalRecords > 0 &&
+            <Root sx={{ width: 540, maxWidth: '100%' }}>
+              <table className="border-table" aria-label="custom pagination table">
+                <tfoot>
+                  <tr>
+                    <CustomTablePagination
+                      rowsPerPageOptions={[5, 10, 20]}
+                      colSpan={3}
+                      count={totalElements}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      slotProps={{
+                        select: {
+                          'aria-label': 'Archivos por página',
+                        },
+                        actions: {
+                          slots: {
+                            nextPageIcon: ChevronRightRoundedIcon,
+                            backPageIcon: ChevronLeftRoundedIcon,
+                          },
+                        },
+                      }}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                  </tr>
+                </tfoot>
+              </table>
+            </Root>
+          }
 
           {files.length > 0 && <h1>Archivos por subir</h1>}
 
@@ -446,142 +445,3 @@ export default function FileManager() {
     </div>
   );
 }
-
-
-
-const blue = {
-  200: '#A5D8FF',
-  400: '#3399FF',
-};
-
-const grey = {
-  50: '#F3F6F9',
-  100: '#E5EAF2',
-  200: '#DAE2ED',
-  300: '#C7D0DD',
-  400: '#B0B8C4',
-  500: '#9DA8B7',
-  600: '#6B7A90',
-  700: '#434D5B',
-  800: '#303740',
-  900: '#1C2025',
-};
-
-const Root = styled('div')(
-  ({ theme }) => `
-  table {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    width: 100%;
-    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    box-shadow: 0px 4px 16px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : grey[200]
-    };
-    border-radius: 12px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    overflow: hidden;
-  }
-
-  td,
-  th {
-    padding: 16px;
-  }
-
-  th {
-    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  }
-  `,
-);
-
-const CustomTablePagination = styled(TablePagination)(
-  ({ theme }) => `
-  & .${classes.spacer} {
-    display: none;
-  }
-
-  & .${classes.toolbar}  {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
-  & .${classes.selectLabel} {
-    margin: 0;
-  }
-
-  & .${classes.select}{
-    font-family: 'IBM Plex Sans', sans-serif;
-    padding: 2px 0 2px 4px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    border-radius: 6px; 
-    background-color: transparent;
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    transition: all 100ms ease;
-
-    &:hover {
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
-    }
-
-    &:focus {
-      outline: 3px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
-      border-color: ${blue[400]};
-    }
-  }
-
-  & .${classes.displayedRows} {
-    margin: 0;
-
-    @media (min-width: 768px) {
-      margin-left: auto;
-    }
-  }
-
-  & .${classes.actions} {
-    display: flex;
-    gap: 6px;
-    border: transparent;
-    text-align: center;
-  }
-
-  & .${classes.actions} > button {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    border: transparent;
-    border-radius: 50%; 
-    background-color: transparent;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    transition: all 100ms ease;
-
-    > svg {
-      font-size: 22px;
-    }
-
-    &:hover {
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
-    }
-
-    &:focus {
-      outline: 3px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
-      border-color: ${blue[400]};
-    }
-
-    &:disabled {
-      opacity: 0.3;
-      &:hover {
-        border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-        background-color: transparent;
-      }
-    }
-  }
-  `,
-);
