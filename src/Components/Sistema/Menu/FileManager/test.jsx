@@ -203,13 +203,10 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
 
 const filterFolders = (folders, searchText) => {
   return folders.filter(folder => {
-    // Check if folder label matches search text (case-insensitive)
     const folderMatch = folder.label.toLowerCase().includes(searchText.toLowerCase());
 
-    // Check if any child folder matches the search text recursively
     const childMatch = folder.children && folder.children.some(child => filterFolders([child], searchText).length > 0);
 
-    // Return folder if either folder label or child matches
     return folderMatch || childMatch;
   });
 };
@@ -217,7 +214,7 @@ const filterFolders = (folders, searchText) => {
 
 const handleApplyFilter = (groups, filterText) => {
   if (filterText.trim() === "") {
-    return groups; 
+    return groups;
   }
 
   const filterGroups = (groups) => {
@@ -225,14 +222,14 @@ const handleApplyFilter = (groups, filterText) => {
       .map(group => {
         // Filter folders within the group
         const filteredFolders = filterFolders(group.folders || [], filterText);
-  
+
         return filteredFolders.length > 0 || group.label.toLowerCase().includes(filterText.toLowerCase())
           ? { ...group, folders: filteredFolders }
           : null;
       })
       .filter(group => group !== null);
   };
-  
+
 
   return filterGroups(groups);
 };
@@ -245,6 +242,14 @@ export default function FileExplorer({ selectIdFolder, groups, showCreateFolder,
   const handleFilterTextChange = (event) => {
     setFilterText(event.target.value);
   };
+
+  useEffect(() => {
+    if (filterText.trim() === "") {
+      setFilteredGroups(Object.values(groups)); // Muestra todos los grupos si el filtro está vacío
+    } else {
+      setFilteredGroups(handleApplyFilter(groups, filterText)); // Aplica el filtro si hay texto
+    }
+  }, [groups]); // Dependencia de useEffect
 
   const handleApplyFilterButtonClick = () => {
     setFilteredGroups(handleApplyFilter(groups, filterText));
@@ -259,33 +264,28 @@ export default function FileExplorer({ selectIdFolder, groups, showCreateFolder,
     selectIdFolder(selectedItemId);
   };
 
-  useEffect(()=>{
-    if(filteredGroups.length === 0){
-      handleApplyFilterButtonClick();
-      console.log(filteredGroups)
-    }
-
-  }, [])
 
   return (
     <div>
       <div>
-      <InputText
-            id="label"
-            name="label"
-            value={filterText}
-            onChange={handleFilterTextChange}
-            autoFocus
-          />
+        <InputText
+          id="label"
+          name="label"
+          className="mb-4"
+          placeholder="Buscar"
+          value={filterText}
+          onChange={handleFilterTextChange}
+          autoFocus
+        />
         <Button
-        label="Filtrar"
-        className="p-button-text ms-2 me-3" onClick={handleApplyFilterButtonClick}
-      />
+          label="Filtrar"
+          className="p-button-text mb-4 ms-2 me-3" onClick={handleApplyFilterButtonClick}
+        />
         <Button
-        label="Limpiar"
-        className="p-button-text"
-        onClick={handleClearFilter}
-      />
+          label="Limpiar"
+          className="p-button-text mb-4"
+          onClick={handleClearFilter}
+        />
       </div>
       <RichTreeView
         items={filteredGroups}
