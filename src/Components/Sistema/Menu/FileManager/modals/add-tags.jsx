@@ -11,6 +11,7 @@ import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import EditIcon from "@mui/icons-material/Edit";
 import { InputText } from "primereact/inputtext";
+import { TreeSelect } from "primereact/treeselect";
 
 const Root = styled("div")(
   ({ theme }) => `
@@ -173,7 +174,7 @@ export default function AddTags() {
     financial: "",
     date: "",
     coin: "",
-    relatedFile: "",    
+    relatedFile: "",
   };
 
   const [inputValue, setInputValue] = React.useState("");
@@ -234,7 +235,8 @@ export default function AddTags() {
       };
       setRequiredField(false);
       showToast("success", "Las etiquetas se han agregado con exito");
-      setData({})
+      console.log(payload, "payload")
+      setData({});
       setIsModal(!isModal);
       setTags([]);
     } else {
@@ -266,6 +268,11 @@ export default function AddTags() {
     </>
   );
 
+  const handleChangeStandar = (event) => {
+    setSelectedContentTitle(event.target.value)
+    setSelectedContentId(parseInt(event.target.value));
+};
+
   const Handler = ({
     isModal,
     productDialogFooter,
@@ -273,6 +280,9 @@ export default function AddTags() {
     data,
     onInputChange,
   }) => {
+    const handleCoinChange = (event) => {
+      onInputChange(event, 'coin'); // Pass the event and field name to onInputChange
+    };
     return (
       <Dialog
         visible={isModal}
@@ -390,16 +400,12 @@ export default function AddTags() {
             />
           </div>
           <div className="col-6">
-            <InputText
-              id="coin"
-              name="coin"
-              className="mt-4"
-              placeholder="Moneda"
-              value={data.coin?.trim()}
-              onChange={(e) => onInputChange(e, "coin")}
-              autoFocus
-            />
-          </div>
+          <select id="coin" name="coin" className="mt-4 form-select form-select-lg" value={data.coin?.trim()} onChange={handleCoinChange}>
+            <option value="soles">Soles</option>
+            <option value="USDT">usd</option>
+            <option value="pesos">eur</option>
+          </select>
+        </div>
         </div>
         <div className="col-6">
           <InputText
@@ -407,8 +413,8 @@ export default function AddTags() {
             name="relatedFile"
             className="mt-4"
             placeholder="Archivo relacionado"
-              value={data.relatedFile?.trim()}
-              onChange={(e) => onInputChange(e, "relatedFile")}
+            value={data.relatedFile?.trim()}
+            onChange={(e) => onInputChange(e, "relatedFile")}
             autoFocus
           />
         </div>
@@ -428,7 +434,7 @@ export default function AddTags() {
           data,
           openModal,
           productDialogFooter,
-          onInputChange
+          onInputChange,
         })}
       {ToastComponent}
     </div>
