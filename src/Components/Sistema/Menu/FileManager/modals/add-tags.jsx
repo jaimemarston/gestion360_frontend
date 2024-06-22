@@ -434,7 +434,7 @@ export default function AddTags({fileId, metadata}) {
             </select>
           </div>
           <div className="col-6">
-            <Calendar placeholder="Mes y año" locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
+            <Calendar placeholder={`${empty.date !== null ? "Fecha seleccina: "+empty.date : "Mes y año"}`} locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
           </div>
 
         </div>
