@@ -181,7 +181,7 @@ export default function AddTags({fileId, metadata}) {
   };
 
   const [inputValue, setInputValue] = React.useState("");
-  const [tags, setTags] = React.useState( []);
+  const [tags, setTags] = React.useState( metadata?.tags.length > 0 ? metadata.tags : []);
   const { showToast, ToastComponent } = useToast();
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
@@ -208,7 +208,7 @@ export default function AddTags({fileId, metadata}) {
     id: "customized-hook-demo",
     multiple: true,
     options: [],
-    getOptionLabel: (option) => option.title,
+    getOptionLabel: (option) => option.name,
     value: tags,
     defaultValue: tags,
     onChange: (event, newValue) => setTags(newValue),
@@ -225,8 +225,8 @@ export default function AddTags({fileId, metadata}) {
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && inputValue.trim() !== "") {
       setRequiredField(false);
-      const newTag = { title: inputValue.trim() };
-      if (!tags.find((tag) => tag.title === newTag.title)) {
+      const newTag = { name: inputValue.trim() };
+      if (!tags.find((tag) => tag.title === newTag.name)) {
         setTags((prev) => [...prev, newTag]);
       }
       setInputValue("");
@@ -242,7 +242,7 @@ export default function AddTags({fileId, metadata}) {
     const payload = {
       idFile: fileId,
       ...data,
-      tags: tags.map((item)=> item.title),
+      tags: tags.map((item)=> item.name),
     };
 
     try {
@@ -338,7 +338,7 @@ export default function AddTags({fileId, metadata}) {
               {tags.map((option, index) => {
                 const { key, ...tagProps } = getTagProps({ index });
                 return (
-                  <StyledTag key={key} {...tagProps} label={option.title} />
+                  <StyledTag key={key} {...tagProps} label={option.name} />
                 );
               })}
               <input
@@ -363,7 +363,7 @@ export default function AddTags({fileId, metadata}) {
                 });
                 return (
                   <li key={key} {...optionProps}>
-                    <span>{option.title}</span>
+                    <span>{option.name}</span>
                     <CheckIcon fontSize="small" />
                   </li>
                 );
