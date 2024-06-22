@@ -340,8 +340,8 @@ export default function FileManager() {
                           folderId={selectedFolderId}
                           fileId={file.id}
                         />
-                        
-                        <AddTags /> 
+
+                        <AddTags metadata={file.metadata} fileId={file.id} /> 
                       </div>
                     </div>
                     {file.filename.length < 12 && (

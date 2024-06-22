@@ -6,7 +6,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
 import { autocompleteClasses } from "@mui/material/Autocomplete";
 import { Dialog } from "primereact/dialog";
-import { useToast } from "../../../../../hooks/useToast";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import EditIcon from "@mui/icons-material/Edit";
@@ -14,6 +13,11 @@ import { InputText } from "primereact/inputtext";
 import { TreeSelect } from "primereact/treeselect";
 import { Calendar } from 'primereact/calendar';
 import { addLocale } from 'primereact/api';
+import {
+  addMetadata
+} from "../../../../../store/slices/fileManager/fileManagerSlice";
+import { useToast } from "../../../../../hooks/useToast";
+import { useDispatch } from "react-redux";
 
 const Root = styled("div")(
   ({ theme }) => `
@@ -165,24 +169,35 @@ const Listbox = styled("ul")(
 `
 );
 
-export default function AddTags() {
+export default function AddTags({fileId, metadata}) {
   let empty = {
-    title: "Value",
-    area: "",
-    proyect: "",
-    financial: "",
-    date: "",
-    coin: "",
-    relatedFile: "",
+    title: metadata?.title,
+    area: metadata?.area,
+    project: metadata?.project,
+    financial: metadata?.financial,
+    date: metadata?.date,
+    currency: metadata?.currency,
+    file_related: metadata?.file_related,
   };
 
+  React.useEffect(()=>{
+    console.log(metadata, "metadata")
+  }, [])
+  
+  
   const [inputValue, setInputValue] = React.useState("");
-  const [tags, setTags] = React.useState([]);
+  const [tags, setTags] = React.useState( metadata?.tags.length > 0 ? metadata.tags : []);
   const { showToast, ToastComponent } = useToast();
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
   const [data, setData] = React.useState(empty);
   const [date, setDate] = React.useState(null);
+  
+/*     React.useEffect(()=>{
+      console.log(tags, "tags")
+    }, [tags]) */
+ 
+  const dispatch = useDispatch();
 
   const {
     getRootProps,
@@ -200,6 +215,7 @@ export default function AddTags() {
     options: [],
     getOptionLabel: (option) => option.title,
     value: tags,
+    defaultValue: tags,
     onChange: (event, newValue) => setTags(newValue),
   });
 
@@ -228,20 +244,32 @@ export default function AddTags() {
   };
 
   const handleSubmit = async () => {
-    if (tags.length) {
-      const payload = {
-        ...data,
-        tags: [...tags],
-      };
-      setRequiredField(false);
-      showToast("success", "Las etiquetas se han agregado con exito");
-      console.log(payload, "payload")
-      setData({});
-      setIsModal(!isModal);
-      setTags([]);
-    } else {
-      setRequiredField(true);
-      /* showToast('error', 'Error al intentar agregar las etiquetas'); */
+    const payload = {
+      idFile: fileId,
+      ...data,
+      tags: tags.map((item)=> item.title),
+    };
+
+    try {
+      if (tags.length) {
+        setRequiredField(false);
+        showToast("success", "Las etiquetas se han agregado con exito");
+        console.log(payload, "payload")
+        const resultAction = dispatch(addMetadata(payload));
+        if (resultAction.error) {
+          showToast("error", "Error eliminar un archivo");
+        } else {
+          openModal();
+          showToast("success", "Archivo eliminado con éxito");
+        }
+        setData({});
+        setIsModal(!isModal);
+        setTags([]);
+      } else {
+        setRequiredField(true);
+      }
+    } catch (error) {
+      console.log("error", error);
     }
   };
 
@@ -268,13 +296,8 @@ export default function AddTags() {
     </>
   );
 
-  const handleChangeStandar = (event) => {
-    setSelectedContentTitle(event.target.value)
-    setSelectedContentId(parseInt(event.target.value));
-  };
-
-  React.useEffect(()=>{
-    if(date !== null){
+  React.useEffect(() => {
+    if (date !== null) {
       data.date = date?.toISOString().slice(0, 7);
     }
   }, [date])
@@ -286,7 +309,7 @@ export default function AddTags() {
     monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
     today: 'Hoy',
     clear: 'Limpiar'
-});
+  });
 
   const Handler = ({
     isModal,
@@ -296,7 +319,7 @@ export default function AddTags() {
     onInputChange,
   }) => {
     const handleCoinChange = (event) => {
-      onInputChange(event, 'coin'); // Pass the event and field name to onInputChange
+      onInputChange(event, 'currency'); // Pass the event and field name to onInputChange
     };
     return (
       <Dialog
@@ -354,7 +377,7 @@ export default function AddTags() {
           ) : null}
         </Root>
         <div className="d-flex">
-          <div className="col-6">
+        <div className="col-6">
             <InputText
               id="title"
               name="title"
@@ -362,7 +385,6 @@ export default function AddTags() {
               placeholder="Titulo"
               value={data.title}
               onChange={(e) => onInputChange(e, "title")}
-              required
               autoFocus
             />
           </div>
@@ -379,14 +401,14 @@ export default function AddTags() {
           </div>
         </div>
         <div className="d-flex">
-          <div className="col-6">
+        <div className="col-6">
             <InputText
-              id="proyect"
-              name="proyect"
+              id="project"
+              name="project"
               className="mt-4"
               placeholder="Proyecto"
-              value={data.proyect}
-              onChange={(e) => onInputChange(e, "proyect")}
+              value={data.project}
+              onChange={(e) => onInputChange(e, "project")}
               autoFocus
             />
           </div>
@@ -403,28 +425,31 @@ export default function AddTags() {
           </div>
         </div>
         <div className="d-flex align-items-end">
-          <div className="col-6">
-            <Calendar placeholder="Mes y año" locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
-          </div>
-          <div className="col-6">
-            <select id="coin" name="coin" className="mt-4 form-select form-select-lg" value={data.coin?.trim()} onChange={handleCoinChange}>
+        <div className="col-6">
+            <select id="currency" name="currency" className="mt-4 form-select form-select-lg" value={data.currency?.trim()} onChange={handleCoinChange}>
+              <option selected>Seleccione una moneda</option>
               <option value="soles">Soles</option>
               <option value="USDT">usd</option>
               <option value="pesos">eur</option>
             </select>
           </div>
+          <div className="col-6">
+            <Calendar placeholder="Mes y año" locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
+          </div>
+
         </div>
         <div className="col-6">
-          <InputText
-            id="relatedFile"
-            name="relatedFile"
-            className="mt-4"
-            placeholder="Archivo relacionado"
-            value={data.relatedFile?.trim()}
-            onChange={(e) => onInputChange(e, "relatedFile")}
-            autoFocus
-          />
-        </div>
+            <InputText
+              id="file_related"
+              name="file_related"
+              className="mt-4"
+              placeholder="Archivo relacionado"
+              value={data.file_related?.trim()}
+              onChange={(e) => onInputChange(e, "file_related")}
+              autoFocus
+            />
+          </div>
+
       </Dialog>
     );
   };
