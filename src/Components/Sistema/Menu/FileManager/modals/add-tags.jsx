@@ -180,13 +180,8 @@ export default function AddTags({fileId, metadata}) {
     file_related: metadata?.file_related,
   };
 
-  React.useEffect(()=>{
-    console.log(metadata, "metadata")
-  }, [])
-  
-  
   const [inputValue, setInputValue] = React.useState("");
-  const [tags, setTags] = React.useState( metadata?.tags.length > 0 ? metadata.tags : []);
+  const [tags, setTags] = React.useState( []);
   const { showToast, ToastComponent } = useToast();
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
