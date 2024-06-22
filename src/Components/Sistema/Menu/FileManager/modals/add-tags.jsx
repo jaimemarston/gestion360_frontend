@@ -6,17 +6,23 @@ import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/material/styles";
 import { autocompleteClasses } from "@mui/material/Autocomplete";
 import { Dialog } from "primereact/dialog";
-import { useToast } from "../../../../../hooks/useToast";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import EditIcon from "@mui/icons-material/Edit";
 import { InputText } from "primereact/inputtext";
+import { TreeSelect } from "primereact/treeselect";
+import { Calendar } from 'primereact/calendar';
+import { addLocale } from 'primereact/api';
+import {
+  addMetadata
+} from "../../../../../store/slices/fileManager/fileManagerSlice";
+import { useToast } from "../../../../../hooks/useToast";
+import { useDispatch } from "react-redux";
 
 const Root = styled("div")(
   ({ theme }) => `
-  color: ${
-    theme.palette.mode === "dark" ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,.85)"
-  };
+  color: ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,.85)"
+    };
   font-size: 14px;
 `
 );
@@ -49,10 +55,9 @@ const InputWrapper = styled("div")(
 
   & input {
     background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
-    color: ${
-      theme.palette.mode === "dark"
-        ? "rgba(255,255,255,0.65)"
-        : "rgba(0,0,0,.85)"
+    color: ${theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.65)"
+      : "rgba(0,0,0,.85)"
     };
     height: 30px;
     box-sizing: border-box;
@@ -89,9 +94,8 @@ const StyledTag = styled(Tag)(
   height: 24px;
   margin: 2px;
   line-height: 22px;
-  background-color: ${
-    theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "#fafafa"
-  };
+  background-color: ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "#fafafa"
+    };
   border: 1px solid ${theme.palette.mode === "dark" ? "#303030" : "#e8e8e8"};
   border-radius: 2px;
   box-sizing: content-box;
@@ -165,23 +169,30 @@ const Listbox = styled("ul")(
 `
 );
 
-export default function AddTags() {
+export default function AddTags({fileId, metadata}) {
   let empty = {
-    title: "Value",
-    area: "",
-    proyect: "",
-    financial: "",
-    date: "",
-    coin: "",
-    relatedFile: "",    
+    title: metadata?.title,
+    area: metadata?.area,
+    project: metadata?.project,
+    financial: metadata?.financial,
+    date: metadata?.date,
+    currency: metadata?.currency,
+    file_related: metadata?.file_related,
   };
 
   const [inputValue, setInputValue] = React.useState("");
-  const [tags, setTags] = React.useState([]);
+  const [tags, setTags] = React.useState( []);
   const { showToast, ToastComponent } = useToast();
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
   const [data, setData] = React.useState(empty);
+  const [date, setDate] = React.useState(null);
+  
+/*     React.useEffect(()=>{
+      console.log(tags, "tags")
+    }, [tags]) */
+ 
+  const dispatch = useDispatch();
 
   const {
     getRootProps,
@@ -199,6 +210,7 @@ export default function AddTags() {
     options: [],
     getOptionLabel: (option) => option.title,
     value: tags,
+    defaultValue: tags,
     onChange: (event, newValue) => setTags(newValue),
   });
 
@@ -227,19 +239,32 @@ export default function AddTags() {
   };
 
   const handleSubmit = async () => {
-    if (tags.length) {
-      const payload = {
-        ...data,
-        tags: [...tags],
-      };
-      setRequiredField(false);
-      showToast("success", "Las etiquetas se han agregado con exito");
-      setData({})
-      setIsModal(!isModal);
-      setTags([]);
-    } else {
-      setRequiredField(true);
-      /* showToast('error', 'Error al intentar agregar las etiquetas'); */
+    const payload = {
+      idFile: fileId,
+      ...data,
+      tags: tags.map((item)=> item.title),
+    };
+
+    try {
+      if (tags.length) {
+        setRequiredField(false);
+        showToast("success", "Las etiquetas se han agregado con exito");
+        console.log(payload, "payload")
+        const resultAction = dispatch(addMetadata(payload));
+        if (resultAction.error) {
+          showToast("error", "Error eliminar un archivo");
+        } else {
+          openModal();
+          showToast("success", "Archivo eliminado con éxito");
+        }
+        setData({});
+        setIsModal(!isModal);
+        setTags([]);
+      } else {
+        setRequiredField(true);
+      }
+    } catch (error) {
+      console.log("error", error);
     }
   };
 
@@ -266,6 +291,21 @@ export default function AddTags() {
     </>
   );
 
+  React.useEffect(() => {
+    if (date !== null) {
+      data.date = date?.toISOString().slice(0, 7);
+    }
+  }, [date])
+
+  addLocale('es', {
+    firstDayOfWeek: 1,
+    showMonthAfterYear: true,
+    monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+    monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+    today: 'Hoy',
+    clear: 'Limpiar'
+  });
+
   const Handler = ({
     isModal,
     productDialogFooter,
@@ -273,6 +313,9 @@ export default function AddTags() {
     data,
     onInputChange,
   }) => {
+    const handleCoinChange = (event) => {
+      onInputChange(event, 'currency'); // Pass the event and field name to onInputChange
+    };
     return (
       <Dialog
         visible={isModal}
@@ -329,15 +372,14 @@ export default function AddTags() {
           ) : null}
         </Root>
         <div className="d-flex">
-          <div className="col-6">
+        <div className="col-6">
             <InputText
               id="title"
               name="title"
               className="mt-4"
               placeholder="Titulo"
-              value={data.title?.trim()}
+              value={data.title}
               onChange={(e) => onInputChange(e, "title")}
-              required
               autoFocus
             />
           </div>
@@ -347,21 +389,21 @@ export default function AddTags() {
               name="area"
               className="mt-4"
               placeholder="Area"
-              value={data.area?.trim()}
+              value={data.area}
               onChange={(e) => onInputChange(e, "area")}
               autoFocus
             />
           </div>
         </div>
         <div className="d-flex">
-          <div className="col-6">
+        <div className="col-6">
             <InputText
-              id="proyect"
-              name="proyect"
+              id="project"
+              name="project"
               className="mt-4"
               placeholder="Proyecto"
-              value={data.proyect?.trim()}
-              onChange={(e) => onInputChange(e, "proyect")}
+              value={data.project}
+              onChange={(e) => onInputChange(e, "project")}
               autoFocus
             />
           </div>
@@ -371,47 +413,38 @@ export default function AddTags() {
               name="financial"
               className="mt-4"
               placeholder="Financiera"
-              value={data.financial?.trim()}
+              value={data.financial}
               onChange={(e) => onInputChange(e, "financial")}
               autoFocus
             />
           </div>
         </div>
-        <div className="d-flex">
-          <div className="col-6">
-            <InputText
-              id="date"
-              name="date"
-              className="mt-4"
-              placeholder="Fecha desde, hasta"
-              value={data.date?.trim()}
-              onChange={(e) => onInputChange(e, "date")}
-              autoFocus
-            />
+        <div className="d-flex align-items-end">
+        <div className="col-6">
+            <select id="currency" name="currency" className="mt-4 form-select form-select-lg" value={data.currency?.trim()} onChange={handleCoinChange}>
+              <option selected>Seleccione una moneda</option>
+              <option value="soles">Soles</option>
+              <option value="USDT">usd</option>
+              <option value="pesos">eur</option>
+            </select>
           </div>
           <div className="col-6">
-            <InputText
-              id="coin"
-              name="coin"
-              className="mt-4"
-              placeholder="Moneda"
-              value={data.coin?.trim()}
-              onChange={(e) => onInputChange(e, "coin")}
-              autoFocus
-            />
+            <Calendar placeholder={`${empty.date !== null ? "Fecha seleccina: "+empty.date : "Mes y año"}`} locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
           </div>
+
         </div>
         <div className="col-6">
-          <InputText
-            id="relatedFile"
-            name="relatedFile"
-            className="mt-4"
-            placeholder="Archivo relacionado"
-              value={data.relatedFile?.trim()}
-              onChange={(e) => onInputChange(e, "relatedFile")}
-            autoFocus
-          />
-        </div>
+            <InputText
+              id="file_related"
+              name="file_related"
+              className="mt-4"
+              placeholder="Archivo relacionado"
+              value={data.file_related?.trim()}
+              onChange={(e) => onInputChange(e, "file_related")}
+              autoFocus
+            />
+          </div>
+
       </Dialog>
     );
   };
@@ -428,7 +461,7 @@ export default function AddTags() {
           data,
           openModal,
           productDialogFooter,
-          onInputChange
+          onInputChange,
         })}
       {ToastComponent}
     </div>

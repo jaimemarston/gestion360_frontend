@@ -1,6 +1,7 @@
 import http from '../axios'
 
 type Files = { mimetype: string, filename: string, base64Content: string, tags: string[] }
+type Metadata = { mimetype: string, filename: string, base64Content: string, tags: string[] }
 
 const getFileFolder = async (folderId, rowsPerPage, page) => {
     const { data } = await http.get(`minio/get-files-by-folder/${folderId}?per_page=${rowsPerPage}&page=${page}`)
@@ -18,8 +19,15 @@ const deleteFile = async (idFolder, fileId) => {
     return data
 }
 
+
+const createMetadata = async (idFile: number, fileData: Metadata) => {
+    const { data } = await http.post(`minio/metadata/${idFile}`, fileData)
+    return data
+}
+
 export default {
     getFileFolder,
     createFile,
-    deleteFile
+    deleteFile,
+    createMetadata
 }

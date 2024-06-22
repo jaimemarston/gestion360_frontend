@@ -69,6 +69,20 @@ export const addFile = createAsyncThunk(
     }
 );
 
+export const addMetadata = createAsyncThunk(
+    'FileManagerSlice/addFile',
+    async ( file, thunkAPI) => {
+
+        const { idFile, ...dataFile } = file;
+
+        const response = await fileService.createMetadata(idFile, dataFile);
+
+        thunkAPI.dispatch(fetchFiles());
+        thunkAPI.dispatch(fetchGroups());
+        return response;
+    }
+);
+
 export const removeFile = createAsyncThunk(
     'FileManagerSlice/removeFile',
     async ( files, thunkAPI) => {
