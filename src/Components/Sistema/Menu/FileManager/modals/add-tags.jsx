@@ -12,12 +12,13 @@ import { Button } from "primereact/button";
 import EditIcon from "@mui/icons-material/Edit";
 import { InputText } from "primereact/inputtext";
 import { TreeSelect } from "primereact/treeselect";
+import { Calendar } from 'primereact/calendar';
+import { addLocale } from 'primereact/api';
 
 const Root = styled("div")(
   ({ theme }) => `
-  color: ${
-    theme.palette.mode === "dark" ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,.85)"
-  };
+  color: ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,.85)"
+    };
   font-size: 14px;
 `
 );
@@ -50,10 +51,9 @@ const InputWrapper = styled("div")(
 
   & input {
     background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
-    color: ${
-      theme.palette.mode === "dark"
-        ? "rgba(255,255,255,0.65)"
-        : "rgba(0,0,0,.85)"
+    color: ${theme.palette.mode === "dark"
+      ? "rgba(255,255,255,0.65)"
+      : "rgba(0,0,0,.85)"
     };
     height: 30px;
     box-sizing: border-box;
@@ -90,9 +90,8 @@ const StyledTag = styled(Tag)(
   height: 24px;
   margin: 2px;
   line-height: 22px;
-  background-color: ${
-    theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "#fafafa"
-  };
+  background-color: ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "#fafafa"
+    };
   border: 1px solid ${theme.palette.mode === "dark" ? "#303030" : "#e8e8e8"};
   border-radius: 2px;
   box-sizing: content-box;
@@ -183,6 +182,7 @@ export default function AddTags() {
   const [isModal, setIsModal] = React.useState(false);
   const [requiredField, setRequiredField] = React.useState(false);
   const [data, setData] = React.useState(empty);
+  const [date, setDate] = React.useState(null);
 
   const {
     getRootProps,
@@ -271,7 +271,22 @@ export default function AddTags() {
   const handleChangeStandar = (event) => {
     setSelectedContentTitle(event.target.value)
     setSelectedContentId(parseInt(event.target.value));
-};
+  };
+
+  React.useEffect(()=>{
+    if(date !== null){
+      data.date = date?.toISOString().slice(0, 7);
+    }
+  }, [date])
+
+  addLocale('es', {
+    firstDayOfWeek: 1,
+    showMonthAfterYear: true,
+    monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+    monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+    today: 'Hoy',
+    clear: 'Limpiar'
+});
 
   const Handler = ({
     isModal,
@@ -345,7 +360,7 @@ export default function AddTags() {
               name="title"
               className="mt-4"
               placeholder="Titulo"
-              value={data.title?.trim()}
+              value={data.title}
               onChange={(e) => onInputChange(e, "title")}
               required
               autoFocus
@@ -357,7 +372,7 @@ export default function AddTags() {
               name="area"
               className="mt-4"
               placeholder="Area"
-              value={data.area?.trim()}
+              value={data.area}
               onChange={(e) => onInputChange(e, "area")}
               autoFocus
             />
@@ -370,7 +385,7 @@ export default function AddTags() {
               name="proyect"
               className="mt-4"
               placeholder="Proyecto"
-              value={data.proyect?.trim()}
+              value={data.proyect}
               onChange={(e) => onInputChange(e, "proyect")}
               autoFocus
             />
@@ -381,31 +396,23 @@ export default function AddTags() {
               name="financial"
               className="mt-4"
               placeholder="Financiera"
-              value={data.financial?.trim()}
+              value={data.financial}
               onChange={(e) => onInputChange(e, "financial")}
               autoFocus
             />
           </div>
         </div>
-        <div className="d-flex">
+        <div className="d-flex align-items-end">
           <div className="col-6">
-            <InputText
-              id="date"
-              name="date"
-              className="mt-4"
-              placeholder="Fecha desde, hasta"
-              value={data.date?.trim()}
-              onChange={(e) => onInputChange(e, "date")}
-              autoFocus
-            />
+            <Calendar placeholder="Mes y año" locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
           </div>
           <div className="col-6">
-          <select id="coin" name="coin" className="mt-4 form-select form-select-lg" value={data.coin?.trim()} onChange={handleCoinChange}>
-            <option value="soles">Soles</option>
-            <option value="USDT">usd</option>
-            <option value="pesos">eur</option>
-          </select>
-        </div>
+            <select id="coin" name="coin" className="mt-4 form-select form-select-lg" value={data.coin?.trim()} onChange={handleCoinChange}>
+              <option value="soles">Soles</option>
+              <option value="USDT">usd</option>
+              <option value="pesos">eur</option>
+            </select>
+          </div>
         </div>
         <div className="col-6">
           <InputText
