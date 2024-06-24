@@ -1,16 +1,11 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import { useAutocomplete } from "@mui/base/useAutocomplete";
 import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import { styled } from "@mui/material/styles";
-import { autocompleteClasses } from "@mui/material/Autocomplete";
+
 import { Dialog } from "primereact/dialog";
 import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
-import EditIcon from "@mui/icons-material/Edit";
 import { InputText } from "primereact/inputtext";
-import { TreeSelect } from "primereact/treeselect";
 import { Calendar } from 'primereact/calendar';
 import { addLocale } from 'primereact/api';
 import {
@@ -18,156 +13,7 @@ import {
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { useToast } from "../../../../../hooks/useToast";
 import { useDispatch } from "react-redux";
-
-const Root = styled("div")(
-  ({ theme }) => `
-  color: ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,.85)"
-    };
-  font-size: 14px;
-`
-);
-
-const Label = styled("label")`
-  padding: 0 0 4px;
-  line-height: 1.5;
-  display: block;
-`;
-
-const InputWrapper = styled("div")(
-  ({ theme }) => `
-  width: 659px;
-  border: 1px solid ${theme.palette.mode === "dark" ? "#434343" : "#d9d9d9"};
-  background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
-  border-radius: 4px;
-  padding: 1px;
-  display: flex;
-  margin-left: 5px;
-  flex-wrap: wrap;
-
-  &:hover {
-    border-color: ${theme.palette.mode === "dark" ? "#177ddc" : "#40a9ff"};
-  }
-
-  &.focused {
-    border-color: ${theme.palette.mode === "dark" ? "#177ddc" : "#40a9ff"};
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-  }
-
-  & input {
-    background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
-    color: ${theme.palette.mode === "dark"
-      ? "rgba(255,255,255,0.65)"
-      : "rgba(0,0,0,.85)"
-    };
-    height: 30px;
-    box-sizing: border-box;
-    padding: 4px 6px;
-    width: 0;
-    min-width: 30px;
-    flex-grow: 1;
-    border: 0;
-    margin: 0;
-    outline: 0;
-  }
-`
-);
-
-function Tag(props) {
-  const { label, onDelete, ...other } = props;
-  return (
-    <div {...other}>
-      <span>{label}</span>
-      <CloseIcon onClick={onDelete} />
-    </div>
-  );
-}
-
-Tag.propTypes = {
-  label: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
-};
-
-const StyledTag = styled(Tag)(
-  ({ theme }) => `
-  display: flex;
-  align-items: center;
-  height: 24px;
-  margin: 2px;
-  line-height: 22px;
-  background-color: ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "#fafafa"
-    };
-  border: 1px solid ${theme.palette.mode === "dark" ? "#303030" : "#e8e8e8"};
-  border-radius: 2px;
-  box-sizing: content-box;
-  padding: 0 4px 0 10px;
-  outline: 0;
-  overflow: hidden;
-
-  &:focus {
-    border-color: ${theme.palette.mode === "dark" ? "#177ddc" : "#40a9ff"};
-    background-color: ${theme.palette.mode === "dark" ? "#003b57" : "#e6f7ff"};
-  }
-
-  & span {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  & svg {
-    font-size: 12px;
-    cursor: pointer;
-    padding: 4px;
-  }
-`
-);
-
-const Listbox = styled("ul")(
-  ({ theme }) => `
-  width: 700px;
-  margin: 2px 0 0;
-  padding: 0;
-  position: absolute;
-  list-style: none;
-  background-color: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
-  overflow: auto;
-  max-height: 250px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 1;
-
-  & li {
-    padding: 5px 12px;
-    display: flex;
-
-    & span {
-      flex-grow: 1;
-    }
-
-    & svg {
-      color: transparent;
-    }
-  }
-
-  & li[aria-selected='true'] {
-    background-color: ${theme.palette.mode === "dark" ? "#2b2b2b" : "#fafafa"};
-    font-weight: 600;
-
-    & svg {
-      color: #1890ff;
-    }
-  }
-
-  & li.${autocompleteClasses.focused} {
-    background-color: ${theme.palette.mode === "dark" ? "#003b57" : "#e6f7ff"};
-    cursor: pointer;
-
-    & svg {
-      color: currentColor;
-    }
-  }
-`
-);
+import { StyledTag, Root, Listbox, InputWrapper, Label } from "./tags-component/Tags-component";
 
 export default function AddTags({fileId, GetFiles, metadata}) {
   let empty = {
@@ -188,10 +34,6 @@ export default function AddTags({fileId, GetFiles, metadata}) {
   const [data, setData] = React.useState(empty);
   const [date, setDate] = React.useState(null);
   
-/*     React.useEffect(()=>{
-      console.log(tags, "tags")
-    }, [tags]) */
- 
   const dispatch = useDispatch();
 
   const {
@@ -211,7 +53,7 @@ export default function AddTags({fileId, GetFiles, metadata}) {
     getOptionLabel: (option) => option.name,
     value: tags,
     defaultValue: tags,
-    onChange: (event, newValue) => setTags(newValue),
+    onChange: (event, newValue) => event.key !== 'Backspace' && setTags(newValue),
   });
 
   const openModal = () => {
@@ -225,8 +67,8 @@ export default function AddTags({fileId, GetFiles, metadata}) {
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && inputValue.trim() !== "") {
       setRequiredField(false);
-      const newTag = { name: inputValue.trim() };
-      if (!tags.find((tag) => tag.title === newTag.name)) {
+      const newTag = { name: inputValue.trim()};
+      if (!tags.find((tag) => tag.name === newTag.name)) {
         setTags((prev) => [...prev, newTag]);
       }
       setInputValue("");
@@ -249,14 +91,15 @@ export default function AddTags({fileId, GetFiles, metadata}) {
       if (tags.length) {
         setRequiredField(false);
         showToast("success", "Las etiquetas se han agregado con exito");
-        const resultAction = dispatch(addMetadata(payload));
-        GetFiles();
+        const resultAction = await dispatch(addMetadata(payload));
         if (resultAction.error) {
-          showToast("error", "Error eliminar un archivo");
+          showToast("error", "Error al intentar agregar etiquetas al archivo");
+        }else{
+          GetFiles();
         }
         setData({});
         setIsModal(!isModal);
-        setTags([]);
+
       } else {
         setRequiredField(true);
       }
@@ -303,6 +146,8 @@ export default function AddTags({fileId, GetFiles, metadata}) {
     clear: 'Limpiar'
   });
 
+  const fecha = new Date(empty.date+ "/01");
+  
   const Handler = ({
     isModal,
     productDialogFooter,
@@ -421,12 +266,12 @@ export default function AddTags({fileId, GetFiles, metadata}) {
             <select id="currency" name="currency" className="mt-4 form-select form-select-lg" value={data.currency?.trim()} onChange={handleCoinChange}>
               <option selected>Seleccione una moneda</option>
               <option value="soles">Soles</option>
-              <option value="USDT">usd</option>
-              <option value="pesos">eur</option>
+              <option value="usd">usd</option>
+              <option value="eur">eur</option>
             </select>
           </div>
           <div className="col-6">
-            <Calendar placeholder={`${empty.date !== null ? "Fecha seleccina: "+empty.date : "Mes y año"}`} locale="es" value={date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
+            <Calendar locale="es" placeholder="Mes y año" value={date === null ? (empty.date !== null ? fecha : date) : date} onChange={(e) => setDate(e.value)} view="month" dateFormat="mm/yy" />
           </div>
 
         </div>
@@ -464,5 +309,4 @@ export default function AddTags({fileId, GetFiles, metadata}) {
     </div>
   );
 }
-
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
