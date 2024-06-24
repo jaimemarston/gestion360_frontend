@@ -341,7 +341,7 @@ export default function FileManager() {
                           fileId={file.id}
                         />
 
-                        <AddTags metadata={file.metadata} fileId={file.id} /> 
+                        <AddTags GetFiles={getFiles} metadata={file.metadata} fileId={file.id} /> 
                       </div>
                     </div>
                     {file.filename.length < 12 && (

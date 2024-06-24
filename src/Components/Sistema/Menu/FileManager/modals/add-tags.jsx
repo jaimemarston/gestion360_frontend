@@ -169,7 +169,7 @@ const Listbox = styled("ul")(
 `
 );
 
-export default function AddTags({fileId, metadata}) {
+export default function AddTags({fileId, GetFiles, metadata}) {
   let empty = {
     title: metadata?.title,
     area: metadata?.area,
@@ -249,13 +249,10 @@ export default function AddTags({fileId, metadata}) {
       if (tags.length) {
         setRequiredField(false);
         showToast("success", "Las etiquetas se han agregado con exito");
-        console.log(payload, "payload")
         const resultAction = dispatch(addMetadata(payload));
+        GetFiles();
         if (resultAction.error) {
           showToast("error", "Error eliminar un archivo");
-        } else {
-          openModal();
-          showToast("success", "Archivo eliminado con éxito");
         }
         setData({});
         setIsModal(!isModal);
