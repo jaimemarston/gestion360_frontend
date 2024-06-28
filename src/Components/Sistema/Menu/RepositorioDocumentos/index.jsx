@@ -86,12 +86,6 @@ const [spinner, setSpinner] = useState(false)
     listarDatosState();
   }, [selectedCity1]);
 
-  useEffect(() => {
-    console.log('');
-    listarDatos();
-  }, [lista]); // eslint-disable-line react-hooks/exhaustive-deps
-  // const history = useHistory();
-
   const dialogFuncMap = {
     displayBasic: setDisplayBasic,
   };
@@ -106,6 +100,7 @@ const [spinner, setSpinner] = useState(false)
     };
     const onHide = (name) => {
       dialogFuncMap[`${name}`](false);
+      setSelectedFiles([])
     };
 
     const renderFooter = (name) => {
@@ -114,6 +109,7 @@ const [spinner, setSpinner] = useState(false)
           <Button label="Cerrar" icon="pi pi-check" onClick={() => onHide(name)} className="p-button-text" />
           <Button
             label='Aceptar'
+            disabled={spinner}
             // icon='pi pi-check'
             onClick={() => {
               onHide(name);
@@ -130,7 +126,6 @@ const [spinner, setSpinner] = useState(false)
     };
 
     const customBase64Uploader = (e) => {
-      
       setSpinner(true)
       let formData = new FormData();
       e.files.map((e) => formData.append('file', e));
@@ -138,6 +133,7 @@ const [spinner, setSpinner] = useState(false)
          'POST',
         formData,
       ).then((res) => {
+        setSelectedFiles([])
         setSpinner(false)
         toast.current.show({
           severity: 'success',
@@ -170,7 +166,6 @@ const [spinner, setSpinner] = useState(false)
           detail: 'Documento Subido',
           life: 3000,
         });
-      
         listarDatos();
       })
         .catch((error) => {
@@ -180,7 +175,18 @@ const [spinner, setSpinner] = useState(false)
       // listarDatos();
     };
     
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const onFileSelect = (e) => {
+      const value = [...e.files];
 
+      console.log(value, "VALUE")
+      setSelectedFiles([...e.files]);
+    };
+
+
+  const onFileRemove = (e) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter(file => file !== e.file));
+  };
 
     return (
       <div className={isDarkMode ?  'dark-mode-table grid crud-demo' : 'grid crud-demo'  } >
@@ -216,7 +222,10 @@ const [spinner, setSpinner] = useState(false)
               customUpload
               uploadHandler={customBase64Uploader}
               maxFileSize={1000000}
-            />
+              onSelect={onFileSelect}
+              onRemove={onFileRemove} 
+              />
+               <p className='mt-3'>Cantidad de archivos seleccionados: {selectedFiles ? selectedFiles.length : ""}</p>
           </div>
         </Dialog>
 
@@ -225,7 +234,7 @@ const [spinner, setSpinner] = useState(false)
           visible={viewFirmados}
           style={{ width: '50vw' }}
           // footer={renderFooter('displayBasic')}
-          onHide={() => setViewFirmados(false)}
+          onHide={() => {setViewFirmados(false), setSelectedFiles([])}}
         >
           <p>Seleccione archivos a Importar en Formato PDF</p>
           <div className='card'>
@@ -240,7 +249,10 @@ const [spinner, setSpinner] = useState(false)
               uploadHandler={customBaseUploader}
               // onUpload={onUpload}
               maxFileSize={1000000}
-            />
+              onSelect={onFileSelect}
+              onRemove={onFileRemove} 
+              />
+               <p className='mt-3'>Cantidad de archivos seleccionados: {selectedFiles ? selectedFiles.length : ""}</p>
           </div>
         </Dialog>
       </div>
