@@ -39,7 +39,7 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   const [viewFirmados, setViewFirmados] = useState(false);
   // const customerService = new CustomerService();
   /*   const empleadoService = new EmpleadoService(); */
-  const [selectedCity1, setSelectedCity1] = useState(null);
+  const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
