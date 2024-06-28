@@ -7,7 +7,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import { fetchDelete, fetchGet, createFormData,  VITE_API_URL} from '../../../../api';
+import { fetchDelete, fetchGet, createFormData, VITE_API_URL } from '../../../../api';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
@@ -16,11 +16,11 @@ import "./style.scss";
 import JSZipUtils from '../assets/JSZipUtils';
 let zip = new JSZip();
  */
-const RegistroDocumentos = ({isDarkMode}) => {
+const RegistroDocumentos = ({ isDarkMode }) => {
 
-  const mainUrlmin =  VITE_API_URL;
+  const mainUrlmin = VITE_API_URL;
   const toast = useRef(null);
-const [spinner, setSpinner] = useState(false)
+  const [spinner, setSpinner] = useState(false)
   const [products, setProducts] = useState([]);
   const [view] = useState(false);
   //const [text, setText] = useState('');
@@ -38,25 +38,26 @@ const [spinner, setSpinner] = useState(false)
 
   const [viewFirmados, setViewFirmados] = useState(false);
   // const customerService = new CustomerService();
-/*   const empleadoService = new EmpleadoService(); */
+  /*   const empleadoService = new EmpleadoService(); */
   const [selectedCity1, setSelectedCity1] = useState(null);
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-   const listarDatos = async  () => {
+  const listarDatos = async () => {
 
-    const response =  await fetchGet('empleados')
+    const response = await fetchGet('empleados')
     setProducts(response.registroEmpleados);
 
-/*     empleadoService
-      .getProductsWithOrdersSmall(selectedCity1?.name)
-      .then((data) => {
-        setProducts(data);
-      }); */
+    /*     empleadoService
+          .getProductsWithOrdersSmall(selectedCity1?.name)
+          .then((data) => {
+            setProducts(data);
+          }); */
   };
- 
+
   const listarDatosState = async () => {
-    const response =  await fetchGet(`empleadosState/${selectedCity1?.name}`)
+    const response = await fetchGet(`empleadosState/${selectedCity1?.name}`)
     setProducts(response.registroEmpleados);
   };
 
@@ -68,7 +69,6 @@ const [spinner, setSpinner] = useState(false)
   // };
 
   const onUpload = (e) => {
-    // console.log(e);
     toast.current.show({
       severity: 'success',
       summary: 'Successful',
@@ -129,8 +129,8 @@ const [spinner, setSpinner] = useState(false)
       setSpinner(true)
       let formData = new FormData();
       e.files.map((e) => formData.append('file', e));
-      createFormData(`regdocAddAll`, 
-         'POST',
+      createFormData(`regdocAddAll`,
+        'POST',
         formData,
       ).then((res) => {
         setSelectedFiles([])
@@ -141,7 +141,7 @@ const [spinner, setSpinner] = useState(false)
           detail: 'Documento Subido',
           life: 3000,
         });
-      
+
         listarDatos();
       })
         .catch((error) => {
@@ -155,8 +155,8 @@ const [spinner, setSpinner] = useState(false)
       setSpinner(true)
       let formData = new FormData();
       e.files.map((e) => formData.append('file', e));
-      createFormData(`regdocfirmAddAll`, 
-         'POST',
+      createFormData(`regdocfirmAddAll`,
+        'POST',
         formData,
       ).then((res) => {
         setSpinner(false)
@@ -174,22 +174,18 @@ const [spinner, setSpinner] = useState(false)
         });
       // listarDatos();
     };
-    
-    const [selectedFiles, setSelectedFiles] = useState([]);
+
     const onFileSelect = (e) => {
       const value = [...e.files];
-
-      console.log(value, "VALUE")
       setSelectedFiles([...e.files]);
     };
 
-
-  const onFileRemove = (e) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter(file => file !== e.file));
-  };
+    const onFileRemove = (e) => {
+      setSelectedFiles((prevFiles) => prevFiles.filter(file => file !== e.file));
+    };
 
     return (
-      <div className={isDarkMode ?  'dark-mode-table grid crud-demo' : 'grid crud-demo'  } >
+      <div className={isDarkMode ? 'dark-mode-table grid crud-demo' : 'grid crud-demo'} >
         <Button
           label='Importar Documentos'
           icon='pi pi-upload'
@@ -216,16 +212,16 @@ const [spinner, setSpinner] = useState(false)
             <FileUpload
               multiple
               name='image'
-             /*  url={Urluploading} */
+              /*  url={Urluploading} */
               accept='pdf/*'
               // onUpload={onUpload}
               customUpload
               uploadHandler={customBase64Uploader}
               maxFileSize={1000000}
               onSelect={onFileSelect}
-              onRemove={onFileRemove} 
-              />
-               <p className='mt-3'>Cantidad de archivos seleccionados: {selectedFiles ? selectedFiles.length : ""}</p>
+              onRemove={onFileRemove}
+            />
+            <p className='mt-3'>Cantidad de archivos seleccionados: {selectedFiles ? selectedFiles.length : ""}</p>
           </div>
         </Dialog>
 
@@ -234,7 +230,7 @@ const [spinner, setSpinner] = useState(false)
           visible={viewFirmados}
           style={{ width: '50vw' }}
           // footer={renderFooter('displayBasic')}
-          onHide={() => {setViewFirmados(false), setSelectedFiles([])}}
+          onHide={() => { setViewFirmados(false), setSelectedFiles([]) }}
         >
           <p>Seleccione archivos a Importar en Formato PDF</p>
           <div className='card'>
@@ -242,7 +238,7 @@ const [spinner, setSpinner] = useState(false)
             <FileUpload
               multiple
               name='image'
-             /*  url={urlfirmado} */
+              /*  url={urlfirmado} */
               accept='pdf/*'
               customUpload
 
@@ -250,9 +246,9 @@ const [spinner, setSpinner] = useState(false)
               // onUpload={onUpload}
               maxFileSize={1000000}
               onSelect={onFileSelect}
-              onRemove={onFileRemove} 
-              />
-               <p className='mt-3'>Cantidad de archivos seleccionados: {selectedFiles ? selectedFiles.length : ""}</p>
+              onRemove={onFileRemove}
+            />
+            <p className='mt-3'>Cantidad de archivos seleccionados: {selectedFiles ? selectedFiles.length : ""}</p>
           </div>
         </Dialog>
       </div>
@@ -260,8 +256,6 @@ const [spinner, setSpinner] = useState(false)
   };
 
   const statusOrderBodyTemplate = (rowData) => {
-    // console.log(rowData);
-    // console.log('=>xx', rowData);
     return (
       <span
         className={`order-badge order-${rowData.estado ? 'activo' : 'cesado'}`}
@@ -272,8 +266,7 @@ const [spinner, setSpinner] = useState(false)
   };
 
   const statusOrderBody = (rowData) => {
-    // console.log('row => ', rowData.estado);
-   
+
     const data = rowData.estado === true ? '#8ff484' : '#f4d484';
     return (
       <span
@@ -286,10 +279,10 @@ const [spinner, setSpinner] = useState(false)
   };
 
   const editProduct = (product) => {
-  
+
     localStorage.setItem('pdfdetalle', JSON.stringify(product));
-/*      var url = '/viewpdf';
-     history.push(url, { detail: product.nombredoc }); */
+    /*      var url = '/viewpdf';
+         history.push(url, { detail: product.nombredoc }); */
   };
 
   const actionBodyTemplate = (rowData) => {
@@ -325,7 +318,7 @@ const [spinner, setSpinner] = useState(false)
     );
   };
 
-  
+
 
   const obtenerId = (e) => {
     setSelectedDocuments(e.value);
@@ -334,19 +327,19 @@ const [spinner, setSpinner] = useState(false)
     setDeleteId(data);
   };
 
-/*   const fetchDelete = async (method = '', data) => {
-    const response = await fetch(`${mainUrl}/documentosall`, {
-      method,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await response.json();
-
-    return result;
-  }; */
+  /*   const fetchDelete = async (method = '', data) => {
+      const response = await fetch(`${mainUrl}/documentosall`, {
+        method,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+  
+      return result;
+    }; */
 
   const deleteAll = () => {
     fetchDelete('DELETE', deleteId)
@@ -379,29 +372,28 @@ const [spinner, setSpinner] = useState(false)
   };
 
   const getAll = () => {
-    console.log(mainUrlmin, deleteId)
     fetchdownload('POST', deleteId)
       .then(async (response) => {
         if (response.ok) {
           const blob = await response.blob();
           const blobUrl = URL.createObjectURL(blob);
-    
+
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = blobUrl;
           a.download = 'documentos.zip'; // Nombre del archivo ZIP
           document.body.appendChild(a);
-          
+
           a.click();
           URL.revokeObjectURL(blobUrl);
 
-        toast.current.show({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Documentos descargado',
-          life: 3000,
-        });
-        }else {
+          toast.current.show({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Documentos descargado',
+            life: 3000,
+          });
+        } else {
           throw new Error('No se pudo descargar el archivo')
         }
 
@@ -419,7 +411,6 @@ const [spinner, setSpinner] = useState(false)
       });
   };
   const rowExpansionTemplate = (data) => {
-    // console.log(data);
     localStorage.setItem('visor', JSON.stringify(data));
 
     return (
@@ -441,8 +432,8 @@ const [spinner, setSpinner] = useState(false)
           emptyMessage='No Data found.'
           // header={header}
           responsiveLayout='scroll'
-          // selection={selectedProducts}
-          // onSelectionChange={(e) => console.log(e.value)}
+        // selection={selectedProducts}
+        // onSelectionChange={(e) => console.log(e.value)}
         >
           <Column
             selectionMode='multiple'
@@ -496,13 +487,12 @@ const [spinner, setSpinner] = useState(false)
     );
   };
 
-  
+
 
   const cities = [{ name: 'todos' }, { name: 'activo' }, { name: 'inactivo' }];
   const onCityChange = (e) => {
     setSelectedCity1(e.value);
   };
-  // console.log(view);
   const getDownload = () => {
     console.log('click');
   };
@@ -614,17 +604,16 @@ const [spinner, setSpinner] = useState(false)
   };
   const eliminarDocumentos = () => {
     setIsCloseModal(false);
-    console.log(product.id)
     fetchDelete(`regdoc/${product.id}`).then((res) => {
-        toast.current.show({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Documento eliminado',
-          life: 3000,
-        });
-        
-        listarDatos();
-      })
+      toast.current.show({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Documento eliminado',
+        life: 3000,
+      });
+
+      listarDatos();
+    })
       .catch((error) => {
         console.log(error)
         toast.current.show({
@@ -637,16 +626,16 @@ const [spinner, setSpinner] = useState(false)
   };
 
   return (
-    <> 
-{  spinner ?  <div className="overlay">
+    <>
+      {spinner ? <div className="overlay">
 
-  <ProgressSpinner style={{ zIndex: 1 }} />
+        <ProgressSpinner style={{ zIndex: 1 }} />
 
-</div> : null}
-      <div className={isDarkMode ?  'dark-mode-table grid table-demo' : 'grid table-demo'  }  >
+      </div> : null}
+      <div className={isDarkMode ? 'dark-mode-table grid table-demo' : 'grid table-demo'}  >
         <Toast ref={toast} />
         <div className='col-12'>
-          <div className={isDarkMode ?  'dark-mode card' : 'card'  } >
+          <div className={isDarkMode ? 'dark-mode card' : 'card'} >
             <h5>Relacion de Empleados por Documentos</h5>
             <Toolbar className='mb-4' right={rightToolbarTemplate}></Toolbar>
 
@@ -680,8 +669,8 @@ const [spinner, setSpinner] = useState(false)
                 //   style={{ minWidth: '14rem' }}
                 showFilterMatchModes={false}
                 sortable
-                //   filterElement={representativeFilterTemplate}
-                //   filter
+              //   filterElement={representativeFilterTemplate}
+              //   filter
               ></Column>
               {/* <Column field='Status' header='Status' sortable /> */}
             </DataTable>
