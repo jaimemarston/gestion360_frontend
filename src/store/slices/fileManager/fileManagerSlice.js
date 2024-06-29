@@ -68,6 +68,19 @@ export const groupEdit = createAsyncThunk(
     }
 );
 
+export const removeGroup = createAsyncThunk(
+    'FileManagerSlice/removeGroup',
+    async ( data, thunkAPI) => {
+
+        const { id } = data;
+
+        const response = await groupService.deleteGroup(id);
+
+        thunkAPI.dispatch(fetchGroups());
+        return response;
+    }
+);
+
 export const addFile = createAsyncThunk(
     'FileManagerSlice/addFile',
     async ( files, thunkAPI) => {

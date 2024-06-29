@@ -25,6 +25,7 @@ import { CustomTablePagination, Root } from "./tablePagination/table-pagination"
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import { EditGroup } from "./modals/edit-group";
+import { DeleteGroup } from "./modals/delete-group";
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -207,6 +208,12 @@ export default function FileManager() {
         {permissions === 2 && <RegisterGroup />}
         {permissions === 2 && nameGroup !== "" &&
         selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
+
+        {selectedGroupId &&
+          showModal &&
+          !isLoading && (
+            <DeleteGroup groupId={selectedGroupId} />
+          )}
 
           {showModal && (
             <RegisterFolder

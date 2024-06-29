@@ -16,8 +16,14 @@ const editGroup = async ( group: { name: string }, id: number ) => {
     return data
 }
 
+const deleteGroup = async ( idGroup: number ) => {
+    const { data } = await http.delete(`/groups/${idGroup}`)
+    return data
+}
+
 export default {
     getAllGroups,
     createGroup,
-    editGroup
+    editGroup,
+    deleteGroup
 }
