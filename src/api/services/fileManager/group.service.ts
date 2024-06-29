@@ -11,8 +11,13 @@ const createGroup = async (group: { name: string }) => {
     return data
 }
 
+const editGroup = async ( group: { name: string }, id: number ) => {
+    const { data } = await http.patch(`/groups/${id}`, group)
+    return data
+}
 
 export default {
     getAllGroups,
-    createGroup
+    createGroup,
+    editGroup
 }
