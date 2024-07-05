@@ -26,6 +26,8 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import { EditGroup } from "./modals/edit-group";
 import { DeleteGroup } from "./modals/delete-group";
+import { Calendar } from 'primereact/calendar';
+import { addLocale } from 'primereact/api';
 
 export default function FileManager() {
   const [selectedFolderId, setselectedFolderId] = useState(null);
@@ -40,6 +42,7 @@ export default function FileManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
+  const [date, setDate] = React.useState(null);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -201,42 +204,59 @@ export default function FileManager() {
     }
   }, [selectedFolderId, page, rowsPerPage]);
 
+  addLocale('es', {
+    firstDayOfWeek: 1,
+    showMonthAfterYear: true,
+    monthNames: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+    monthNamesShort: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'],
+    today: 'Hoy',
+    clear: 'Limpiar'
+  });
+
   return (
     <div className="container">
       <div className="row">
         <div className="col-12 d-flex">
-        {permissions === 2 && <RegisterGroup />}
-        {permissions === 2 && nameGroup !== "" &&
-        selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
+          <div className="d-flex col-8">
+            {permissions === 2 && <RegisterGroup />}
+            {permissions === 2 && nameGroup !== "" &&
 
-        {selectedGroupId &&
-          showModal &&
-          !isLoading && (
-            <DeleteGroup groupId={selectedGroupId} />
-          )}
+              selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
 
-          {showModal && (
-            <RegisterFolder
-              parentFolder={parentFolder}
-              folderId={selectedFolderId}
-              groupName={nameGroup}
-              groupID={selectedGroupId}
-            />
-          )}
-          {selectedFolderId && showModal && (
-            <EditFolder
-              folderName={nameFolder}
-              groupName={nameGroup}
-              folderId={selectedFolderId}
-            />
-          )}
-          {selectedFolderId &&
-            showModal &&
-            !isLoading &&
-            uploadedFiles.data &&
-            uploadedFiles.data.data.length === 0 && (
-              <DeleteFolder folderId={selectedFolderId} />
+            {selectedGroupId &&
+              showModal &&
+              !isLoading && (
+                <DeleteGroup groupId={selectedGroupId} />
+              )}
+
+            {showModal && (
+              <RegisterFolder
+                parentFolder={parentFolder}
+                folderId={selectedFolderId}
+                groupName={nameGroup}
+                groupID={selectedGroupId}
+              />
             )}
+            {selectedFolderId && showModal && (
+              <EditFolder
+                folderName={nameFolder}
+                groupName={nameGroup}
+                folderId={selectedFolderId}
+              />
+            )}
+            {selectedFolderId &&
+              showModal &&
+              !isLoading &&
+              uploadedFiles.data &&
+              uploadedFiles.data.data.length === 0 && (
+                <DeleteFolder folderId={selectedFolderId} />
+              )}
+          </div>
+          <div className="col-4 d-flex align-items-center justify-content-center">
+            <div className="mb-3">
+              <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => setDate(e.value)} view="year" dateFormat="yy" />
+            </div>
+          </div>
         </div>
         <div className="col-6 folder-list">
           <FileExplorer
@@ -351,7 +371,7 @@ export default function FileManager() {
                           fileId={file.id}
                         />
 
-                        <AddTags GetFiles={getFiles} metadata={file.metadata} fileId={file.id} /> 
+                        <AddTags GetFiles={getFiles} metadata={file.metadata} fileId={file.id} />
                       </div>
                     </div>
                     {file.filename.length < 12 && (
