@@ -30,6 +30,7 @@ const RegisterFolder = ({
     groupId: parentFolder ? groupID : null,
   };
   const [listProduct, setlistProduct] = useState([]);
+  const [usersActive, setUsersActive] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [newData, setNewData] = useState(null);
   const [isCloseModal, setIsCloseModal] = useState(false);
@@ -58,6 +59,11 @@ const RegisterFolder = ({
   useEffect(() => {
     listarUsuarios();
   }, []);
+
+  useEffect(()=>{
+    const active = listProduct.filter((item) => item.estado === true);
+    setUsersActive(active)
+  }, [listProduct])
 
   const openModal = () => {
     setIsModal(!isModal);
@@ -218,7 +224,7 @@ const RegisterFolder = ({
         {parentFolder && (
           <TablaUsuario
             dt={dt}
-            listProduct={listProduct}
+            listProduct={usersActive}
             selectedUsers={selectedUsers}
             setSelectedProducts={setSelectedProducts}
             globalFilter={globalFilter}

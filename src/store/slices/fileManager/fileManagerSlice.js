@@ -55,6 +55,32 @@ export const fetchFiles = createAsyncThunk(
     }
 );
 
+export const groupEdit = createAsyncThunk(
+    'FileManagerSlice/groupEdit',
+    async ( group, thunkAPI) => {
+
+        const { id, ...data } = group;
+
+        const response = await groupService.editGroup(data, id);
+
+        thunkAPI.dispatch(fetchGroups());
+        return response;
+    }
+);
+
+export const removeGroup = createAsyncThunk(
+    'FileManagerSlice/removeGroup',
+    async ( data, thunkAPI) => {
+
+        const { id } = data;
+
+        const response = await groupService.deleteGroup(id);
+
+        thunkAPI.dispatch(fetchGroups());
+        return response;
+    }
+);
+
 export const addFile = createAsyncThunk(
     'FileManagerSlice/addFile',
     async ( files, thunkAPI) => {
