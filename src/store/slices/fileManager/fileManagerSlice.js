@@ -24,8 +24,11 @@ function removeEmptyStringProperties(obj) {
 
 export const fetchGroups = createAsyncThunk(
     'FileManagerSlice/fetchGroups',
-    async (_, thunkAPI) => {
-        const response = await groupService.getAllGroups();
+    async (data, thunkAPI) => {
+
+        const { year } = data
+
+        const response = await groupService.getAllGroups(year);
 
         return response;
     }
