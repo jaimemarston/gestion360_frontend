@@ -42,7 +42,7 @@ export default function FileManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
-  const [date, setDate] = React.useState(null);
+  const [date, setDate] = useState(null);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -79,13 +79,24 @@ export default function FileManager() {
 
   const groups = useTransformedGroups();
 
+  const clearData = () =>{
+    setNameFolder("")
+    setNameGroup("")
+    setSelectedGroupId(null)
+    setselectedFolderId(null)
+  }
+
   const fetch = async () => {
-    dispatch(fetchGroups());
+    clearData();
+    const payload = {
+      year: date?.toISOString().slice(0, 4)
+    };
+    dispatch(fetchGroups(date === null ? '' : payload));
   };
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [date]);
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -231,6 +242,7 @@ export default function FileManager() {
 
             {showModal && (
               <RegisterFolder
+                updateGroup={fetchGroups}
                 parentFolder={parentFolder}
                 folderId={selectedFolderId}
                 groupName={nameGroup}
@@ -259,6 +271,7 @@ export default function FileManager() {
           </div>
         </div>
         <div className="col-6 folder-list">
+        {groups.length ? 
           <FileExplorer
             groups={groups}
             showCreateFolder={createFolder}
@@ -267,6 +280,7 @@ export default function FileManager() {
             setNameFolder={setNameFolder}
             setNameGroup={setNameGroup}
           />
+        : <h5>Este año no posee informacion</h5> }
         </div>
 
         <div

@@ -24,8 +24,11 @@ function removeEmptyStringProperties(obj) {
 
 export const fetchGroups = createAsyncThunk(
     'FileManagerSlice/fetchGroups',
-    async (_, thunkAPI) => {
-        const response = await groupService.getAllGroups();
+    async (data, thunkAPI) => {
+
+        const { year } = data
+
+        const response = await groupService.getAllGroups(year);
 
         return response;
     }
@@ -38,7 +41,7 @@ export const addGroup = createAsyncThunk(
 
         const response = await groupService.createGroup(removeEmptyStringProperties(group));
 
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
         return response;
     }
 );
@@ -63,7 +66,7 @@ export const groupEdit = createAsyncThunk(
 
         const response = await groupService.editGroup(data, id);
 
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
         return response;
     }
 );
@@ -76,7 +79,7 @@ export const removeGroup = createAsyncThunk(
 
         const response = await groupService.deleteGroup(id);
 
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
         return response;
     }
 );
@@ -90,7 +93,7 @@ export const addFile = createAsyncThunk(
         const response = await fileService.createFile(idFolder, formattedFiles);
 
         thunkAPI.dispatch(fetchFiles());
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
         return response;
     }
 );
@@ -104,7 +107,7 @@ export const addMetadata = createAsyncThunk(
         const response = await fileService.createMetadata(idFile, dataFile);
 
         thunkAPI.dispatch(fetchFiles());
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
         return response;
     }
 );
@@ -125,7 +128,7 @@ export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
         const response = await folderService.createFolder(folder);
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
 
         return response;
     }
@@ -138,7 +141,7 @@ export const editFolder = createAsyncThunk(
         const {label, folderId} = folder;
 
         const response = await folderService.updateFolder(folderId, label);
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
 
         return response;
     }
@@ -152,7 +155,7 @@ export const removeFolder = createAsyncThunk(
 
         const response = await folderService.deleteFolder(folderId);
 
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
 
         return response;
     }
@@ -163,7 +166,7 @@ export const updateGroup = createAsyncThunk(
     async (group, thunkAPI) => {
         const response = await groupService.createGroup(removeEmptyStringProperties(group));
 
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
         return response;
     }
 );
@@ -173,7 +176,7 @@ export const updateFolder = createAsyncThunk(
     async (folder, thunkAPI) => {
         const response = await folderService.createFolder(removeEmptyStringProperties(folder));
 
-        thunkAPI.dispatch(fetchGroups());
+        thunkAPI.dispatch(fetchGroups(''));
 
         return response;
     }

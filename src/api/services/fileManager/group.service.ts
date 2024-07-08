@@ -1,7 +1,7 @@
 import http from '../axios'
 
-const getAllGroups = async () => {
-    const { data } = await http.get('/groups')
+const getAllGroups = async (year: string = '') => {
+    const { data } = await http.get(`/groups?year=${year}`)
 
     return data
 }
