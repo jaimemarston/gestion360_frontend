@@ -42,7 +42,7 @@ const RegisterGroup = ({ date }) => {
     try{
       const payload = {
         ...data,
-        date: date?.toISOString().slice(0, 4)
+        date: date
       }
       const resultAction = await dispatch(addGroup(payload));
       if (resultAction.error) {

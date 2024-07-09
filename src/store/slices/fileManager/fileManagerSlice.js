@@ -61,11 +61,11 @@ export const groupEdit = createAsyncThunk(
     'FileManagerSlice/groupEdit',
     async ( group, thunkAPI) => {
 
-        const { id, ...data } = group;
+        const { id, date, ...data } = group;
 
         const response = await groupService.editGroup(data, id);
 
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(date));
         return response;
     }
 );

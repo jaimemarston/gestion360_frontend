@@ -8,7 +8,7 @@ import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useEffect, useState } from "react";
 
-const EditGroup = ({ name, id }) => {
+const EditGroup = ({ name, id, date }) => {
   const [isModal, setIsModal] = useState(false);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const { showToast, ToastComponent } = useToast()
@@ -37,7 +37,8 @@ const EditGroup = ({ name, id }) => {
   const save = async () => {
     const payload = {
         ...data,
-        id: id
+        id: id,
+        date: date
       };
     try{
       const resultAction = await dispatch(groupEdit(payload));
