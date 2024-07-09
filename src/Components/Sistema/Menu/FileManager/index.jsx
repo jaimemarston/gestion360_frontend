@@ -42,7 +42,7 @@ export default function FileManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(new Date());
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -88,10 +88,7 @@ export default function FileManager() {
 
   const fetch = async () => {
     clearData();
-    const payload = {
-      year: date?.toISOString().slice(0, 4)
-    };
-    dispatch(fetchGroups(date === null ? '' : payload));
+    dispatch(fetchGroups(date === null ? '' : date?.toISOString().slice(0, 4)));
   };
 
   useEffect(() => {
@@ -229,7 +226,7 @@ export default function FileManager() {
       <div className="row">
         <div className="col-12 d-flex">
           <div className="d-flex col-8">
-            {permissions === 2 && <RegisterGroup />}
+            {permissions === 2 && <RegisterGroup date={date} />}
             {permissions === 2 && nameGroup !== "" &&
 
               selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
