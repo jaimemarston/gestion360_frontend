@@ -125,8 +125,9 @@ export const removeFile = createAsyncThunk(
 export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
+        const { date } = folder
         const response = await folderService.createFolder(folder);
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(date));
 
         return response;
     }

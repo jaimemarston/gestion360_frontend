@@ -245,6 +245,7 @@ export default function FileManager() {
 
             {showModal && (
               <RegisterFolder
+                date={year}
                 updateGroup={fetchGroups}
                 parentFolder={parentFolder}
                 folderId={selectedFolderId}

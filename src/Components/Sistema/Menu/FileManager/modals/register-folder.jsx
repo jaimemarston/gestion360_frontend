@@ -22,6 +22,7 @@ const RegisterFolder = ({
   groupID,
   parentFolder,
   folderId,
+  date
 }) => {
   const [usersId, setUsersId] = useState([]);
   let empty = {
@@ -86,6 +87,7 @@ const RegisterFolder = ({
       groupId: parentFolder ? groupID : null,
       parent: parentFolder ? null : folderId,
       user_ids: parentFolder ? selectedUsers.map((item) => item.id) : null,
+      date: date
     };
     try {
       const resultAction = await dispatch(addFolder(payload));
