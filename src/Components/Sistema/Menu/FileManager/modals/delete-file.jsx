@@ -3,7 +3,6 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-    fetchGroups,
     fetchFiles,
     removeFile
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
@@ -33,7 +32,6 @@ const DeleteFile = ({ buttonIcon, fileId, folderId }) => {
                 openModal();
                 showToast("success", "Archivo eliminado con éxito");
                 dispatch(fetchFiles(payload));
-                dispatch(fetchGroups());
             }
         } catch (error) {
             console.log("error", error);

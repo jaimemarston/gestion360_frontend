@@ -3,8 +3,6 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-  fetchGroups,
-  fetchFiles,
   removeFolder,
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { useToast } from "../../../../../hooks/useToast";
@@ -32,7 +30,6 @@ const DeleteFolder = ({ folderId }) => {
       } else {
         openModal();
         showToast("success", "Carpeta eliminado con éxito");
-        dispatch(fetchGroups());
       }
     } catch (error) {
       console.log("error", error);

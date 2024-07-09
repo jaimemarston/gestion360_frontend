@@ -1,6 +1,5 @@
 import {
   addFolder,
-  fetchGroups,
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";

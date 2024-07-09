@@ -8,7 +8,7 @@ import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useState } from "react";
 
-const RegisterGroup = ({ date }) => {
+const RegisterGroup = () => {
   const [isModal, setIsModal] = useState(false);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const { showToast, ToastComponent } = useToast()
@@ -16,10 +16,6 @@ const RegisterGroup = ({ date }) => {
   const [data, setData] = useState({ name: '' });
 
   const dispatch = useDispatch();
-
-  const refetch = async () => {
-    dispatch(fetchGroups());
-  };
 
   const openModal = () => {
     setIsModal(!isModal);
@@ -42,7 +38,6 @@ const RegisterGroup = ({ date }) => {
     try{
       const payload = {
         ...data,
-        date: date
       }
       const resultAction = await dispatch(addGroup(payload));
       if (resultAction.error) {

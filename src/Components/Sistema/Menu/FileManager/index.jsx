@@ -11,6 +11,7 @@ import {
   fetchGroups,
   addFile,
   fetchFiles,
+  setCurrentDate
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
@@ -43,7 +44,6 @@ export default function FileManager() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
   const [date, setDate] = useState(new Date());
-  const [year, setYear] = useState(new Date()?.toISOString().slice(0, 4));
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -89,15 +89,16 @@ export default function FileManager() {
 
   const updateDate = (value) =>{
     setDate(value);
-    setYear(value?.toISOString().slice(0, 4))
+    dispatch(setCurrentDate(value?.toISOString().slice(0, 4)));
   }
 
   const fetch = async () => {
     clearData();
-    dispatch(fetchGroups(date === null ? '' : year));
+    dispatch(fetchGroups());
   };
 
   useEffect(() => {
+    dispatch(setCurrentDate(date?.toISOString().slice(0, 4)));
     fetch();
   }, [date]);
 
@@ -232,10 +233,10 @@ export default function FileManager() {
       <div className="row">
         <div className="col-12 d-flex">
           <div className="d-flex col-8">
-            {permissions === 2 && <RegisterGroup date={year} />}
+            {permissions === 2 && <RegisterGroup />}
             {permissions === 2 && nameGroup !== "" &&
 
-              selectedGroupId !== null && <EditGroup date={year} name={nameGroup} id={selectedGroupId} />}
+              selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
 
             {selectedGroupId &&
               showModal &&

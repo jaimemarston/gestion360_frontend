@@ -3,7 +3,6 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-  fetchGroups,
   removeGroup,
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { useToast } from "../../../../../hooks/useToast";
