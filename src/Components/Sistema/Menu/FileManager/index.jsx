@@ -43,6 +43,7 @@ export default function FileManager() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
   const [date, setDate] = useState(new Date());
+  const [year, setYear] = useState(new Date()?.toISOString().slice(0, 4));
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -86,9 +87,14 @@ export default function FileManager() {
     setselectedFolderId(null)
   }
 
+  const updateDate = (value) =>{
+    setDate(value);
+    setYear(value?.toISOString().slice(0, 4))
+  }
+
   const fetch = async () => {
     clearData();
-    dispatch(fetchGroups(date === null ? '' : date?.toISOString().slice(0, 4)));
+    dispatch(fetchGroups(date === null ? '' : year));
   };
 
   useEffect(() => {
@@ -226,10 +232,10 @@ export default function FileManager() {
       <div className="row">
         <div className="col-12 d-flex">
           <div className="d-flex col-8">
-            {permissions === 2 && <RegisterGroup date={date} />}
+            {permissions === 2 && <RegisterGroup date={year} />}
             {permissions === 2 && nameGroup !== "" &&
 
-              selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
+              selectedGroupId !== null && <EditGroup date={year} name={nameGroup} id={selectedGroupId} />}
 
             {selectedGroupId &&
               showModal &&
@@ -263,7 +269,7 @@ export default function FileManager() {
           </div>
           <div className="col-4 d-flex align-items-center justify-content-center">
             <div className="mb-3">
-              <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => setDate(e.value)} view="year" dateFormat="yy" />
+              <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => updateDate(e.value)} view="year" dateFormat="yy" />
             </div>
           </div>
         </div>
