@@ -74,11 +74,10 @@ export const removeGroup = createAsyncThunk(
     'FileManagerSlice/removeGroup',
     async ( data, thunkAPI) => {
 
-        const { id } = data;
+        const { id, date } = data;
 
         const response = await groupService.deleteGroup(id);
-
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(date));
         return response;
     }
 );

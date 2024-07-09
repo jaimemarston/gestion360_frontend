@@ -240,7 +240,7 @@ export default function FileManager() {
             {selectedGroupId &&
               showModal &&
               !isLoading && (
-                <DeleteGroup groupId={selectedGroupId} />
+                <DeleteGroup date={year} groupId={selectedGroupId} />
               )}
 
             {showModal && (
