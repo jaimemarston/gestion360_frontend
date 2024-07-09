@@ -8,7 +8,7 @@ import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useState } from "react";
 
-const RegisterGroup = ({ isDarkMode }) => {
+const RegisterGroup = ({ date }) => {
   const [isModal, setIsModal] = useState(false);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const { showToast, ToastComponent } = useToast()
@@ -40,7 +40,11 @@ const RegisterGroup = ({ isDarkMode }) => {
 
   const save = async () => {
     try{
-      const resultAction = await dispatch(addGroup(data));
+      const payload = {
+        ...data,
+        date: date?.toISOString().slice(0, 4)
+      }
+      const resultAction = await dispatch(addGroup(payload));
       if (resultAction.error) {
         showToast('error', 'Error al intentar crear un grupo');
       } else {
@@ -125,10 +129,7 @@ const RegisterGroup = ({ isDarkMode }) => {
 
   return (
     <div
-      className={
-        isDarkMode ? "dark-mode-table grid crud-demo" : "grid crud-demo"
-      }
-    >
+      className="grid crud-demo">
       <div className="col-12">
         <div>
           <Toolbar
