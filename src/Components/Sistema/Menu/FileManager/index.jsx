@@ -241,12 +241,11 @@ export default function FileManager() {
             {selectedGroupId &&
               showModal &&
               !isLoading && (
-                <DeleteGroup date={year} groupId={selectedGroupId} />
+                <DeleteGroup groupId={selectedGroupId} />
               )}
 
             {showModal && (
               <RegisterFolder
-                date={year}
                 updateGroup={fetchGroups}
                 parentFolder={parentFolder}
                 folderId={selectedFolderId}

@@ -9,7 +9,7 @@ import { useToast } from "../../../../../hooks/useToast";
 import { Button } from "primereact/button";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const DeleteGroup = ({ groupId, date }) => {
+const DeleteGroup = ({ groupId }) => {
   const [isModalView, setIsModalView] = useState(false);
 
   const dispatch = useDispatch();
@@ -22,7 +22,6 @@ const DeleteGroup = ({ groupId, date }) => {
   const deleteFolder = async () => {
     const payload = {
         id: groupId,
-        date: date
     };
     try {
       const resultAction = await dispatch(removeGroup(payload));
