@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useState } from "react";
+import classNames from 'classnames';
 
 const RegisterGroup = () => {
   const [isModal, setIsModal] = useState(false);
@@ -14,6 +15,7 @@ const RegisterGroup = () => {
   const { showToast, ToastComponent } = useToast()
 
   const [data, setData] = useState({ name: '' });
+  const [submitted, setSubmitted] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -35,6 +37,14 @@ const RegisterGroup = () => {
   };
 
   const save = async () => {
+
+    if(!data.name){
+      setSubmitted(true)
+      return;
+    }else{
+      setSubmitted(false)
+    }
+
     try{
       const payload = {
         ...data,
@@ -90,7 +100,7 @@ const RegisterGroup = () => {
     return (
       <Dialog
         visible={isModal}
-        style={{ width: "450px", height: "200px" }}
+        style={{ width: "450px", height: "220px" }}
         header="Crear grupo"
         modal
         className="p-fluid"
@@ -106,8 +116,13 @@ const RegisterGroup = () => {
             onChange={(e) => onInputChange(e, "name")}
             required
             autoFocus
-
+            className={classNames({
+              'p-invalid': submitted && !data.name,
+            })}
           />
+          {submitted && !data.name && (
+            <small className='p-invalid'>El nombre de el grupo es requerido</small>
+          )}
         </div>
 
         <div

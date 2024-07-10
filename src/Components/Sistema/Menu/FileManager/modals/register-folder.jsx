@@ -78,7 +78,11 @@ const RegisterFolder = ({
   };
 
   const save = async () => {
-    setSubmitted(true);
+    if(!data.label){
+      setSubmitted(true);
+    }else{
+      setSubmitted(false);
+    }
 
     const payload = {
       ...data,
@@ -97,7 +101,6 @@ const RegisterFolder = ({
     } catch (error) {
       console.log("error", error);
     } finally {
-      setSubmitted(false);
     }
   };
 

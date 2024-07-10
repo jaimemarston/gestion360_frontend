@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useEffect, useState } from "react";
+import classNames from 'classnames';
 
 const EditGroup = ({ name, id }) => {
   const [isModal, setIsModal] = useState(false);
@@ -14,6 +15,7 @@ const EditGroup = ({ name, id }) => {
   const { showToast, ToastComponent } = useToast()
 
   const [data, setData] = useState({ name: name });
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(()=>{
     setData({name: name })
@@ -35,6 +37,14 @@ const EditGroup = ({ name, id }) => {
   };
 
   const save = async () => {
+
+    if(!data.name){
+      setSubmitted(true)
+      return;
+    }else{
+      setSubmitted(false)
+    }
+
     const payload = {
         ...data,
         id: id,
@@ -90,7 +100,7 @@ const EditGroup = ({ name, id }) => {
     return (
       <Dialog
         visible={isModal}
-        style={{ width: "450px", height: "200px" }}
+        style={{ width: "450px", height: "220px" }}
         header="Editar grupo"
         modal
         className="p-fluid"
@@ -106,7 +116,13 @@ const EditGroup = ({ name, id }) => {
             onChange={(e) => onInputChange(e, "name")}
             required
             autoFocus
+            className={classNames({
+              'p-invalid': submitted && !data.name,
+            })}
           />
+          {submitted && !data.name && (
+            <small className='p-invalid'>El nombre de el grupo es requerido</small>
+          )}
         </div>
         <div
           className="field"

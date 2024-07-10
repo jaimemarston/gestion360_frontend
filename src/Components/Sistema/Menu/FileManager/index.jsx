@@ -237,7 +237,7 @@ export default function FileManager() {
             {permissions === 2 && <RegisterGroup />}
             {permissions === 2 && nameGroup !== "" &&
 
-              selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
+            selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
 
             {selectedGroupId &&
               showModal &&
