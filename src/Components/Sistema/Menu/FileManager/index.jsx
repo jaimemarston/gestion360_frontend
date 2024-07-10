@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./modals/register-folder";
 import { RegisterGroup } from "./modals/register-group";
+import { CreateGroupUsers } from "./modals/create-group-users"
 import "./style-file-manager.scss";
 import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
@@ -244,9 +245,10 @@ export default function FileManager() {
                 <DeleteGroup groupId={selectedGroupId} />
               )}
 
+              <CreateGroupUsers />
+
             {showModal && (
               <RegisterFolder
-                updateGroup={fetchGroups}
                 parentFolder={parentFolder}
                 folderId={selectedFolderId}
                 groupName={nameGroup}
