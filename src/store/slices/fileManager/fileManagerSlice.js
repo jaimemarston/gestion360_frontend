@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import folderService from '../../../api/services/fileManager/folder.service';
 import groupService from '../../../api/services/fileManager/group.service';
 import fileService from '../../../api/services/fileManager/file.service';
+import usersGroup from '../../../api/services/fileManager/usersGroup.service';
 import { useSelector } from 'react-redux';
 
 const initialState = {
@@ -43,6 +44,20 @@ export const addGroup = createAsyncThunk(
         const { ...data } = group;
 
         const response = await groupService.createGroup(removeEmptyStringProperties(data));
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        return response;
+    }
+);
+
+export const addUsersGroup = createAsyncThunk(
+    'FileManagerSlice/addUsersGroup',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { ...data } = group;
+
+        const response = await usersGroup.createUsersGroup(removeEmptyStringProperties(data));
    
         thunkAPI.dispatch(fetchGroups(year));
         return response;

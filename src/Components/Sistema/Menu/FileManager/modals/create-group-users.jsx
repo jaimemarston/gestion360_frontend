@@ -1,5 +1,5 @@
 import {
-    addFolder,
+  addUsersGroup,
   } from "../../../../../store/slices/fileManager/fileManagerSlice";
   import { Button } from "primereact/button";
   import { Column } from "primereact/column";
@@ -16,7 +16,7 @@ import {
   
   const CreateGroupUsers = () => {
     let empty = {
-      label: "",
+      name: "",
     };
     const [listProduct, setlistProduct] = useState([]);
     const [usersActive, setUsersActive] = useState([]);
@@ -68,7 +68,7 @@ import {
     };
   
     const save = async () => {
-      if(!data.label){
+      if(!data.name){
           setSubmitted(true);
           return
       }else{
@@ -76,15 +76,16 @@ import {
       }
       const payload = {
         ...data,
-        user_ids: parentFolder ? selectedUsers.map((item) => item.id) : null,
+        user_ids: selectedUsers.map((item) => item.id),
       };
       try {
-        const resultAction = await dispatch(addFolder(payload));
+        const resultAction = await dispatch(addUsersGroup(payload));
         if (resultAction.error) {
           showToast("error", "Error al intentar crear una carpeta");
         } else {
           showToast("success", "Carpeta creada con éxito");
           closeModal();
+          setSelectedProducts([])
         }
       } catch (error) {
         console.log("error", error);
@@ -184,7 +185,7 @@ import {
         <Dialog
           visible={isModal}
           style={{ width: "950px", height: "660px" }}
-          header={`Grupo seleccionado: ${groupName}`}
+          header={`Grupo seleccionado: `}
           modal
           className="p-fluid"
           footer={productDialogFooter}
@@ -193,17 +194,17 @@ import {
           <div className="field">
             <label htmlFor="label">Nombre de el grupo de usuarios</label>
             <InputText
-              id="label"
-              name="label"
-              value={data.label?.trim()}
-              onChange={(e) => onInputChange(e, "label")}
+              id="name"
+              name="name"
+              value={data.name?.trim()}
+              onChange={(e) => onInputChange(e, "name")}
               required
               autoFocus
               className={classNames({
-                "p-invalid": submitted && !data.label,
+                "p-invalid": submitted && !data.name,
               })}
             />
-            {submitted && !data.label && (
+            {submitted && !data.name && (
               <small className="p-invalid">
                 El nombre de el grupo de usuarios es requerido
               </small>
