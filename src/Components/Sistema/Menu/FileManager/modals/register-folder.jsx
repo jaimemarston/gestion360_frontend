@@ -1,5 +1,6 @@
 import {
   addFolder,
+  fetchUsersGroups
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
@@ -30,14 +31,17 @@ const RegisterFolder = ({
   };
   const [listProduct, setlistProduct] = useState([]);
   const [usersActive, setUsersActive] = useState([]);
+  const [usersGroup, setGroupUsers] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [newData, setNewData] = useState(null);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const [value, setValue] = useState(empty.estado);
   const [selectedUsers, setSelectedProducts] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   const [data, setData] = useState(empty);
   const [submitted, setSubmitted] = useState(false);
+  const [showGroupUser, setShowGroupUser] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const dt = useRef(null);
 
@@ -48,6 +52,14 @@ const RegisterFolder = ({
   const switchFondo = (e) => {
     setValue(e);
   };
+
+  const showTableGroup = () =>{
+    setShowGroupUser(true)
+  }
+
+  const showTableUsers = () =>{
+    setShowGroupUser(false)
+  }
 
   const listarUsuarios = () => {
     fetchGet("usuario").then((data) => {
@@ -76,6 +88,19 @@ const RegisterFolder = ({
     setIsModal(!isModal);
     setIsCloseModal(!isCloseModal);
   };
+
+  const getGroups = () => {
+    dispatch(fetchUsersGroups()).unwrap().then((result) => {
+      setGroupUsers(result.data); // result es el valor que devuelve tu action creator
+    }).catch((error) => {
+      console.error(error);
+      // Maneja el error aquí si es necesario
+    });
+  };
+
+  useEffect(()=>{
+    getGroups()
+  }, [])
 
   const save = async () => {
     if(!data.label){
@@ -136,7 +161,7 @@ const RegisterFolder = ({
     return (
       <>
         <span className="p-column-title">Codigo</span>
-        {rowData.codigo}
+        {rowData.codigo ? rowData.codigo : rowData.id}
       </>
     );
   };
@@ -145,7 +170,7 @@ const RegisterFolder = ({
     return (
       <>
         <span className="p-column-title">Nombre</span>
-        {rowData.nombre}
+        {rowData.nombre ? rowData.nombre : rowData.name}
       </>
     );
   };
@@ -223,12 +248,46 @@ const RegisterFolder = ({
           )}
         </div>
 
-        {parentFolder && (
+        <div className="my-2 d-flex">
+        <Button
+          className="p-button-success d-flex justify-content-center mr-2"
+          onClick={showTableUsers}
+          disabled={!showGroupUser}
+        >
+          Tabla de usuarios
+        </Button>
+        <Button
+          className="p-button-success d-flex justify-content-center mr-2"
+          onClick={showTableGroup}
+          disabled={showGroupUser}
+        >
+          Tabla de grupo de usuarios
+        </Button>
+      </div>
+
+        {parentFolder && !showGroupUser && (
           <TablaUsuario
             dt={dt}
             listProduct={usersActive}
             selectedUsers={selectedUsers}
             setSelectedProducts={setSelectedProducts}
+            globalFilter={globalFilter}
+            header={header}
+            actionBodyTemplate={actionBodyTemplate}
+            actionBodyTemplate2={actionBodyTemplate2}
+            codigoBodyTemplate={codigoBodyTemplate}
+            nombreBodyTemplate={nombreBodyTemplate}
+            usuarioBodyTemplate={usuarioBodyTemplate}
+            statusBodyTemplate={statusBodyTemplate}
+          />
+        )}
+
+        {parentFolder && showGroupUser && (
+          <TablaUsuario
+            dt={dt}
+            listProduct={usersGroup}
+            selectedUsers={selectedGroups}
+            setSelectedProducts={setSelectedGroups}
             globalFilter={globalFilter}
             header={header}
             actionBodyTemplate={actionBodyTemplate}
@@ -375,6 +434,7 @@ const TablaUsuario = ({
         body={nombreBodyTemplate}
         headerStyle={{ width: "44%", minWidth: "10rem" }}
       ></Column>
+      {usuarioBodyTemplate && 
       <Column
         field="email"
         header="Usuario"
@@ -382,12 +442,14 @@ const TablaUsuario = ({
         body={usuarioBodyTemplate}
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
+      }
       <Column
         field="rol"
         header="Rol"
         sortable
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
+      {statusBodyTemplate && 
       <Column
         field="inventoryStatus"
         header="Status"
@@ -395,6 +457,7 @@ const TablaUsuario = ({
         sortable
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
+      }
     </DataTable>
   );
 };

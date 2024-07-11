@@ -64,6 +64,17 @@ export const addUsersGroup = createAsyncThunk(
     }
 );
 
+export const fetchUsersGroups = createAsyncThunk(
+    'FileManagerSlice/fetchUsersGroups',
+    async (_, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const response = await usersGroup.getAllUsersGroups(year);
+
+        return response;
+    }
+);
+
 export const fetchFiles = createAsyncThunk(
     'FileManagerSlice/fetchFile',
     async (folderId, thunkAPI) => {
