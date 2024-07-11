@@ -434,7 +434,6 @@ const TablaUsuario = ({
         body={nombreBodyTemplate}
         headerStyle={{ width: "44%", minWidth: "10rem" }}
       ></Column>
-      {usuarioBodyTemplate && 
       <Column
         field="email"
         header="Usuario"
@@ -442,14 +441,12 @@ const TablaUsuario = ({
         body={usuarioBodyTemplate}
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
-      }
       <Column
         field="rol"
         header="Rol"
         sortable
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
-      {statusBodyTemplate && 
       <Column
         field="inventoryStatus"
         header="Status"
@@ -457,7 +454,6 @@ const TablaUsuario = ({
         sortable
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
-      }
     </DataTable>
   );
 };
