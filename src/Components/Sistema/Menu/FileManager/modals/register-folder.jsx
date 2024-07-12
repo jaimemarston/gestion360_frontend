@@ -100,7 +100,7 @@ const RegisterFolder = ({
 
   useEffect(() => {
     getGroups()
-  }, [])
+  }, [isModal])
 
   const save = async () => {
     if (!data.label) {
