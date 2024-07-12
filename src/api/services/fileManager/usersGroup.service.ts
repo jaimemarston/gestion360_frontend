@@ -11,4 +11,9 @@ const createUsersGroup = async (group: { name: string }) => {
     return data
 }
 
-export default { createUsersGroup , getAllUsersGroups}
+const addUsersGroup = async (id: string | number, group: { users: number[] }) => {
+    const { data } = await http.post(`/usergroups/${id}/addUsers`, group)
+    return data
+}
+
+export default { createUsersGroup , getAllUsersGroups, addUsersGroup }

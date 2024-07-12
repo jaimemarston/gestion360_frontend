@@ -60,6 +60,22 @@ export const addUsersGroup = createAsyncThunk(
         const response = await usersGroup.createUsersGroup(removeEmptyStringProperties(data));
    
         thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
+export const addUsersToTheUserGroup = createAsyncThunk(
+    'FileManagerSlice/addUsersToTheUserGroup',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { id, ...data } = group;
+
+        const response = await usersGroup.addUsersGroup(id, data);
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
         return response;
     }
 );
