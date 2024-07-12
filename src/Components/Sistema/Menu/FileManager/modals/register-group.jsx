@@ -7,19 +7,17 @@ import { useDispatch } from "react-redux";
 import { useToast } from "../../../../../hooks/useToast";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import React, { useState } from "react";
+import classNames from 'classnames';
 
-const RegisterGroup = ({ isDarkMode }) => {
+const RegisterGroup = () => {
   const [isModal, setIsModal] = useState(false);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const { showToast, ToastComponent } = useToast()
 
   const [data, setData] = useState({ name: '' });
+  const [submitted, setSubmitted] = useState(false);
 
   const dispatch = useDispatch();
-
-  const refetch = async () => {
-    dispatch(fetchGroups());
-  };
 
   const openModal = () => {
     setIsModal(!isModal);
@@ -39,8 +37,19 @@ const RegisterGroup = ({ isDarkMode }) => {
   };
 
   const save = async () => {
+
+    if(!data.name){
+      setSubmitted(true)
+      return;
+    }else{
+      setSubmitted(false)
+    }
+
     try{
-      const resultAction = await dispatch(addGroup(data));
+      const payload = {
+        ...data,
+      }
+      const resultAction = await dispatch(addGroup(payload));
       if (resultAction.error) {
         showToast('error', 'Error al intentar crear un grupo');
       } else {
@@ -91,7 +100,7 @@ const RegisterGroup = ({ isDarkMode }) => {
     return (
       <Dialog
         visible={isModal}
-        style={{ width: "450px", height: "200px" }}
+        style={{ width: "450px", height: "220px" }}
         header="Crear grupo"
         modal
         className="p-fluid"
@@ -107,8 +116,13 @@ const RegisterGroup = ({ isDarkMode }) => {
             onChange={(e) => onInputChange(e, "name")}
             required
             autoFocus
-
+            className={classNames({
+              'p-invalid': submitted && !data.name,
+            })}
           />
+          {submitted && !data.name && (
+            <small className='p-invalid'>El nombre de el grupo es requerido</small>
+          )}
         </div>
 
         <div
@@ -125,10 +139,7 @@ const RegisterGroup = ({ isDarkMode }) => {
 
   return (
     <div
-      className={
-        isDarkMode ? "dark-mode-table grid crud-demo" : "grid crud-demo"
-      }
-    >
+      className="grid crud-demo">
       <div className="col-12">
         <div>
           <Toolbar

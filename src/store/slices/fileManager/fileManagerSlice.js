@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import folderService from '../../../api/services/fileManager/folder.service';
 import groupService from '../../../api/services/fileManager/group.service';
 import fileService from '../../../api/services/fileManager/file.service';
+import usersGroup from '../../../api/services/fileManager/usersGroup.service';
+import { useSelector } from 'react-redux';
 
 const initialState = {
     isLoadingFile: false,
@@ -9,6 +11,7 @@ const initialState = {
     groups: [],
     folders: [],
     files: [],
+    currentDate: ''
 };
 
 function removeEmptyStringProperties(obj) {
@@ -24,9 +27,8 @@ function removeEmptyStringProperties(obj) {
 
 export const fetchGroups = createAsyncThunk(
     'FileManagerSlice/fetchGroups',
-    async (data, thunkAPI) => {
-
-        const { year } = data
+    async (_, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const response = await groupService.getAllGroups(year);
 
@@ -37,11 +39,54 @@ export const fetchGroups = createAsyncThunk(
 export const addGroup = createAsyncThunk(
     'FileManagerSlice/addGroup',
     async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
+        const { ...data } = group;
 
-        const response = await groupService.createGroup(removeEmptyStringProperties(group));
+        const response = await groupService.createGroup(removeEmptyStringProperties(data));
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        return response;
+    }
+);
 
-        thunkAPI.dispatch(fetchGroups(''));
+export const addUsersGroup = createAsyncThunk(
+    'FileManagerSlice/addUsersGroup',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { ...data } = group;
+
+        const response = await usersGroup.createUsersGroup(removeEmptyStringProperties(data));
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
+export const addUsersToTheUserGroup = createAsyncThunk(
+    'FileManagerSlice/addUsersToTheUserGroup',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { id, ...data } = group;
+
+        const response = await usersGroup.addUsersGroup(id, data);
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
+export const fetchUsersGroups = createAsyncThunk(
+    'FileManagerSlice/fetchUsersGroups',
+    async (_, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const response = await usersGroup.getAllUsersGroups(year);
+
         return response;
     }
 );
@@ -49,11 +94,13 @@ export const addGroup = createAsyncThunk(
 export const fetchFiles = createAsyncThunk(
     'FileManagerSlice/fetchFile',
     async (folderId, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { idFolder, rowsPerPage, page } = folderId;
 
         const response = await fileService.getFileFolder(idFolder, rowsPerPage, page );
 
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -61,12 +108,13 @@ export const fetchFiles = createAsyncThunk(
 export const groupEdit = createAsyncThunk(
     'FileManagerSlice/groupEdit',
     async ( group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { id, ...data } = group;
 
         const response = await groupService.editGroup(data, id);
 
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -74,12 +122,12 @@ export const groupEdit = createAsyncThunk(
 export const removeGroup = createAsyncThunk(
     'FileManagerSlice/removeGroup',
     async ( data, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { id } = data;
 
         const response = await groupService.deleteGroup(id);
-
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -87,13 +135,14 @@ export const removeGroup = createAsyncThunk(
 export const addFile = createAsyncThunk(
     'FileManagerSlice/addFile',
     async ( files, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { idFolder, ...formattedFiles } = files;
 
         const response = await fileService.createFile(idFolder, formattedFiles);
 
         thunkAPI.dispatch(fetchFiles());
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -101,13 +150,14 @@ export const addFile = createAsyncThunk(
 export const addMetadata = createAsyncThunk(
     'FileManagerSlice/addFile',
     async ( file, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { idFile, ...dataFile } = file;
 
         const response = await fileService.createMetadata(idFile, dataFile);
 
         thunkAPI.dispatch(fetchFiles());
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -115,11 +165,13 @@ export const addMetadata = createAsyncThunk(
 export const removeFile = createAsyncThunk(
     'FileManagerSlice/removeFile',
     async ( files, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { idFolder, idFile } = files;
 
         const response = await fileService.deleteFile(idFolder, idFile);
-
+        
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -127,8 +179,11 @@ export const removeFile = createAsyncThunk(
 export const addFolder = createAsyncThunk(
     'FileManagerSlice/addFolder',
     async (folder, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
         const response = await folderService.createFolder(folder);
-        thunkAPI.dispatch(fetchGroups(''));
+        
+        thunkAPI.dispatch(fetchGroups(year));
 
         return response;
     }
@@ -137,11 +192,12 @@ export const addFolder = createAsyncThunk(
 export const editFolder = createAsyncThunk(
     'FileManagerSlice/editFolder',
     async (folder, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const {label, folderId} = folder;
 
         const response = await folderService.updateFolder(folderId, label);
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
 
         return response;
     }
@@ -150,12 +206,13 @@ export const editFolder = createAsyncThunk(
 export const removeFolder = createAsyncThunk(
     'FileManagerSlice/removeFolder',
     async (idFolder, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const {folderId} = idFolder;
 
         const response = await folderService.deleteFolder(folderId);
 
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
 
         return response;
     }
@@ -164,9 +221,11 @@ export const removeFolder = createAsyncThunk(
 export const updateGroup = createAsyncThunk(
     'FileManagerSlice/updateGroup',
     async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
         const response = await groupService.createGroup(removeEmptyStringProperties(group));
 
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -174,9 +233,11 @@ export const updateGroup = createAsyncThunk(
 export const updateFolder = createAsyncThunk(
     'FileManagerSlice/updateFolder',
     async (folder, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
         const response = await folderService.createFolder(removeEmptyStringProperties(folder));
 
-        thunkAPI.dispatch(fetchGroups(''));
+        thunkAPI.dispatch(fetchGroups(year));
 
         return response;
     }
@@ -194,7 +255,10 @@ export const FileManagerSlice = createSlice({
         },
         getFiles: (state) => {
             return state.files;
-        }
+        },
+        setCurrentDate: (state, action) => {
+            state.currentDate = action.payload; // Update currentDate directly
+        },
     },
     extraReducers: (builder) => {
 
@@ -251,4 +315,4 @@ export const FileManagerSlice = createSlice({
     },
 });
 
-export const { getGroups, getFiles } = FileManagerSlice.actions;
+export const { getGroups, getFiles, setCurrentDate } = FileManagerSlice.actions;

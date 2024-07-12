@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { RegisterFolder } from "./modals/register-folder";
 import { RegisterGroup } from "./modals/register-group";
+import { CreateGroupUsers } from "./modals/create-group-users"
 import "./style-file-manager.scss";
 import FileExplorer from "./test";
 import usePermission from "../../../../hooks/usePermission";
@@ -11,6 +12,7 @@ import {
   fetchGroups,
   addFile,
   fetchFiles,
+  setCurrentDate
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { ViewFile } from "./modals/view-file";
 import { DeleteFile } from "./modals/delete-file";
@@ -42,7 +44,7 @@ export default function FileManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(new Date());
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -86,15 +88,18 @@ export default function FileManager() {
     setselectedFolderId(null)
   }
 
+  const updateDate = (value) =>{
+    setDate(value);
+    dispatch(setCurrentDate(value?.toISOString().slice(0, 4)));
+  }
+
   const fetch = async () => {
     clearData();
-    const payload = {
-      year: date?.toISOString().slice(0, 4)
-    };
-    dispatch(fetchGroups(date === null ? '' : payload));
+    dispatch(fetchGroups());
   };
 
   useEffect(() => {
+    dispatch(setCurrentDate(date?.toISOString().slice(0, 4)));
     fetch();
   }, [date]);
 
@@ -232,7 +237,7 @@ export default function FileManager() {
             {permissions === 2 && <RegisterGroup />}
             {permissions === 2 && nameGroup !== "" &&
 
-              selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
+            selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
 
             {selectedGroupId &&
               showModal &&
@@ -240,9 +245,10 @@ export default function FileManager() {
                 <DeleteGroup groupId={selectedGroupId} />
               )}
 
+              <CreateGroupUsers />
+
             {showModal && (
               <RegisterFolder
-                updateGroup={fetchGroups}
                 parentFolder={parentFolder}
                 folderId={selectedFolderId}
                 groupName={nameGroup}
@@ -266,7 +272,7 @@ export default function FileManager() {
           </div>
           <div className="col-4 d-flex align-items-center justify-content-center">
             <div className="mb-3">
-              <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => setDate(e.value)} view="year" dateFormat="yy" />
+              <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => updateDate(e.value)} view="year" dateFormat="yy" />
             </div>
           </div>
         </div>

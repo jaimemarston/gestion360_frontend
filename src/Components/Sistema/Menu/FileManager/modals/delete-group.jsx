@@ -3,7 +3,6 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-  fetchGroups,
   removeGroup,
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { useToast } from "../../../../../hooks/useToast";
@@ -32,7 +31,6 @@ const DeleteGroup = ({ groupId }) => {
       } else {
         openModal();
         showToast("success", "Grupo eliminado con éxito");
-        dispatch(fetchGroups());
       }
     } catch (error) {
       console.log("error", error);

@@ -50,7 +50,12 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   };
 
   const save = async () => {
-    setSubmitted(true);
+    if(!data.label){
+      setSubmitted(true);
+      return;
+    }else{
+      setSubmitted(false);
+    }
   
     const payload = {
      ...data,
@@ -66,8 +71,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
       }
     } catch (error) {
       console.log("error", error);
-    } finally {
-      setSubmitted(false);
     }
   };
 
@@ -124,7 +127,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
               'p-invalid': submitted && !data.label,
             })}
           />
-          {submitted && !data.codigo && (
+          {submitted && !data.label && (
             <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
           )}
         </div>

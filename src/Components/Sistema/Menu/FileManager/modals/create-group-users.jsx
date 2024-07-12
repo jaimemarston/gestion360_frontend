@@ -1,6 +1,7 @@
 import {
-  addFolder,
-  fetchUsersGroups
+  addUsersGroup,
+  fetchUsersGroups,
+  addUsersToTheUserGroup
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
@@ -12,38 +13,28 @@ import { Toolbar } from "primereact/toolbar";
 import { useDispatch } from "react-redux";
 import { useToast } from "../../../../../hooks/useToast";
 import classNames from "classnames";
-import FolderIcon from "@mui/icons-material/Folder";
 import React, { useState, useEffect, useRef } from "react";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import GroupIcon from '@mui/icons-material/Group';
 
-const RegisterFolder = ({
-  isDarkMode,
-  groupName,
-  groupID,
-  parentFolder,
-  folderId,
-}) => {
-  const [usersId, setUsersId] = useState([]);
+const CreateGroupUsers = () => {
   let empty = {
-    label: "",
-    parent: parentFolder ? null : folderId,
-    groupId: parentFolder ? groupID : null,
+    name: "",
   };
   const [listProduct, setlistProduct] = useState([]);
   const [usersActive, setUsersActive] = useState([]);
-  const [usersGroup, setGroupUsers] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [newData, setNewData] = useState(null);
   const [isCloseModal, setIsCloseModal] = useState(false);
   const [value, setValue] = useState(empty.estado);
   const [selectedUsers, setSelectedProducts] = useState([]);
-  const [selectedGroups, setSelectedGroups] = useState([]);
 
   const [data, setData] = useState(empty);
   const [submitted, setSubmitted] = useState(false);
-  const [showGroupUser, setShowGroupUser] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const dt = useRef(null);
+  const [showSelectGroup, setShowSelectGroup] = useState(false);
+  const [usersGroup, setGroupUsers] = useState([]);
+  const [selectGroupId, setSelectGroupId] = useState('');
 
   const { showToast, ToastComponent } = useToast();
 
@@ -52,14 +43,6 @@ const RegisterFolder = ({
   const switchFondo = (e) => {
     setValue(e);
   };
-
-  const showTableGroup = () => {
-    setShowGroupUser(true)
-  }
-
-  const showTableUsers = () => {
-    setShowGroupUser(false)
-  }
 
   const listarUsuarios = () => {
     fetchGet("usuario").then((data) => {
@@ -99,35 +82,72 @@ const RegisterFolder = ({
   };
 
   useEffect(() => {
-    getGroups()
-  }, [isModal])
+    getGroups();
+  }, []);
+
+  useEffect(() => {
+    if (usersGroup.length > 0) {
+      setSelectGroupId(usersGroup[0].id);
+    }
+  }, [usersGroup]);
 
   const save = async () => {
-    if (!data.label) {
+    if (!data.name) {
       setSubmitted(true);
+      return
     } else {
       setSubmitted(false);
     }
-
     const payload = {
       ...data,
-      groupId: parentFolder ? groupID : null,
-      parent: parentFolder ? null : folderId,
-      user_ids: parentFolder ? selectedUsers.map((item) => item.id) : null,
+      usersIds: selectedUsers.map((item) => item.id),
     };
     try {
-      const resultAction = await dispatch(addFolder(payload));
+      const resultAction = await dispatch(addUsersGroup(payload));
       if (resultAction.error) {
         showToast("error", "Error al intentar crear una carpeta");
       } else {
         showToast("success", "Carpeta creada con éxito");
         closeModal();
+        setSelectedProducts([])
       }
     } catch (error) {
       console.log("error", error);
-    } finally {
     }
   };
+
+  const AddUsers = async () => {
+    if (!selectGroupId || !selectedUsers.length) {
+      setSubmitted(true);
+      return
+    } else {
+      setSubmitted(false);
+    }
+    const payload = {
+      id: selectGroupId,
+      users: selectedUsers.map((item) => item.id),
+    };
+    try {
+      const resultAction = await dispatch(addUsersToTheUserGroup(payload));
+      if (resultAction.error) {
+        showToast("error", "Error al intentar agregar usuarios a un grupo");
+      } else {
+        showToast("success", "Usuarios agregados con éxito");
+        closeModal();
+        setSelectedProducts([])
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const showTableGroup = () => {
+    setShowSelectGroup(true)
+  }
+
+  const showTableUsers = () => {
+    setShowSelectGroup(false)
+  }
 
   const editProduct = (data) => {
     setData({ ...data });
@@ -150,8 +170,8 @@ const RegisterFolder = ({
           className="p-button-success d-flex justify-content-center mr-2"
           onClick={openModal}
         >
-          <CreateNewFolderIcon className="me-2 mb-1" />
-          Crear carpeta
+          <GroupIcon className="me-2 mb-1" />
+          Crear grupo de personas
         </Button>
       </div>
     </>
@@ -161,7 +181,7 @@ const RegisterFolder = ({
     return (
       <>
         <span className="p-column-title">Codigo</span>
-        {rowData.codigo ? rowData.codigo : rowData.id}
+        {rowData.codigo}
       </>
     );
   };
@@ -170,7 +190,7 @@ const RegisterFolder = ({
     return (
       <>
         <span className="p-column-title">Nombre</span>
-        {rowData.nombre ? rowData.nombre : rowData.name}
+        {rowData.nombre}
       </>
     );
   };
@@ -189,15 +209,6 @@ const RegisterFolder = ({
       <>
         <span className="p-column-title">Estado</span>
         {rowData?.estado === true ? "Activo" : "Inactivo"}
-      </>
-    );
-  };
-
-  const AmountOfUsersBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Cantidad de usuarios</span>
-        {rowData?.usersAmount}
       </>
     );
   };
@@ -230,83 +241,77 @@ const RegisterFolder = ({
     return (
       <Dialog
         visible={isModal}
-        style={parentFolder ? { width: "950px", height: "660px" } : { width: "400px", height: "220px" }}
-        header={`Grupo seleccionado: ${groupName}`}
+        style={{ width: "950px", height: "660px" }}
+        header={`Grupo seleccionado: `}
         modal
         className="p-fluid"
         footer={productDialogFooter}
         onHide={openModal}
       >
-        <div className="field">
-          <label htmlFor="label">Nombre de la carpeta</label>
-          <InputText
-            id="label"
-            name="label"
-            value={data.label?.trim()}
-            onChange={(e) => onInputChange(e, "label")}
-            required
-            autoFocus
-            className={classNames({
-              "p-invalid": submitted && !data.label,
-            })}
-          />
-          {submitted && !data.codigo && (
-            <small className="p-invalid">
-              El nombre de la carpeta es requerido
-            </small>
-          )}
-        </div>
-
         <div className="my-2 d-flex">
           <Button
             className="p-button-success d-flex justify-content-center mr-2"
             onClick={showTableUsers}
-            disabled={!showGroupUser}
+            disabled={!showSelectGroup}
           >
-            Tabla de usuarios
+            Crear grupo de usuarios
           </Button>
           <Button
             className="p-button-success d-flex justify-content-center mr-2"
             onClick={showTableGroup}
-            disabled={showGroupUser}
+            disabled={showSelectGroup}
           >
-            Tabla de grupo de usuarios
+            Asignar usuarios a un grupo
           </Button>
         </div>
+        {!showSelectGroup &&
+          <div className="field">
 
-        {parentFolder && !showGroupUser && (
-          <TablaUsuario
-            dt={dt}
-            listProduct={usersActive}
-            selectedUsers={selectedUsers}
-            setSelectedProducts={setSelectedProducts}
-            globalFilter={globalFilter}
-            header={header}
-            actionBodyTemplate={actionBodyTemplate}
-            actionBodyTemplate2={actionBodyTemplate2}
-            codigoBodyTemplate={codigoBodyTemplate}
-            nombreBodyTemplate={nombreBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
-            statusBodyTemplate={statusBodyTemplate}
-          />
-        )}
+            <label htmlFor="label">Nombre de el grupo de usuarios</label>
+            <InputText
+              id="name"
+              name="name"
+              value={data.name?.trim()}
+              onChange={(e) => onInputChange(e, "name")}
+              required
+              autoFocus
+              className={classNames({
+                "p-invalid": submitted && !data.name,
+              })}
+            />
+            {submitted && !data.name && (
+              <small className="p-invalid">
+                El nombre de el grupo de usuarios es requerido
+              </small>
+            )}
+          </div>
+        }
 
-        {parentFolder && showGroupUser && (
-          <TablaUsuario
-            dt={dt}
-            listProduct={usersGroup}
-            selectedUsers={selectedGroups}
-            setSelectedProducts={setSelectedGroups}
-            globalFilter={globalFilter}
-            header={headerGroup}
-            actionBodyTemplate={actionBodyTemplate}
-            actionBodyTemplate2={actionBodyTemplate2}
-            codigoBodyTemplate={codigoBodyTemplate}
-            nombreBodyTemplate={nombreBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
-            AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
-          />
-        )}
+        {showSelectGroup &&
+          <div className="field">
+            <label htmlFor="label">Elige el grupo al que le quieres asignar usuarios</label>
+            <select value={selectGroupId} onChange={(e) => setSelectGroupId(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+              {usersGroup && usersGroup.map((group) => (
+                <option key={group.id} value={group.id}>{group.name}</option>
+              ))}
+            </select>
+          </div>
+        }
+
+        <TablaUsuario
+          dt={dt}
+          listProduct={usersActive}
+          selectedUsers={selectedUsers}
+          setSelectedProducts={setSelectedProducts}
+          globalFilter={globalFilter}
+          header={header}
+          actionBodyTemplate={actionBodyTemplate}
+          actionBodyTemplate2={actionBodyTemplate2}
+          codigoBodyTemplate={codigoBodyTemplate}
+          nombreBodyTemplate={nombreBodyTemplate}
+          usuarioBodyTemplate={usuarioBodyTemplate}
+          statusBodyTemplate={statusBodyTemplate}
+        />
       </Dialog>
     );
   };
@@ -323,14 +328,6 @@ const RegisterFolder = ({
       </div>
     );
   };
-
-  const headerGroup = (
-    <div className="flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-      <div className="col-12">
-        <h5 className="m-0">Lista de grupos de usuarios</h5>
-      </div>
-    </div>
-  );
 
   const header = (
     <div className="flex flex-column flex-md-row justify-content-md-between align-items-md-center">
@@ -366,7 +363,7 @@ const RegisterFolder = ({
         icon="pi pi-check"
         className="p-button-text"
         onClick={() => {
-          save(), setData({});
+          showSelectGroup ? AddUsers() : save(),  setData({});
         }}
       />
     </>
@@ -374,10 +371,7 @@ const RegisterFolder = ({
 
   return (
     <div
-      className={
-        isDarkMode ? "dark-mode-table grid crud-demo" : "grid crud-demo"
-      }
-    >
+      className="grid crud-demo">
       <div className="col-12">
         <div>
           {ToastComponent}
@@ -404,7 +398,7 @@ const RegisterFolder = ({
   );
 };
 
-export { RegisterFolder };
+export { CreateGroupUsers };
 
 const TablaUsuario = ({
   dt,
@@ -417,7 +411,6 @@ const TablaUsuario = ({
   nombreBodyTemplate,
   usuarioBodyTemplate,
   statusBodyTemplate,
-  AmountOfUsersBodyTemplate,
 }) => {
   return (
     <DataTable
@@ -465,24 +458,13 @@ const TablaUsuario = ({
         sortable
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
-      {statusBodyTemplate &&
-        <Column
-          field="inventoryStatus"
-          header="Status"
-          body={statusBodyTemplate}
-          sortable
-          headerStyle={{ width: "14%", minWidth: "10rem" }}
-        ></Column>
-      }
-      {AmountOfUsersBodyTemplate &&
-        <Column
-          field="inventoryStatus"
-          header="Cantidad de usuarios"
-          body={AmountOfUsersBodyTemplate}
-          sortable
-          headerStyle={{ width: "18%", minWidth: "14rem" }}
-        ></Column>
-      }
+      <Column
+        field="inventoryStatus"
+        header="Status"
+        body={statusBodyTemplate}
+        sortable
+        headerStyle={{ width: "14%", minWidth: "10rem" }}
+      ></Column>
     </DataTable>
   );
 };
