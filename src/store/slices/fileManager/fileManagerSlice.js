@@ -100,6 +100,7 @@ export const fetchFiles = createAsyncThunk(
 
         const response = await fileService.getFileFolder(idFolder, rowsPerPage, page );
 
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
@@ -164,11 +165,13 @@ export const addMetadata = createAsyncThunk(
 export const removeFile = createAsyncThunk(
     'FileManagerSlice/removeFile',
     async ( files, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
 
         const { idFolder, idFile } = files;
 
         const response = await fileService.deleteFile(idFolder, idFile);
-
+        
+        thunkAPI.dispatch(fetchGroups(year));
         return response;
     }
 );
