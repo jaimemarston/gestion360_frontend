@@ -76,7 +76,7 @@ import {
       }
       const payload = {
         ...data,
-        user_ids: selectedUsers.map((item) => item.id),
+        usersIds: selectedUsers.map((item) => item.id),
       };
       try {
         const resultAction = await dispatch(addUsersGroup(payload));

@@ -53,11 +53,11 @@ const RegisterFolder = ({
     setValue(e);
   };
 
-  const showTableGroup = () =>{
+  const showTableGroup = () => {
     setShowGroupUser(true)
   }
 
-  const showTableUsers = () =>{
+  const showTableUsers = () => {
     setShowGroupUser(false)
   }
 
@@ -71,7 +71,7 @@ const RegisterFolder = ({
     listarUsuarios();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const active = listProduct.filter((item) => item.estado === true);
     setUsersActive(active)
   }, [listProduct])
@@ -98,14 +98,14 @@ const RegisterFolder = ({
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     getGroups()
   }, [])
 
   const save = async () => {
-    if(!data.label){
+    if (!data.label) {
       setSubmitted(true);
-    }else{
+    } else {
       setSubmitted(false);
     }
 
@@ -193,6 +193,15 @@ const RegisterFolder = ({
     );
   };
 
+  const AmountOfUsersBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Cantidad de usuarios</span>
+        {rowData?.usersAmount}
+      </>
+    );
+  };
+
   const actionBodyTemplate = (rowData) => {
     return (
       <div className="actions">
@@ -249,21 +258,21 @@ const RegisterFolder = ({
         </div>
 
         <div className="my-2 d-flex">
-        <Button
-          className="p-button-success d-flex justify-content-center mr-2"
-          onClick={showTableUsers}
-          disabled={!showGroupUser}
-        >
-          Tabla de usuarios
-        </Button>
-        <Button
-          className="p-button-success d-flex justify-content-center mr-2"
-          onClick={showTableGroup}
-          disabled={showGroupUser}
-        >
-          Tabla de grupo de usuarios
-        </Button>
-      </div>
+          <Button
+            className="p-button-success d-flex justify-content-center mr-2"
+            onClick={showTableUsers}
+            disabled={!showGroupUser}
+          >
+            Tabla de usuarios
+          </Button>
+          <Button
+            className="p-button-success d-flex justify-content-center mr-2"
+            onClick={showTableGroup}
+            disabled={showGroupUser}
+          >
+            Tabla de grupo de usuarios
+          </Button>
+        </div>
 
         {parentFolder && !showGroupUser && (
           <TablaUsuario
@@ -289,13 +298,13 @@ const RegisterFolder = ({
             selectedUsers={selectedGroups}
             setSelectedProducts={setSelectedGroups}
             globalFilter={globalFilter}
-            header={header}
+            header={headerGroup}
             actionBodyTemplate={actionBodyTemplate}
             actionBodyTemplate2={actionBodyTemplate2}
             codigoBodyTemplate={codigoBodyTemplate}
             nombreBodyTemplate={nombreBodyTemplate}
             usuarioBodyTemplate={usuarioBodyTemplate}
-            statusBodyTemplate={statusBodyTemplate}
+            AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
           />
         )}
       </Dialog>
@@ -314,6 +323,14 @@ const RegisterFolder = ({
       </div>
     );
   };
+
+  const headerGroup = (
+    <div className="flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+      <div className="col-12">
+        <h5 className="m-0">Lista de grupos de usuarios</h5>
+      </div>
+    </div>
+  );
 
   const header = (
     <div className="flex flex-column flex-md-row justify-content-md-between align-items-md-center">
@@ -400,6 +417,7 @@ const TablaUsuario = ({
   nombreBodyTemplate,
   usuarioBodyTemplate,
   statusBodyTemplate,
+  AmountOfUsersBodyTemplate,
 }) => {
   return (
     <DataTable
@@ -447,13 +465,24 @@ const TablaUsuario = ({
         sortable
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
-      <Column
-        field="inventoryStatus"
-        header="Status"
-        body={statusBodyTemplate}
-        sortable
-        headerStyle={{ width: "14%", minWidth: "10rem" }}
-      ></Column>
+      {statusBodyTemplate &&
+        <Column
+          field="inventoryStatus"
+          header="Status"
+          body={statusBodyTemplate}
+          sortable
+          headerStyle={{ width: "14%", minWidth: "10rem" }}
+        ></Column>
+      }
+      {AmountOfUsersBodyTemplate &&
+        <Column
+          field="inventoryStatus"
+          header="Cantidad de usuarios"
+          body={AmountOfUsersBodyTemplate}
+          sortable
+          headerStyle={{ width: "18%", minWidth: "14rem" }}
+        ></Column>
+      }
     </DataTable>
   );
 };
