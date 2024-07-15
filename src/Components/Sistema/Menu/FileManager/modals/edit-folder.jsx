@@ -1,4 +1,4 @@
-import { editFolder } from '../../../../../store/slices/fileManager/fileManagerSlice';
+import { editFolder, fetchUsersGroups } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -12,11 +12,12 @@ import classNames from 'classnames';
 import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import TablaUsuario from '../../TableUsers'
 
 const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   const [usersId, setUsersId] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     let empty = {
       label: folderName,
       folderId: folderId
@@ -31,6 +32,13 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   const [data, setData] = useState();
   const [submitted, setSubmitted] = useState(false);
   const dt = useRef(null);
+  const [listProduct, setlistProduct] = useState([]);
+  const [usersActive, setUsersActive] = useState([]);
+  const [selectedUsers, setSelectedProducts] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [showGroupUser, setShowGroupUser] = useState(false);
+  const [usersGroup, setGroupUsers] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   const { showToast, ToastComponent } = useToast()
 
@@ -49,16 +57,29 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     setIsCloseModal(!isCloseModal);
   };
 
+  const getGroups = () => {
+    dispatch(fetchUsersGroups()).unwrap().then((result) => {
+      setGroupUsers(result.data); // result es el valor que devuelve tu action creator
+    }).catch((error) => {
+      console.error(error);
+      // Maneja el error aquí si es necesario
+    });
+  };
+
+  useEffect(() => {
+    getGroups()
+  }, [isModal])
+
   const save = async () => {
-    if(!data.label){
+    if (!data.label) {
       setSubmitted(true);
       return;
-    }else{
+    } else {
       setSubmitted(false);
     }
-  
+
     const payload = {
-     ...data,
+      ...data,
     };
 
     try {
@@ -78,6 +99,21 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
+  const listarUsuarios = () => {
+    fetchGet("usuario").then((data) => {
+      setlistProduct(data.usuario);
+    });
+  };
+
+  useEffect(() => {
+    listarUsuarios();
+  }, []);
+
+  useEffect(() => {
+    const active = listProduct.filter((item) => item.estado === true);
+    setUsersActive(active)
+  }, [listProduct])
+
 
   const leftToolbarTemplate = () => (
     <>
@@ -92,6 +128,147 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
       </div>
     </>
   );
+  const editProduct = (data) => {
+    setData({ ...data });
+    setIsModal();
+  };
+
+  const confirmDeleteProduct = (rowData) => {
+    setNewData(rowData);
+    closeModal();
+  };
+
+  const codigoBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Codigo</span>
+        {rowData.codigo}
+      </>
+    );
+  };
+
+  const idBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Codigo</span>
+        {rowData.id}
+      </>
+    );
+  };
+
+  const nombreBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Nombre</span>
+        {rowData.nombre}
+      </>
+    );
+  };
+
+  const nameBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Nombre</span>
+        {rowData.name}
+      </>
+    );
+  };
+
+  const headerGroup = (
+    <div className="flex justify-content-between align-items-center">
+      <div className="col-3">
+        <h5 className="mb-3">Lista de grupos de usuarios</h5>
+      </div>
+      <div className="col-9">
+        <span className="block mt-2 mt-md-0 p-input-icon-left">
+          <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+          <option value="todos">Todos</option>
+          <option value="asignados">Asignados</option>
+          </select>
+        </span>
+      </div>
+    </div>
+  );
+
+  const usuarioBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Usuario</span>
+        {rowData.email}
+      </>
+    );
+  };
+
+  const statusBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Estado</span>
+        {rowData?.estado === true ? "Activo" : "Inactivo"}
+      </>
+    );
+  };
+
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <div className="actions">
+        <Button
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-success mr-2"
+          onClick={() => {
+            editProduct(rowData);
+            openModal();
+          }}
+        />
+      </div>
+    );
+  };
+
+  const AmountOfUsersBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Cantidad de usuarios</span>
+        {rowData?.usersAmount}
+      </>
+    );
+  };
+
+  const actionBodyTemplate2 = (rowData) => {
+    return (
+      <div className="actions">
+        <Button
+          icon="pi pi-trash"
+          className="p-button-rounded p-button-warning "
+          onClick={() => {
+            confirmDeleteProduct(rowData);
+          }}
+        />
+      </div>
+    );
+  };
+
+  const header = (
+    <div className="flex justify-content-md-between align-items-center">
+      <div className="col-2">
+        <h5 className="mb-3">Lista de Usuarios</h5>
+      </div>
+      <div className="col-10">
+        <span className="block mt-2 mt-md-0 p-input-icon-left">
+          <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+          <option value="todos">Todos</option>
+          <option value="asignados">Asignados</option>
+          </select>
+        </span>
+      </div>
+    </div>
+  );
+
+  const showTableGroup = () => {
+    setShowGroupUser(true)
+  }
+
+  const showTableUsers = () => {
+    setShowGroupUser(false)
+  }
 
   const Handler = ({
     isModal,
@@ -106,7 +283,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     return (
       <Dialog
         visible={isModal}
-        style={{ width: '600px', height: "250px" }}
+        style={{ width: '800px', height: "600px" }}
         header={`Grupo seleccionado: ${groupName}`}
         modal
         className='p-fluid'
@@ -131,6 +308,57 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
             <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
           )}
         </div>
+
+        <div className="my-2 d-flex">
+          <Button
+            className="p-button-success d-flex justify-content-center mr-2"
+            onClick={showTableUsers}
+            disabled={!showGroupUser}
+          >
+            Tabla de usuarios
+          </Button>
+          <Button
+            className="p-button-success d-flex justify-content-center mr-2"
+            onClick={showTableGroup}
+            disabled={showGroupUser}
+          >
+            Tabla de grupo de usuarios
+          </Button>
+        </div>
+
+        {!showGroupUser && (
+          <TablaUsuario
+            dt={dt}
+            listProduct={usersActive}
+            selectedUsers={selectedUsers}
+            setSelectedProducts={setSelectedProducts}
+            globalFilter={globalFilter}
+            header={header}
+            actionBodyTemplate={actionBodyTemplate}
+            actionBodyTemplate2={actionBodyTemplate2}
+            codigoBodyTemplate={codigoBodyTemplate}
+            nombreBodyTemplate={nombreBodyTemplate}
+            usuarioBodyTemplate={usuarioBodyTemplate}
+            statusBodyTemplate={statusBodyTemplate}
+          />
+        )}
+
+        {showGroupUser && (
+          <TablaUsuario
+            dt={dt}
+            listProduct={usersGroup}
+            selectedUsers={selectedGroups}
+            setSelectedProducts={setSelectedGroups}
+            globalFilter={globalFilter}
+            header={headerGroup}
+            actionBodyTemplate={actionBodyTemplate}
+            actionBodyTemplate2={actionBodyTemplate2}
+            codigoBodyTemplate={idBodyTemplate}
+            nombreBodyTemplate={nameBodyTemplate}
+            usuarioBodyTemplate={usuarioBodyTemplate}
+            AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
+          />
+        )}
       </Dialog>
     );
   };
@@ -149,7 +377,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
         label='Guardar'
         icon='pi pi-check'
         className='p-button-text'
-        onClick={()=> {save()}}
+        onClick={() => { save() }}
       />
     </>
   );
