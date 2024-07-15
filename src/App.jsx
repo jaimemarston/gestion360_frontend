@@ -44,6 +44,7 @@ import {
 } from "./Components/Sistema/Menu";
 import { RegistroPresupuestoFinanciero } from "./Components/Sistema/Menu/RegistroPresupuestoFinanciero";
 import FileManager from "./Components/Sistema/Menu/FileManager";
+import CreateGroupUsers from "./Components/Sistema/Menu/UserGroupRegistration";
 import { useToast } from "./hooks/useToast";
 
 function App() {
@@ -174,6 +175,11 @@ function App() {
             exact
             path={"file-manager"}
             element={<FileManager isDarkMode={isDarkMode} />}
+          />
+          <Route
+            exact
+            path={"user-group-registration"}
+            element={<CreateGroupUsers isDarkMode={isDarkMode} />}
           />
         </Route>
       </Routes>
