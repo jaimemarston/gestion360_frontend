@@ -258,22 +258,24 @@ const RegisterFolder = ({
           )}
         </div>
 
-        <div className="my-2 d-flex">
-          <Button
-            className="p-button-success d-flex justify-content-center mr-2"
-            onClick={showTableUsers}
-            disabled={!showGroupUser}
-          >
-            Tabla de usuarios
-          </Button>
-          <Button
-            className="p-button-success d-flex justify-content-center mr-2"
-            onClick={showTableGroup}
-            disabled={showGroupUser}
-          >
-            Tabla de grupo de usuarios
-          </Button>
-        </div>
+        {parentFolder &&
+          <div className="my-2 d-flex">
+            <Button
+              className="p-button-success d-flex justify-content-center mr-2"
+              onClick={showTableUsers}
+              disabled={!showGroupUser}
+            >
+              Tabla de usuarios
+            </Button>
+            <Button
+              className="p-button-success d-flex justify-content-center mr-2"
+              onClick={showTableGroup}
+              disabled={showGroupUser}
+            >
+              Tabla de grupo de usuarios
+            </Button>
+          </div>
+        }
 
         {parentFolder && !showGroupUser && (
           <TablaUsuario
