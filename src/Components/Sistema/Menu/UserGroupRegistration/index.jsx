@@ -67,7 +67,7 @@ export default function CreateGroupUsers() {
 
     const getGroups = () => {
         dispatch(fetchUsersGroups()).unwrap().then((result) => {
-            setGroupUsers(result.data); // result es el valor que devuelve tu action creator
+            setGroupUsers(result.data.parsedGroups); // result es el valor que devuelve tu action creator
         }).catch((error) => {
             console.error(error);
         });

@@ -1,7 +1,5 @@
-import { editFolder, fetchUsersGroups } from '../../../../../store/slices/fileManager/fileManagerSlice';
+import { editFolder, getUsersAssignToFolder, getGroupsUsersAssignToFolder } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { fetchGet, } from '../../../../../api';
 import { InputText } from 'primereact/inputtext';
@@ -9,7 +7,6 @@ import { Toolbar } from 'primereact/toolbar';
 import { useDispatch } from 'react-redux';
 import { useToast } from '../../../../../hooks/useToast';
 import classNames from 'classnames';
-import FolderIcon from '@mui/icons-material/Folder';
 import React, { useState, useEffect, useRef } from 'react';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import TablaUsuario from '../../TableUsers'
@@ -32,13 +29,29 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   const [data, setData] = useState();
   const [submitted, setSubmitted] = useState(false);
   const dt = useRef(null);
-  const [listProduct, setlistProduct] = useState([]);
+  const [usersList, setUsersList] = useState([]);
+  //usuarios asignados
+  const [usersAssign, setUsersAssign] = useState([]);
+  //usuarios con el status activo sin asignar
   const [usersActive, setUsersActive] = useState([]);
-  const [selectedUsers, setSelectedProducts] = useState([]);
+  //ids de usuarios por asignar
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  //ids de usuarios por eliminar
+  const [selectedUsersDelete, setSelectedUsersDelete] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [showGroupUser, setShowGroupUser] = useState(false);
+  //grupo de usuarios sin asignar
   const [usersGroup, setGroupUsers] = useState([]);
+  //grupo de usuarios asignados
+  const [usersGroupAssign, setGroupUsersAssign] = useState([]);
+  //ids de usuarios por asignar
   const [selectedGroups, setSelectedGroups] = useState([]);
+  //ids de grupos de usuarios por eliminar
+  const [selectedGroupsUsersDelete, setSelectedGroupsUsersDelete] = useState([]);
+  const [editNameFolder, setEditNameFolder] = useState(null);
+  
+  const [filterStatusGroup, setFilterStatusGroup] = useState('sin asignar')
+  const [filterStatusUsers, setFilterStatusUsers] = useState('sin asignar')
 
   const { showToast, ToastComponent } = useToast()
 
@@ -58,16 +71,26 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   };
 
   const getGroups = () => {
-    dispatch(fetchUsersGroups()).unwrap().then((result) => {
-      setGroupUsers(result.data); // result es el valor que devuelve tu action creator
+    dispatch(getGroupsUsersAssignToFolder(folderId)).unwrap().then((result) => {
+      setGroupUsers(result.data.parsedGroups)
+      setGroupUsersAssign(result.data.parsedAlreadyIncludedUsergroups)
     }).catch((error) => {
       console.error(error);
-      // Maneja el error aquí si es necesario
+    });
+  };
+
+  const getUsers = () => {
+    dispatch(getUsersAssignToFolder(folderId)).unwrap().then((result) => {
+      setUsersList(result.usuario)
+      setUsersAssign(result.alreadyIncluded)
+    }).catch((error) => {
+      console.error(error);
     });
   };
 
   useEffect(() => {
-    getGroups()
+    getUsers();
+    getGroups();
   }, [isModal])
 
   const save = async () => {
@@ -83,8 +106,8 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     };
 
     try {
-      const users = selectedUsers.map((item)=> item.id)
-      const groups = selectedGroups.map((item)=> item.id)
+      const users = selectedUsers.map((item) => item.id);
+      const groups = selectedGroups.map((item) => item.id);
       const resultAction = await dispatch(editFolder(payload));
       if (resultAction.error) {
         showToast('error', 'Error al intentar editar la carpeta')
@@ -97,24 +120,20 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     }
   };
 
+  useEffect(()=>{
+    if(editNameFolder === null){
+      setEditNameFolder(true)
+    }
+  }, [editFolder])
+
   const onInputChange = (e, name) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  const listarUsuarios = () => {
-    fetchGet("usuario").then((data) => {
-      setlistProduct(data.usuario);
-    });
-  };
-
   useEffect(() => {
-    listarUsuarios();
-  }, []);
-
-  useEffect(() => {
-    const active = listProduct.filter((item) => item.estado === true);
+    const active = usersList.filter((item) => item.estado === true);
     setUsersActive(active)
-  }, [listProduct])
+  }, [usersList])
 
 
   const leftToolbarTemplate = () => (
@@ -183,9 +202,9 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
       </div>
       <div className="col-9">
         <span className="block mt-2 mt-md-0 p-input-icon-left">
-          <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-          <option value="todos">Todos</option>
-          <option value="asignados">Asignados</option>
+          <select value={filterStatusGroup} onChange={(e) => setFilterStatusGroup(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+            <option value="sin asignar">Sin asignar</option>
+            <option value="asignados">Asignados</option>
           </select>
         </span>
       </div>
@@ -255,9 +274,9 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
       </div>
       <div className="col-10">
         <span className="block mt-2 mt-md-0 p-input-icon-left">
-          <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-          <option value="todos">Todos</option>
-          <option value="asignados">Asignados</option>
+          <select value={filterStatusUsers} onChange={(e) => setFilterStatusUsers(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+            <option value="sin asignar">Sin asignar</option>
+            <option value="asignados">Asignados</option>
           </select>
         </span>
       </div>
@@ -280,7 +299,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     onInputChange,
     submitted,
   }) => {
-    // console.log(data);
 
     return (
       <Dialog
@@ -295,20 +313,51 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
         <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName}</h5>
         <div className='field'>
           <label htmlFor='label'>Carpeta principal</label>
-          <InputText
-            id='label'
-            name='label'
-            value={data?.label?.trim()}
-            onChange={(e) => onInputChange(e, 'label')}
-            required
-            autoFocus
-            className={classNames({
-              'p-invalid': submitted && !data.label,
-            })}
-          />
-          {submitted && !data.label && (
-            <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
-          )}
+          <div className="d-flex">
+            <div className={`${editNameFolder ? 'col-11' : 'col-10'} d-flex`}>
+              <InputText
+                id='label'
+                name='label'
+                value={data?.label?.trim()}
+                onChange={(e) => onInputChange(e, 'label')}
+                required
+                autoFocus
+                disabled={editNameFolder}
+                className={classNames({
+                  'p-invalid': submitted && !data.label,
+                })}
+              />
+              {submitted && !data.label && (
+                <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
+              )}
+            </div>
+            <div className={`${editNameFolder ? 'col-1': 'col-2' }`}>
+              {editNameFolder && 
+                <Button
+                  className="text-center d-flex justify-content-center"
+                  onClick={() => setEditNameFolder(false)}
+                >
+                  <BorderColorIcon />
+                </Button>
+              }
+              {!editNameFolder && 
+               <div className='d-flex'>
+                <Button
+                  className="text-center me-3 d-flex justify-content-center"
+                  onClick={() => setEditNameFolder(!editNameFolder)}
+                >
+                  <BorderColorIcon />
+                </Button>
+                <Button
+                  className="text-center d-flex justify-content-center"
+                  onClick={() => setEditNameFolder(false)}
+                >
+                  <BorderColorIcon />
+                </Button>
+                </div>
+              }
+            </div>
+          </div>
         </div>
 
         <div className="my-2 d-flex">
@@ -331,9 +380,9 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
         {!showGroupUser && (
           <TablaUsuario
             dt={dt}
-            listProduct={usersActive}
-            selectedUsers={selectedUsers}
-            setSelectedProducts={setSelectedProducts}
+            listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
+            selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersDelete}
+            setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersDelete}
             globalFilter={globalFilter}
             header={header}
             actionBodyTemplate={actionBodyTemplate}
@@ -348,9 +397,9 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
         {showGroupUser && (
           <TablaUsuario
             dt={dt}
-            listProduct={usersGroup}
-            selectedUsers={selectedGroups}
-            setSelectedProducts={setSelectedGroups}
+            listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
+            selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersDelete}
+            setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersDelete}
             globalFilter={globalFilter}
             header={headerGroup}
             actionBodyTemplate={actionBodyTemplate}

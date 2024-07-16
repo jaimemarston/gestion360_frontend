@@ -258,6 +258,32 @@ export const updateFolder = createAsyncThunk(
     }
 );
 
+export const getUsersAssignToFolder = createAsyncThunk(
+    'FileManagerSlice/getUsersAssignToFolder',
+    async (folderId, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const response = await folderService.usersAssignToaFolder(folderId);
+
+        thunkAPI.dispatch(fetchGroups(year));
+
+        return response;
+    }
+);
+
+export const getGroupsUsersAssignToFolder = createAsyncThunk(
+    'FileManagerSlice/getGroupsUsersAssignToFolder',
+    async (folderId, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const response = await folderService.gruoupsUsersAssignToaFolder(folderId);
+
+        thunkAPI.dispatch(fetchGroups(year));
+
+        return response;
+    }
+);
+
 export const FileManagerSlice = createSlice({
     name: 'FileManagerSlice',
     initialState,

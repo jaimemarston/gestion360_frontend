@@ -33,10 +33,22 @@ const assignUsersToaFolder = async (folderId: number, user_ids: number[], usergr
     return data;
 }
 
+const usersAssignToaFolder = async (folderId: number) =>{
+    const { data } = await http.get(`/usuario?folderId=${folderId}`) 
+    return data;
+}
+
+const gruoupsUsersAssignToaFolder = async (folderId: number) =>{
+    const { data } = await http.get(`/usergroups?folderId=${folderId}`) 
+    return data;
+}
+
 export default {
     getAllFolder,
     createFolder,
     updateFolder,
     deleteFolder,
-    assignUsersToaFolder
+    assignUsersToaFolder,
+    usersAssignToaFolder,
+    gruoupsUsersAssignToaFolder,
 }
