@@ -83,6 +83,8 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     };
 
     try {
+      const users = selectedUsers.map((item)=> item.id)
+      const groups = selectedGroups.map((item)=> item.id)
       const resultAction = await dispatch(editFolder(payload));
       if (resultAction.error) {
         showToast('error', 'Error al intentar editar la carpeta')

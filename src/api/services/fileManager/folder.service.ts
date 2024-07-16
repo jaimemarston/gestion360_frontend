@@ -28,9 +28,15 @@ const deleteFolder = async (folderId: number) => {
     return data
 }
 
+const assignUsersToaFolder = async (folderId: number, user_ids: number[], usergroups_ids: number[] ) =>{
+    const { data } = await http.post(`/folders/add-user/${folderId}`, {user_ids, usergroups_ids}) 
+    return data;
+}
+
 export default {
     getAllFolder,
     createFolder,
     updateFolder,
-    deleteFolder
+    deleteFolder,
+    assignUsersToaFolder
 }

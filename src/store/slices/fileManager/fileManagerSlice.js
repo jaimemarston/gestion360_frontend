@@ -80,6 +80,21 @@ export const addUsersToTheUserGroup = createAsyncThunk(
     }
 );
 
+export const addUsersAndGroupsToTheFolder = createAsyncThunk(
+    'FileManagerSlice/addUsersAndGroupsToTheFolder',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { folderId, user_ids, usergroups_ids } = group;
+
+        const response = await folderService.assignUsersToaFolder(folderId, user_ids, usergroups_ids);
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
 export const fetchUsersGroups = createAsyncThunk(
     'FileManagerSlice/fetchUsersGroups',
     async (_, thunkAPI) => {
