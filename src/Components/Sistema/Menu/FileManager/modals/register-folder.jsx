@@ -115,6 +115,7 @@ const RegisterFolder = ({
       groupId: parentFolder ? groupID : null,
       parent: parentFolder ? null : folderId,
       user_ids: parentFolder ? selectedUsers.map((item) => item.id) : null,
+      usergroups_ids: parentFolder ? selectedGroups.map((item) => item.id) : null,
     };
     try {
       const resultAction = await dispatch(addFolder(payload));
