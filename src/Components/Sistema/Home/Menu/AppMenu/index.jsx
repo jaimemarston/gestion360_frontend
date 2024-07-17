@@ -95,6 +95,14 @@ export default function AppMenu({ isOpen }) {
             navigate('/file-manager');
           },
         },
+        {
+          label: 'Crear grupos de usuarios',
+          icon: 'pi pi-users me-2',
+          to: '/user-group-registration',
+          command: () => {
+            navigate('/user-group-registration');
+          },
+        },
       ],
     },
     /*     {

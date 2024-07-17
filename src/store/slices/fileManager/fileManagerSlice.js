@@ -80,6 +80,36 @@ export const addUsersToTheUserGroup = createAsyncThunk(
     }
 );
 
+export const addUsersAndGroupsToTheFolder = createAsyncThunk(
+    'FileManagerSlice/addUsersAndGroupsToTheFolder',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { folderId, user_ids, usergroups_ids } = group;
+
+        const response = await folderService.assignUsersToaFolder(folderId, user_ids, usergroups_ids);
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
+export const desassignateUsersToaFolder = createAsyncThunk(
+    'FileManagerSlice/desassignateUsersToaFolder',
+    async (group, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const { folderId, user_ids, usergroups_ids } = group;
+
+        const response = await folderService.desassignateUsersToaFolder(folderId, user_ids, usergroups_ids);
+   
+        thunkAPI.dispatch(fetchGroups(year));
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
 export const fetchUsersGroups = createAsyncThunk(
     'FileManagerSlice/fetchUsersGroups',
     async (_, thunkAPI) => {
@@ -236,6 +266,32 @@ export const updateFolder = createAsyncThunk(
         const year = thunkAPI.getState().FileManager.currentDate;
 
         const response = await folderService.createFolder(removeEmptyStringProperties(folder));
+
+        thunkAPI.dispatch(fetchGroups(year));
+
+        return response;
+    }
+);
+
+export const getUsersAssignToFolder = createAsyncThunk(
+    'FileManagerSlice/getUsersAssignToFolder',
+    async (folderId, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const response = await folderService.usersAssignToaFolder(folderId);
+
+        thunkAPI.dispatch(fetchGroups(year));
+
+        return response;
+    }
+);
+
+export const getGroupsUsersAssignToFolder = createAsyncThunk(
+    'FileManagerSlice/getGroupsUsersAssignToFolder',
+    async (folderId, thunkAPI) => {
+        const year = thunkAPI.getState().FileManager.currentDate;
+
+        const response = await folderService.gruoupsUsersAssignToaFolder(folderId);
 
         thunkAPI.dispatch(fetchGroups(year));
 

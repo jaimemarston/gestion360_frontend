@@ -15,6 +15,7 @@ import classNames from "classnames";
 import FolderIcon from "@mui/icons-material/Folder";
 import React, { useState, useEffect, useRef } from "react";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import TablaUsuario from '../../TableUsers'
 
 const RegisterFolder = ({
   isDarkMode,
@@ -114,6 +115,7 @@ const RegisterFolder = ({
       groupId: parentFolder ? groupID : null,
       parent: parentFolder ? null : folderId,
       user_ids: parentFolder ? selectedUsers.map((item) => item.id) : null,
+      usergroups_ids: parentFolder ? selectedGroups.map((item) => item.id) : null,
     };
     try {
       const resultAction = await dispatch(addFolder(payload));
@@ -257,22 +259,24 @@ const RegisterFolder = ({
           )}
         </div>
 
-        <div className="my-2 d-flex">
-          <Button
-            className="p-button-success d-flex justify-content-center mr-2"
-            onClick={showTableUsers}
-            disabled={!showGroupUser}
-          >
-            Tabla de usuarios
-          </Button>
-          <Button
-            className="p-button-success d-flex justify-content-center mr-2"
-            onClick={showTableGroup}
-            disabled={showGroupUser}
-          >
-            Tabla de grupo de usuarios
-          </Button>
-        </div>
+        {parentFolder &&
+          <div className="my-2 d-flex">
+            <Button
+              className="p-button-success d-flex justify-content-center mr-2"
+              onClick={showTableUsers}
+              disabled={!showGroupUser}
+            >
+              Tabla de usuarios
+            </Button>
+            <Button
+              className="p-button-success d-flex justify-content-center mr-2"
+              onClick={showTableGroup}
+              disabled={showGroupUser}
+            >
+              Tabla de grupo de usuarios
+            </Button>
+          </div>
+        }
 
         {parentFolder && !showGroupUser && (
           <TablaUsuario
@@ -405,84 +409,3 @@ const RegisterFolder = ({
 };
 
 export { RegisterFolder };
-
-const TablaUsuario = ({
-  dt,
-  listProduct,
-  selectedUsers,
-  setSelectedProducts,
-  globalFilter,
-  header,
-  codigoBodyTemplate,
-  nombreBodyTemplate,
-  usuarioBodyTemplate,
-  statusBodyTemplate,
-  AmountOfUsersBodyTemplate,
-}) => {
-  return (
-    <DataTable
-      ref={dt}
-      value={listProduct}
-      selection={selectedUsers}
-      onSelectionChange={(e) => setSelectedProducts(e.value)}
-      dataKey="id"
-      paginator
-      rows={10}
-      rowsPerPageOptions={[5, 10, 25]}
-      className="datatable-responsive"
-      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-      globalFilter={globalFilter}
-      emptyMessage="No products found."
-      header={header}
-      responsiveLayout="scroll"
-    >
-      <Column selectionMode="multiple" headerStyle={{ width: "3rem" }}></Column>
-      <Column
-        field="codigo"
-        header="Codigo"
-        sortable
-        body={codigoBodyTemplate}
-        headerStyle={{ width: "14%", minWidth: "10rem" }}
-      ></Column>
-      <Column
-        field="nombre"
-        header="Nombre"
-        sortable
-        body={nombreBodyTemplate}
-        headerStyle={{ width: "44%", minWidth: "10rem" }}
-      ></Column>
-      <Column
-        field="email"
-        header="Usuario"
-        sortable
-        body={usuarioBodyTemplate}
-        headerStyle={{ width: "14%", minWidth: "10rem" }}
-      ></Column>
-      <Column
-        field="rol"
-        header="Rol"
-        sortable
-        headerStyle={{ width: "14%", minWidth: "10rem" }}
-      ></Column>
-      {statusBodyTemplate &&
-        <Column
-          field="inventoryStatus"
-          header="Status"
-          body={statusBodyTemplate}
-          sortable
-          headerStyle={{ width: "14%", minWidth: "10rem" }}
-        ></Column>
-      }
-      {AmountOfUsersBodyTemplate &&
-        <Column
-          field="inventoryStatus"
-          header="Cantidad de usuarios"
-          body={AmountOfUsersBodyTemplate}
-          sortable
-          headerStyle={{ width: "18%", minWidth: "14rem" }}
-        ></Column>
-      }
-    </DataTable>
-  );
-};
