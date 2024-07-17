@@ -475,7 +475,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
           label={`${filterStatusGroup === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
           icon='pi pi-check'
           className='p-button-text'
-          disabled={selectedUsersDelete.length === 0 && selectedGroupsDelete.length === 0}
+          disabled={selectedGroupsUsersDelete.length === 0 && selectedGroups.length === 0}
           onClick={filterStatusGroup === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
         />
         :
@@ -483,7 +483,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
           label={`${filterStatusUsers === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
           icon='pi pi-check'
           className='p-button-text'
-          disabled={selectedUsers.length === 0 && selectedGroups.length === 0}
+          disabled={selectedUsers.length === 0 && selectedUsersDelete.length === 0}
           onClick={filterStatusUsers === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
         />
       }
