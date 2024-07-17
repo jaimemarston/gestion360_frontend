@@ -3,8 +3,6 @@ import {
   fetchUsersGroups
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { fetchGet } from "../../../../../api";
 import { InputText } from "primereact/inputtext";
@@ -12,7 +10,6 @@ import { Toolbar } from "primereact/toolbar";
 import { useDispatch } from "react-redux";
 import { useToast } from "../../../../../hooks/useToast";
 import classNames from "classnames";
-import FolderIcon from "@mui/icons-material/Folder";
 import React, { useState, useEffect, useRef } from "react";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import TablaUsuario from '../../TableUsers'
@@ -92,7 +89,8 @@ const RegisterFolder = ({
 
   const getGroups = () => {
     dispatch(fetchUsersGroups()).unwrap().then((result) => {
-      setGroupUsers(result.data); // result es el valor que devuelve tu action creator
+      
+      setGroupUsers(result.data.parsedGroups); // result es el valor que devuelve tu action creator
     }).catch((error) => {
       console.error(error);
       // Maneja el error aquí si es necesario
