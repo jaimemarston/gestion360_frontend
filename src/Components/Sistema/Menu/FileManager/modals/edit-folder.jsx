@@ -47,6 +47,8 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
   const [selectedGroups, setSelectedGroups] = useState([]);
   //ids de grupos de usuarios por eliminar
   const [selectedGroupsUsersDelete, setSelectedGroupsUsersDelete] = useState([]);
+  const [selectedGroupsUsersCheck, setSelectedGroupsUsersCheck] = useState([]);
+
   const [editNameFolder, setEditNameFolder] = useState(null);
 
   const [filterStatusGroup, setFilterStatusGroup] = useState('sin asignar')
@@ -449,8 +451,10 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
               <TablaUsuario
                 dt={dt}
                 listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
-                selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersDelete}
-                setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersDelete}
+                selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersCheck}
+                setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersCheck}
+                assign={filterStatusGroup === 'asignados' ? true : false}
+                setSelectedGroupsUsersDelete={setSelectedGroupsUsersDelete}
                 globalFilter={globalFilter}
                 header={headerGroup}
                 actionBodyTemplate={actionBodyTemplate}
