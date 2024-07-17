@@ -11,7 +11,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import TablaUsuario from '../../TableUsers'
 
-const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
+const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, folderId }) => {
   const [usersId, setUsersId] = useState([]);
 
   useEffect(() => {
@@ -24,7 +24,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   }, [folderName, folderId])
 
   const [isModal, setIsModal] = useState(false);
-  const [isCloseModal, setIsCloseModal] = useState(false);
 
   const [data, setData] = useState();
   const [submitted, setSubmitted] = useState(false);
@@ -62,12 +61,16 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   };
 
   const openModal = () => {
-    setIsModal(!isModal);
+    setIsModal(true);
   };
 
   const closeModal = () => {
-    setIsModal(!isModal);
-    setIsCloseModal(!isCloseModal);
+    setIsModal(false);
+    setData({});
+    setSelectedGroupsUsersDelete([]);
+    setSelectedGroups([]);
+    setSelectedUsers([]);
+    setSelectedUsersDelete([]);
   };
 
   const getGroups = () => {
@@ -106,8 +109,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     };
 
     try {
-      const users = selectedUsers.map((item) => item.id);
-      const groups = selectedGroups.map((item) => item.id);
       const resultAction = await dispatch(editFolder(payload));
       if (resultAction.error) {
         showToast('error', 'Error al intentar editar la carpeta')
@@ -241,21 +242,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     );
   };
 
-  const headerGroup = (
-    <div className="flex justify-content-between align-items-center">
-      <div className="col-3">
-        <h5 className="mb-3">Lista de grupos de usuarios</h5>
-      </div>
-      <div className="col-9">
-        <span className="block mt-2 mt-md-0 p-input-icon-left">
-          <select value={filterStatusGroup} onChange={(e) => setFilterStatusGroup(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-            <option value="sin asignar">Sin asignar</option>
-            <option value="asignados">Asignados</option>
-          </select>
-        </span>
-      </div>
-    </div>
-  );
 
   const usuarioBodyTemplate = (rowData) => {
     return (
@@ -275,6 +261,23 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     );
   };
 
+
+  const headerGroup = (
+    <div className="flex justify-content-between align-items-center">
+      <div className="col-3">
+        <h5 className="mb-3">Lista de grupos de usuarios</h5>
+      </div>
+      <div className="col-9">
+        <span className="block mt-2 mt-md-0 p-input-icon-left">
+          <select value={filterStatusGroup} onChange={(e) => setFilterStatusGroup(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+            <option value="sin asignar">Sin asignar</option>
+            <option value="asignados">Asignados</option>
+          </select>
+        </span>
+      </div>
+    </div>
+  );
+
   const actionBodyTemplate = (rowData) => {
     return (
       <div className="actions">
@@ -283,7 +286,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
           className="p-button-rounded p-button-success mr-2"
           onClick={() => {
             editProduct(rowData);
-            openModal();
+            closeModal();
           }}
         />
       </div>
@@ -406,56 +409,60 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
           </div>
         </div>
 
-        <div className="my-2 d-flex">
-          <Button
-            className="p-button-success d-flex justify-content-center mr-2"
-            onClick={showTableUsers}
-            disabled={!showGroupUser}
-          >
-            Tabla de usuarios
-          </Button>
-          <Button
-            className="p-button-success d-flex justify-content-center mr-2"
-            onClick={showTableGroup}
-            disabled={showGroupUser}
-          >
-            Tabla de grupo de usuarios
-          </Button>
-        </div>
+        {selectedFolderFather &&
+          <>
+            <div className="my-2 d-flex">
+              <Button
+                className="p-button-success d-flex justify-content-center mr-2"
+                onClick={showTableUsers}
+                disabled={!showGroupUser}
+              >
+                Tabla de usuarios
+              </Button>
+              <Button
+                className="p-button-success d-flex justify-content-center mr-2"
+                onClick={showTableGroup}
+                disabled={showGroupUser}
+              >
+                Tabla de grupo de usuarios
+              </Button>
+            </div>
 
-        {!showGroupUser && (
-          <TablaUsuario
-            dt={dt}
-            listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
-            selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersDelete}
-            setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersDelete}
-            globalFilter={globalFilter}
-            header={header}
-            actionBodyTemplate={actionBodyTemplate}
-            actionBodyTemplate2={actionBodyTemplate2}
-            codigoBodyTemplate={codigoBodyTemplate}
-            nombreBodyTemplate={nombreBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
-            statusBodyTemplate={statusBodyTemplate}
-          />
-        )}
+            {!showGroupUser && (
+              <TablaUsuario
+                dt={dt}
+                listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
+                selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersDelete}
+                setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersDelete}
+                globalFilter={globalFilter}
+                header={header}
+                actionBodyTemplate={actionBodyTemplate}
+                actionBodyTemplate2={actionBodyTemplate2}
+                codigoBodyTemplate={codigoBodyTemplate}
+                nombreBodyTemplate={nombreBodyTemplate}
+                usuarioBodyTemplate={usuarioBodyTemplate}
+                statusBodyTemplate={statusBodyTemplate}
+              />
+            )}
 
-        {showGroupUser && (
-          <TablaUsuario
-            dt={dt}
-            listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
-            selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersDelete}
-            setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersDelete}
-            globalFilter={globalFilter}
-            header={headerGroup}
-            actionBodyTemplate={actionBodyTemplate}
-            actionBodyTemplate2={actionBodyTemplate2}
-            codigoBodyTemplate={idBodyTemplate}
-            nombreBodyTemplate={nameBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
-            AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
-          />
-        )}
+            {showGroupUser && (
+              <TablaUsuario
+                dt={dt}
+                listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
+                selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersDelete}
+                setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersDelete}
+                globalFilter={globalFilter}
+                header={headerGroup}
+                actionBodyTemplate={actionBodyTemplate}
+                actionBodyTemplate2={actionBodyTemplate2}
+                codigoBodyTemplate={idBodyTemplate}
+                nombreBodyTemplate={nameBodyTemplate}
+                usuarioBodyTemplate={usuarioBodyTemplate}
+                AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
+              />
+            )}
+          </>
+        }
       </Dialog>
     );
   };
@@ -467,7 +474,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
         icon='pi pi-times'
         className='p-button-text'
         onClick={() => {
-          openModal();
+          closeModal();
         }}
       />
       {showGroupUser ?

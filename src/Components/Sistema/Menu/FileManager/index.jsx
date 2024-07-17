@@ -44,6 +44,7 @@ export default function FileManager() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalElements, setTotalElements] = useState(0);
   const [date, setDate] = useState(new Date());
+  const [selectedFolderFather, setSelectedFolderFather] = useState(false);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -63,6 +64,7 @@ export default function FileManager() {
     return {
       id: folder.id + "-" + folder.uuid,
       label: folder.label,
+      fatherFolder: folder.parent === null ? true : false,
       children: [...children, ...documents],
     };
   };
@@ -254,6 +256,7 @@ export default function FileManager() {
             )}
             {selectedFolderId && showModal && (
               <EditFolder
+                selectedFolderFather={selectedFolderFather}
                 folderName={nameFolder}
                 groupName={nameGroup}
                 folderId={selectedFolderId}
@@ -277,6 +280,7 @@ export default function FileManager() {
         {groups.length ? 
           <FileExplorer
             groups={groups}
+            setSelectedFolderFather={setSelectedFolderFather}
             showCreateFolder={createFolder}
             selectGroupId={handleGroupId}
             selectIdFolder={handleFolderId}
