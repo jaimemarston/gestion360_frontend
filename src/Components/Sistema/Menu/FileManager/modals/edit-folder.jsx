@@ -113,6 +113,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
         showToast('error', 'Error al intentar editar la carpeta')
       } else {
         showToast('success', 'Carpeta editada con éxito');
+        setEditNameFolder(true)
         closeModal();
       }
     } catch (error) {
@@ -346,13 +347,13 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
                   className="text-center me-3 d-flex justify-content-center"
                   onClick={() => setEditNameFolder(!editNameFolder)}
                 >
-                  <BorderColorIcon />
+                  <i className='pi pi-times py-1' />
                 </Button>
                 <Button
                   className="text-center d-flex justify-content-center"
-                  onClick={() => setEditNameFolder(false)}
+                  onClick={save}
                 >
-                  <BorderColorIcon />
+                  <i className='pi pi-check py-1' />
                 </Button>
                 </div>
               }
