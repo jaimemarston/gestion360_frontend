@@ -15,14 +15,16 @@ const TablaUsuario = ({
   statusBodyTemplate,
   AmountOfUsersBodyTemplate,
   setSelectedGroupsUsersDelete,
-  assign
+  assign,
+  selectedGroupsUsersCheck
 }) => {
+  
   React.useEffect(() => {
+    console.log(selectedGroupsUsersCheck.lenght)
     if (assign === true) {
       setSelectedProducts(listProduct);
     }
-    // Inicializa todos los ítems como seleccionados por defecto
-  }, [listProduct]);
+  }, [assign === true && selectedGroupsUsersCheck.lenght === 0]);
 
   const handleSelectionChange = (e) => {
     const newSelection = e.value;

@@ -263,7 +263,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
     );
   };
 
-
   const headerGroup = (
     <div className="flex justify-content-between align-items-center">
       <div className="col-3">
@@ -272,6 +271,22 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
       <div className="col-9">
         <span className="block mt-2 mt-md-0 p-input-icon-left">
           <select value={filterStatusGroup} onChange={(e) => setFilterStatusGroup(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+            <option value="sin asignar">Sin asignar</option>
+            <option value="asignados">Asignados</option>
+          </select>
+        </span>
+      </div>
+    </div>
+  );
+
+  const header = (
+    <div className="flex justify-content-md-between align-items-center">
+      <div className="col-2">
+        <h5 className="mb-3">Lista de Usuarios</h5>
+      </div>
+      <div className="col-10">
+        <span className="block mt-2 mt-md-0 p-input-icon-left">
+          <select value={filterStatusUsers} onChange={(e) => setFilterStatusUsers(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
             <option value="sin asignar">Sin asignar</option>
             <option value="asignados">Asignados</option>
           </select>
@@ -317,22 +332,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
       </div>
     );
   };
-
-  const header = (
-    <div className="flex justify-content-md-between align-items-center">
-      <div className="col-2">
-        <h5 className="mb-3">Lista de Usuarios</h5>
-      </div>
-      <div className="col-10">
-        <span className="block mt-2 mt-md-0 p-input-icon-left">
-          <select value={filterStatusUsers} onChange={(e) => setFilterStatusUsers(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-            <option value="sin asignar">Sin asignar</option>
-            <option value="asignados">Asignados</option>
-          </select>
-        </span>
-      </div>
-    </div>
-  );
 
   const showTableGroup = () => {
     setShowGroupUser(true)
@@ -453,6 +452,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
                 listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
                 selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersCheck}
                 setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersCheck}
+                selectedGroupsUsersCheck={selectedGroupsUsersDelete}
                 assign={filterStatusGroup === 'asignados' ? true : false}
                 setSelectedGroupsUsersDelete={setSelectedGroupsUsersDelete}
                 globalFilter={globalFilter}
@@ -486,7 +486,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
           label={`${filterStatusGroup === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
           icon='pi pi-check'
           className='p-button-text'
-          disabled={selectedGroupsUsersDelete.length === 0 && selectedGroups.length === 0}
+          disabled={filterStatusGroup === 'sin asignar' ? selectedGroups.length === 0 : selectedGroupsUsersDelete.length === 0 }
           onClick={filterStatusGroup === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
         />
         :
@@ -494,7 +494,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
           label={`${filterStatusUsers === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
           icon='pi pi-check'
           className='p-button-text'
-          disabled={selectedUsers.length === 0 && selectedUsersDelete.length === 0}
+          disabled={filterStatusUsers === 'sin asignar' ? selectedUsers.length === 0 : selectedUsersDelete.length === 0}
           onClick={filterStatusUsers === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
         />
       }
