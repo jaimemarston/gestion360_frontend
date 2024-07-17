@@ -1,4 +1,4 @@
-import { editFolder, getUsersAssignToFolder, getGroupsUsersAssignToFolder } from '../../../../../store/slices/fileManager/fileManagerSlice';
+import { editFolder, getUsersAssignToFolder, getGroupsUsersAssignToFolder, addUsersAndGroupsToTheFolder, desassignateUsersToaFolder } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { fetchGet, } from '../../../../../api';
@@ -49,7 +49,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
   //ids de grupos de usuarios por eliminar
   const [selectedGroupsUsersDelete, setSelectedGroupsUsersDelete] = useState([]);
   const [editNameFolder, setEditNameFolder] = useState(null);
-  
+
   const [filterStatusGroup, setFilterStatusGroup] = useState('sin asignar')
   const [filterStatusUsers, setFilterStatusUsers] = useState('sin asignar')
 
@@ -93,7 +93,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     getGroups();
   }, [isModal])
 
-  const save = async () => {
+  const EditLabelFolder = async () => {
     if (!data.label) {
       setSubmitted(true);
       return;
@@ -121,8 +121,53 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
     }
   };
 
-  useEffect(()=>{
-    if(editNameFolder === null){
+  const AssignUsersAndGroupUser = async () => {
+
+    const payload = {
+      folderId: folderId,
+      user_ids: selectedUsers.map((item) => item.id),
+      usergroups_ids: selectedGroups.map((item) => item.id)
+    };
+
+    try {
+      const resultAction = await dispatch(addUsersAndGroupsToTheFolder(payload));
+      if (resultAction.error) {
+        showToast('error', 'Error al intentar asignar usuarios y/o grupos de usuarios la carpeta')
+      } else {
+        showToast('success', 'Usuarios y grupos de usuarios asignados con éxito');
+        setEditNameFolder(true)
+        closeModal();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const DisasignateUsersAndUserGroups = async () => {
+
+    const payload = {
+      folderId: folderId,
+      user_ids: selectedUsersDelete.map((item) => item.id),
+      usergroups_ids: selectedGroupsUsersDelete.map((item) => item.id)
+    };
+
+
+    try {
+      const resultAction = await dispatch(desassignateUsersToaFolder(payload));
+      if (resultAction.error) {
+        showToast('error', 'Error al intentar desasignar usuarios o grupos de usuarios a ima carpeta')
+      } else {
+        showToast('success', 'Usuarios y grupos de usuarios desasignados con éxito');
+        setEditNameFolder(true)
+        closeModal();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (editNameFolder === null) {
       setEditNameFolder(true)
     }
   }, [editFolder])
@@ -332,8 +377,8 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
                 <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
               )}
             </div>
-            <div className={`${editNameFolder ? 'col-1': 'col-2' }`}>
-              {editNameFolder && 
+            <div className={`${editNameFolder ? 'col-1' : 'col-2'}`}>
+              {editNameFolder &&
                 <Button
                   className="text-center d-flex justify-content-center"
                   onClick={() => setEditNameFolder(false)}
@@ -341,20 +386,20 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
                   <BorderColorIcon />
                 </Button>
               }
-              {!editNameFolder && 
-               <div className='d-flex'>
-                <Button
-                  className="text-center me-3 d-flex justify-content-center"
-                  onClick={() => setEditNameFolder(!editNameFolder)}
-                >
-                  <i className='pi pi-times py-1' />
-                </Button>
-                <Button
-                  className="text-center d-flex justify-content-center"
-                  onClick={save}
-                >
-                  <i className='pi pi-check py-1' />
-                </Button>
+              {!editNameFolder &&
+                <div className='d-flex'>
+                  <Button
+                    className="text-center me-3 d-flex justify-content-center"
+                    onClick={() => setEditNameFolder(!editNameFolder)}
+                  >
+                    <i className='pi pi-times py-1' />
+                  </Button>
+                  <Button
+                    className="text-center d-flex justify-content-center"
+                    onClick={EditLabelFolder}
+                  >
+                    <i className='pi pi-check py-1' />
+                  </Button>
                 </div>
               }
             </div>
@@ -425,14 +470,26 @@ const EditFolder = ({ isDarkMode, folderName, groupName, folderId }) => {
           openModal();
         }}
       />
-      <Button
-        label='Guardar'
-        icon='pi pi-check'
-        className='p-button-text'
-        onClick={() => { save() }}
-      />
+      {showGroupUser ?
+        <Button
+          label={`${filterStatusGroup === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
+          icon='pi pi-check'
+          className='p-button-text'
+          disabled={selectedUsersDelete.length === 0 && selectedGroupsDelete.length === 0}
+          onClick={filterStatusGroup === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
+        />
+        :
+        <Button
+          label={`${filterStatusUsers === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
+          icon='pi pi-check'
+          className='p-button-text'
+          disabled={selectedUsers.length === 0 && selectedGroups.length === 0}
+          onClick={filterStatusUsers === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
+        />
+      }
     </>
   );
+
 
   return (
     <div className={isDarkMode ? 'dark-mode-table grid crud-demo' : 'grid crud-demo'}>

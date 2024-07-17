@@ -33,6 +33,11 @@ const assignUsersToaFolder = async (folderId: number, user_ids: number[], usergr
     return data;
 }
 
+const desassignateUsersToaFolder = async (folderId: number, user_ids: number[], usergroups_ids: number[] ) =>{
+    const { data } = await http.post(`/folders/remove-user/${folderId}`, {user_ids, usergroups_ids}) 
+    return data;
+}
+
 const usersAssignToaFolder = async (folderId: number) =>{
     const { data } = await http.get(`/usuario?folderId=${folderId}`) 
     return data;
@@ -51,4 +56,5 @@ export default {
     assignUsersToaFolder,
     usersAssignToaFolder,
     gruoupsUsersAssignToaFolder,
+    desassignateUsersToaFolder
 }
