@@ -92,7 +92,6 @@ export default function CreateGroupUsers() {
         }
         const payload = {
             ...data,
-            usersIds: selectedUsers.map((item) => item.id),
         };
         try {
             const resultAction = await dispatch(addUsersGroup(payload));
@@ -236,58 +235,39 @@ export default function CreateGroupUsers() {
         <div
             className="grid crud-demo">
             <div className="col-12">
+                {ToastComponent}
                 <div className="d-flex me-4">
-                    <div className="col-6 me-3">
-                        <h4 htmlFor="label">Nombre de el grupo de usuarios</h4>
-                        <InputText
-                            id="name"
-                            name="name"
-                            placeholder="Nombre de el grupo"
-                            value={data.name?.trim()}
-                            onChange={(e) => onInputChange(e, "name")}
-                            required
-                            autoFocus
-                            className={classNames({
-                                "p-invalid": submitted && !data.name,
-                            }, "mb-4 w-full")}
-                        />
-                        {submitted && !data.name && (
-                            <small className="p-invalid">
-                                El nombre de el grupo de usuarios es requerido
-                            </small>
-                        )}
-
-                        <TablaUsuario
-                            dt={dt}
-                            listProduct={usersActive}
-                            selectedUsers={selectedUsers}
-                            setSelectedProducts={setSelectedProducts}
-                            globalFilter={globalFilter}
-                            header={header}
-                            actionBodyTemplate={actionBodyTemplate}
-                            actionBodyTemplate2={actionBodyTemplate2}
-                            codigoBodyTemplate={codigoBodyTemplate}
-                            nombreBodyTemplate={nombreBodyTemplate}
-                            usuarioBodyTemplate={usuarioBodyTemplate}
-                            statusBodyTemplate={statusBodyTemplate}
-                        />
-                        <div className="w-full d-flex justify-content-end">
-                            <Button
-                                label="Cancelar"
-                                icon="pi pi-times"
-                                className="p-button-text"
-                                onClick={() => setData({})}
-                            />
-                            <Button
-                                label="Guardar"
-                                icon="pi pi-check"
-                                className="p-button-text"
-                                onClick={() => { save(), setData({name: ""}) }}
-                            />
+                    <div className="col-12">
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div className="d-grid w-full">
+                                <h4 htmlFor="label">Nombre de el grupo de usuarios</h4>
+                                <InputText
+                                    id="name"
+                                    name="name"
+                                    placeholder="Nombre de el grupo"
+                                    value={data.name?.trim()}
+                                    onChange={(e) => onInputChange(e, "name")}
+                                    required
+                                    autoFocus
+                                    className={classNames({
+                                        "p-invalid": submitted && !data.name,
+                                    }, "mb-0 w-full")}
+                                />
+                                {submitted && !data.name && (
+                                    <small className="p-invalid">
+                                        El nombre de el grupo de usuarios es requerido
+                                    </small>
+                                )}
+                            </div>
+                            <div className="col-2 d-flex justify-content-end">
+                                <Button
+                                    label="Crear grupo"
+                                    icon="pi pi-check"
+                                    className="p-button-text ms-3 mt-6"
+                                    onClick={() => { save(), setData({ name: "" }) }}
+                                />
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="col-6">
                         <h4 htmlFor="label">Elige el grupo al que le quieres asignar usuarios</h4>
                         <select value={selectGroupId} onChange={(e) => setSelectGroupId(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
                             {usersGroup && usersGroup.map((group) => (
@@ -310,7 +290,7 @@ export default function CreateGroupUsers() {
                         />
                         <div className="w-full d-flex justify-content-end">
                             <Button
-                                label="Guardar"
+                                label="Asignar"
                                 icon="pi pi-check"
                                 className="p-button-text"
                                 onClick={() => AddUsers()}
