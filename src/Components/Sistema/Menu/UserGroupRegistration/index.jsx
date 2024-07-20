@@ -290,7 +290,7 @@ export default function CreateGroupUsers() {
                         />
                         <div className="w-full d-flex justify-content-end">
                             <Button
-                                label="Guardar"
+                                label="Asignar"
                                 icon="pi pi-check"
                                 className="p-button-text"
                                 onClick={() => AddUsers()}
