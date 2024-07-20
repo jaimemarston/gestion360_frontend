@@ -20,7 +20,6 @@ const TablaUsuario = ({
 }) => {
   
   React.useEffect(() => {
-    console.log(selectedGroupsUsersCheck.lenght)
     if (assign === true) {
       setSelectedProducts(listProduct);
     }
