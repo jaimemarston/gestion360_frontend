@@ -147,43 +147,6 @@ export default function CreateGroupUsers() {
         setData({ ...data, [e.target.name]: e.target.value });
     };
 
-
-    const codigoBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Codigo</span>
-                {rowData.codigo}
-            </>
-        );
-    };
-
-    const nombreBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Nombre</span>
-                {rowData.nombre}
-            </>
-        );
-    };
-
-    const usuarioBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Usuario</span>
-                {rowData.email}
-            </>
-        );
-    };
-
-    const statusBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Estado</span>
-                {rowData?.estado === true ? "Activo" : "Inactivo"}
-            </>
-        );
-    };
-
     const actionBodyTemplate = (rowData) => {
         return (
             <div className="actions">
@@ -223,6 +186,7 @@ export default function CreateGroupUsers() {
                     <i className="pi pi-search" />
                     <InputText
                         type="search"
+                        className="w-full"
                         onInput={(e) => setGlobalFilter(e.target.value)}
                         placeholder="Buscar..."
                     />
@@ -283,10 +247,6 @@ export default function CreateGroupUsers() {
                             header={header}
                             actionBodyTemplate={actionBodyTemplate}
                             actionBodyTemplate2={actionBodyTemplate2}
-                            codigoBodyTemplate={codigoBodyTemplate}
-                            nombreBodyTemplate={nombreBodyTemplate}
-                            usuarioBodyTemplate={usuarioBodyTemplate}
-                            statusBodyTemplate={statusBodyTemplate}
                         />
                         <div className="w-full d-flex justify-content-end">
                             <Button
