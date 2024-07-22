@@ -44,15 +44,6 @@ const TablaUsuario = ({
     );
   };
 
-  const usuarioBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Usuario</span>
-        {rowData.email}
-      </>
-    );
-  };
-
   const statusBodyTemplate = (rowData) => {
     return (
       <>
@@ -118,7 +109,6 @@ const TablaUsuario = ({
         field="email"
         header="Usuario"
         sortable
-        body={usuarioBodyTemplate}
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
       <Column

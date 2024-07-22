@@ -175,14 +175,6 @@ const RegisterFolder = ({
     );
   };
 
-  const usuarioBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Usuario</span>
-        {rowData.email}
-      </>
-    );
-  };
 
   const statusBodyTemplate = (rowData) => {
     return (
@@ -288,7 +280,6 @@ const RegisterFolder = ({
             actionBodyTemplate2={actionBodyTemplate2}
             codigoBodyTemplate={codigoBodyTemplate}
             nombreBodyTemplate={nombreBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
             statusBodyTemplate={statusBodyTemplate}
           />
         )}
@@ -305,7 +296,6 @@ const RegisterFolder = ({
             actionBodyTemplate2={actionBodyTemplate2}
             codigoBodyTemplate={codigoBodyTemplate}
             nombreBodyTemplate={nombreBodyTemplate}
-            usuarioBodyTemplate={usuarioBodyTemplate}
             AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
           />
         )}
