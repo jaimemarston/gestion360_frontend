@@ -11,10 +11,10 @@ const TablaUsuario = ({
   header,
   nombreBodyTemplate,
   AmountOfUsersBodyTemplate,
-  setSelectedGroupsUsersDelete,
+  setSelectedDelete,
   codigoBodyTemplate,
   assign,
-  selectedGroupsUsersCheck,
+  selectedDelete,
 }) => {
 
   const rolBodyTemplate = (rowData) => {
@@ -66,8 +66,8 @@ const TablaUsuario = ({
     if (assign === true) {
       setSelectedProducts(listProduct);
     }
-  }, [assign === true && selectedGroupsUsersCheck.lenght === 0]);
-
+  }, [assign || selectedDelete && selectedDelete.lenght === 0]);
+  
   const handleSelectionChange = (e) => {
     const newSelection = e.value;
     setSelectedProducts(newSelection);
@@ -78,7 +78,7 @@ const TablaUsuario = ({
         (item) => !newSelection.some((selected) => selected.id === item.id)
       );
 
-      setSelectedGroupsUsersDelete(deseleccionados);
+      setSelectedDelete(deseleccionados);
     }
   };
   return (

@@ -36,6 +36,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
   //ids de usuarios por asignar
   const [selectedUsers, setSelectedUsers] = useState([]);
   //ids de usuarios por eliminar
+  const [selectedUsersCheck, setSelectedUsersCheck] = useState([]);
   const [selectedUsersDelete, setSelectedUsersDelete] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [showGroupUser, setShowGroupUser] = useState(false);
@@ -397,8 +398,11 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
               <TablaUsuario
                 dt={dt}
                 listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
-                selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersDelete}
-                setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersDelete}
+                selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersCheck}
+                setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersCheck}
+                selectedDelete={selectedUsersDelete}
+                assign={filterStatusUsers === 'asignados' ? true : false}
+                setSelectedDelete={setSelectedUsersDelete}
                 globalFilter={globalFilter}
                 header={header}
                 actionBodyTemplate={actionBodyTemplate}
@@ -412,9 +416,9 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
                 listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
                 selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersCheck}
                 setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersCheck}
-                selectedGroupsUsersCheck={selectedGroupsUsersDelete}
+                selectedDelete={selectedGroupsUsersDelete}
                 assign={filterStatusGroup === 'asignados' ? true : false}
-                setSelectedGroupsUsersDelete={setSelectedGroupsUsersDelete}
+                setSelectedDelete={setSelectedGroupsUsersDelete}
                 globalFilter={globalFilter}
                 header={headerGroup}
                 actionBodyTemplate={actionBodyTemplate}
