@@ -9,22 +9,56 @@ const TablaUsuario = ({
   setSelectedProducts,
   globalFilter,
   header,
-  codigoBodyTemplate,
   nombreBodyTemplate,
-  usuarioBodyTemplate,
-  statusBodyTemplate,
   AmountOfUsersBodyTemplate,
-  setSelectedGroupsUsersDelete,
+  setSelectedDelete,
+  codigoBodyTemplate,
   assign,
-  selectedGroupsUsersCheck
+  selectedDelete,
 }) => {
-  
+
+  const rolBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Rol</span>
+        {rowData.rol === 'ADMIN_ROLE' ? 'Admin' : 'Usuario normal'}
+      </>
+    );
+  };
+
+  const codigoBodyTemplateDefault = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Codigo</span>
+        {rowData.codigo}
+      </>
+    );
+  };
+
+  const nombreBodyTemplateDefault = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Nombre</span>
+        {rowData.nombre}
+      </>
+    );
+  };
+
+  const statusBodyTemplate = (rowData) => {
+    return (
+      <>
+        <span className="p-column-title">Estado</span>
+        {rowData?.estado === true ? "Activo" : "Inactivo"}
+      </>
+    );
+  };
+
   React.useEffect(() => {
     if (assign === true) {
       setSelectedProducts(listProduct);
     }
-  }, [assign === true && selectedGroupsUsersCheck.lenght === 0]);
-
+  }, [assign || selectedDelete && selectedDelete.lenght === 0]);
+  
   const handleSelectionChange = (e) => {
     const newSelection = e.value;
     setSelectedProducts(newSelection);
@@ -35,7 +69,7 @@ const TablaUsuario = ({
         (item) => !newSelection.some((selected) => selected.id === item.id)
       );
 
-      setSelectedGroupsUsersDelete(deseleccionados);
+      setSelectedDelete(deseleccionados);
     }
   };
   return (
@@ -61,27 +95,27 @@ const TablaUsuario = ({
         field="codigo"
         header="Codigo"
         sortable
-        body={codigoBodyTemplate}
+        body={codigoBodyTemplate ? codigoBodyTemplate : codigoBodyTemplateDefault}
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
       <Column
         field="nombre"
         header="Nombre"
         sortable
-        body={nombreBodyTemplate}
+        body={nombreBodyTemplate ? nombreBodyTemplate : nombreBodyTemplateDefault}
         headerStyle={{ width: "44%", minWidth: "10rem" }}
       ></Column>
       <Column
         field="email"
         header="Usuario"
         sortable
-        body={usuarioBodyTemplate}
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
       <Column
         field="rol"
         header="Rol"
         sortable
+        body={rolBodyTemplate}
         headerStyle={{ width: "14%", minWidth: "10rem" }}
       ></Column>
       {statusBodyTemplate &&

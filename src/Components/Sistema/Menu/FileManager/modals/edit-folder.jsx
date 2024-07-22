@@ -36,6 +36,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
   //ids de usuarios por asignar
   const [selectedUsers, setSelectedUsers] = useState([]);
   //ids de usuarios por eliminar
+  const [selectedUsersCheck, setSelectedUsersCheck] = useState([]);
   const [selectedUsersDelete, setSelectedUsersDelete] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [showGroupUser, setShowGroupUser] = useState(false);
@@ -208,29 +209,11 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
     closeModal();
   };
 
-  const codigoBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Codigo</span>
-        {rowData.codigo}
-      </>
-    );
-  };
-
   const idBodyTemplate = (rowData) => {
     return (
       <>
         <span className="p-column-title">Codigo</span>
         {rowData.id}
-      </>
-    );
-  };
-
-  const nombreBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Nombre</span>
-        {rowData.nombre}
       </>
     );
   };
@@ -244,24 +227,6 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
     );
   };
 
-
-  const usuarioBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Usuario</span>
-        {rowData.email}
-      </>
-    );
-  };
-
-  const statusBodyTemplate = (rowData) => {
-    return (
-      <>
-        <span className="p-column-title">Estado</span>
-        {rowData?.estado === true ? "Activo" : "Inactivo"}
-      </>
-    );
-  };
 
   const headerGroup = (
     <div className="flex justify-content-between align-items-center">
@@ -433,16 +398,15 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
               <TablaUsuario
                 dt={dt}
                 listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
-                selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersDelete}
-                setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersDelete}
+                selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersCheck}
+                setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersCheck}
+                selectedDelete={selectedUsersDelete}
+                assign={filterStatusUsers === 'asignados' ? true : false}
+                setSelectedDelete={setSelectedUsersDelete}
                 globalFilter={globalFilter}
                 header={header}
                 actionBodyTemplate={actionBodyTemplate}
                 actionBodyTemplate2={actionBodyTemplate2}
-                codigoBodyTemplate={codigoBodyTemplate}
-                nombreBodyTemplate={nombreBodyTemplate}
-                usuarioBodyTemplate={usuarioBodyTemplate}
-                statusBodyTemplate={statusBodyTemplate}
               />
             )}
 
@@ -452,16 +416,15 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
                 listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
                 selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersCheck}
                 setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersCheck}
-                selectedGroupsUsersCheck={selectedGroupsUsersDelete}
+                selectedDelete={selectedGroupsUsersDelete}
                 assign={filterStatusGroup === 'asignados' ? true : false}
-                setSelectedGroupsUsersDelete={setSelectedGroupsUsersDelete}
+                setSelectedDelete={setSelectedGroupsUsersDelete}
                 globalFilter={globalFilter}
                 header={headerGroup}
                 actionBodyTemplate={actionBodyTemplate}
                 actionBodyTemplate2={actionBodyTemplate2}
                 codigoBodyTemplate={idBodyTemplate}
                 nombreBodyTemplate={nameBodyTemplate}
-                usuarioBodyTemplate={usuarioBodyTemplate}
                 AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
               />
             )}
