@@ -1,6 +1,7 @@
 import { json } from 'react-router-dom';
 import { getEnvVariables } from '../helpers';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const { VITE_API_URL }  = import.meta.env;
 
@@ -203,7 +204,31 @@ const fetchUserLogout=  ()=> {
 
 }
 
+export const getGoogleInfo = (access_token) => {
+  try {
+    const data = axios(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${access_token}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${access_token}`
+      },
+    })
+    return data;
+  } catch (error) {
+    if (import.meta.env.MODE === 'development') {
+      console.log(error);
+    }
+    throw error;
+  }
+}
 
+export const loginUserWithGoogle = async (email) => {
+  try {
+    const response = await axios.post(`${VITE_API_URL}/google`, { email });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 
 

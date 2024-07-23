@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // PrimeReact
 import sd from "./descocentro.jpg";
@@ -6,18 +6,21 @@ import logo from "./predes.png";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 
-import { fetchLogin } from "../../../api/api";
+import { fetchLogin, getGoogleInfo, loginUserWithGoogle } from "../../../api/api";
 import Swal from "sweetalert2";
 import { Button } from "primereact/button";
 import { Image } from "primereact/image";
 import "./login.scss";
 import { setToken } from "../../../api/services/axios";
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
   const [login, setLogin] = useState({
     email: "",
     password: "",
   });
+  const [googleToken, setGoogleToken] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
@@ -39,6 +42,60 @@ export default function Login() {
       });
     }
   };
+
+  const triggerGoogleFailure = (requestWasSend) => {
+    if (requestWasSend) {
+      Swal.fire({
+        title: "Error!",
+        text: "Error al intentar iniciar sesión con Google, tu cuenta debe tener el mismo correo electrónico registrado en la plataforma",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: "Error al intentar iniciar sesión con Google, intentalo más tarde",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
+  }
+
+  const handleSuccessLogin = (token) =>{
+    localStorage.setItem("token", token);
+    setToken(token);
+    navigate(`/Dashboard`);
+  }
+
+  useEffect(() => {
+    if (googleToken && googleToken.length > 0) {
+      if (loading) return;
+      const fecthUserData = async () => {
+        try {
+          setLoading(true)
+          const { data } = await getGoogleInfo(googleToken);
+          const logedUser = await loginUserWithGoogle(data.email)
+          handleSuccessLogin(logedUser.token);
+        } catch (error) {
+          if (import.meta.env.MODE === 'development') {
+            console.log(error);
+          }
+          triggerGoogleFailure((error.response && error.response.status === 500));
+        } finally {
+          setLoading(false)
+        }
+      }
+      fecthUserData();
+    }
+  }, [googleToken]);
+
+  const handleLogin = useGoogleLogin({
+    onSuccess: (response) => {
+      setGoogleToken(response.access_token);
+    },
+    onError: (error) => alert(`Error with Google Login: ${error}`),
+  });
+
   return (
     <section id="login">
       <div className={`containerLogin`}>
@@ -77,7 +134,8 @@ export default function Login() {
             </div>
             <Button type="submit" label={"Ingreso"} className="inputs" />
 
-              <button type="button" className="login-with-google-btn mt-5">
+              <button onClick={() => handleLogin()} 
+              type="button" className="login-with-google-btn mt-5">
                 Sign in with Google
               </button>
           </form>
