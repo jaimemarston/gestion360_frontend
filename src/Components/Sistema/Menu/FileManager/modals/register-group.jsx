@@ -1,4 +1,4 @@
-import { addGroup, fetchGroups } from "../../../../../store/slices/fileManager/fileManagerSlice";
+import { addGroup } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -62,17 +62,15 @@ const RegisterGroup = () => {
   };
 
   const leftToolbarTemplate = () => (
-    <>
-      <div className="my-2">
-        <Button
-          className='p-button-success d-flex align-items-center mr-2'
+      <div className="my-1">
+        <button
+          className='btn btn-outline-primary py-3 px-3 d-flex align-items-center'
           onClick={openModal}
         >
           <FolderCopyIcon className="me-2" />
           Crear grupo
-        </Button>
+        </button>
       </div>
-    </>
   );
 
   const productDialogFooter = (

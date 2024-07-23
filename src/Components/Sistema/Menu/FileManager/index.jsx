@@ -270,7 +270,7 @@ export default function FileManager() {
                 <DeleteFolder folderId={selectedFolderId} />
               )}
           </div>
-          <div className="col-4 d-flex align-items-center justify-content-center">
+          <div className="col-4 mt-1 d-flex align-items-center justify-content-center">
             <div className="mb-3">
               <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => updateDate(e.value)} view="year" dateFormat="yy" />
             </div>
