@@ -16,4 +16,14 @@ const addUsersGroup = async (id: string | number, group: { users: number[] }) =>
     return data
 }
 
-export default { createUsersGroup , getAllUsersGroups, addUsersGroup }
+const getUsersFromAGroupUser = async (groupId: number) => {
+    const { data } = await http.get(`/usuario?usergroupId=${groupId}`)
+    return data
+}
+
+const unassignUsersFromUserGroups = async (id: string | number, group: { users: number[] }) => {
+    const { data } = await http.post(`/usergroups/${id}/removeUsers`, group)
+    return data
+}
+
+export default { createUsersGroup , getAllUsersGroups, addUsersGroup, getUsersFromAGroupUser, unassignUsersFromUserGroups }
