@@ -6,7 +6,7 @@ import logo from "./predes.png";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 
-import { fetchLogin, getGoogleInfo } from "../../../api/api";
+import { fetchLogin, getGoogleInfo, loginUserWithGoogle } from "../../../api/api";
 import Swal from "sweetalert2";
 import { Button } from "primereact/button";
 import { Image } from "primereact/image";
@@ -43,6 +43,30 @@ export default function Login() {
     }
   };
 
+  const triggerGoogleFailure = (requestWasSend) => {
+    if (requestWasSend) {
+      Swal.fire({
+        title: "Error!",
+        text: "Error al intentar iniciar sesión con Google, tu cuenta debe tener el mismo correo electrónico registrado en la plataforma",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: "Error al intentar iniciar sesión con Google, intentalo más tarde",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
+  }
+
+  const handleSuccessLogin = (token) =>{
+    localStorage.setItem("token", token);
+    setToken(token);
+    navigate(`/Dashboard`);
+  }
+
   useEffect(() => {
     if (googleToken && googleToken.length > 0) {
       if (loading) return;
@@ -50,11 +74,13 @@ export default function Login() {
         try {
           setLoading(true)
           const { data } = await getGoogleInfo(googleToken);
-          console.log(data)
+          const logedUser = await loginUserWithGoogle(data.email)
+          handleSuccessLogin(logedUser.token);
         } catch (error) {
           if (import.meta.env.MODE === 'development') {
             console.log(error);
           }
+          triggerGoogleFailure((error.response && error.response.status === 500));
         } finally {
           setLoading(false)
         }

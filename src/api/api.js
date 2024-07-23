@@ -221,6 +221,15 @@ export const getGoogleInfo = (access_token) => {
   }
 }
 
+export const loginUserWithGoogle = async (email) => {
+  try {
+    const response = await axios.post(`${VITE_API_URL}/google`, { email });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 
 
