@@ -144,17 +144,15 @@ const RegisterFolder = ({
   };
 
   const leftToolbarTemplate = () => (
-    <>
-      <div className="my-2">
-        <Button
-          className="p-button-success d-flex justify-content-center mr-2"
+      <div className="mt-1">
+        <button
+          className="btn btn-outline-primary py-3 px-3 d-flex justify-content-center"
           onClick={openModal}
         >
-          <CreateNewFolderIcon className="me-2 mb-1" />
+          <CreateNewFolderIcon className="me-2" />
           Crear carpeta
-        </Button>
+        </button>
       </div>
-    </>
   );
 
   const codigoBodyTemplate = (rowData) => {

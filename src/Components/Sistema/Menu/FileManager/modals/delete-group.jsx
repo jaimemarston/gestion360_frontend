@@ -6,7 +6,6 @@ import {
   removeGroup,
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { useToast } from "../../../../../hooks/useToast";
-import { Button } from "primereact/button";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const DeleteGroup = ({ groupId }) => {
@@ -40,13 +39,13 @@ const DeleteGroup = ({ groupId }) => {
   const leftToolbarTemplate = () => (
     <>
       <div className="my-1">
-        <Button
-          className="p-button-success d-flex justify-content-center"
+        <button
+          className="btn btn-outline-primary py-3 px-3 align-items-center d-flex justify-content-center"
           onClick={openModal}
         >
-          <DeleteIcon className="me-2 mb-2" />
+          <DeleteIcon className="me-2 " />
           Eliminar Grupo
-        </Button>
+        </button>
       </div>
     </>
   );

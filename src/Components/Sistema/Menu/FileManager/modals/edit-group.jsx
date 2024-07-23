@@ -1,4 +1,4 @@
-import { addGroup, groupEdit } from "../../../../../store/slices/fileManager/fileManagerSlice";
+import { groupEdit } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
@@ -63,17 +63,15 @@ const EditGroup = ({ name, id }) => {
   };
 
   const leftToolbarTemplate = () => (
-    <>
-      <div className="my-2">
-        <Button
-          className='p-button-success d-flex align-items-center mr-2'
+      <div className="my-1">
+        <button
+          className='btn btn-outline-primary py-3 px-3 d-flex align-items-center'
           onClick={openModal}
         >
           <FolderCopyIcon className="me-2" />
           Editar grupo
-        </Button>
+        </button>
       </div>
-    </>
   );
 
   const productDialogFooter = (

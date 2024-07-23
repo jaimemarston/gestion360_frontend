@@ -6,7 +6,6 @@ import {
   removeFolder,
 } from "../../../../../store/slices/fileManager/fileManagerSlice";
 import { useToast } from "../../../../../hooks/useToast";
-import { Button } from "primereact/button";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const DeleteFolder = ({ folderId }) => {
@@ -37,17 +36,15 @@ const DeleteFolder = ({ folderId }) => {
   };
 
   const leftToolbarTemplate = () => (
-    <>
-      <div className="my-2">
-        <Button
-          className="p-button-success d-flex justify-content-center mr-2"
+      <div className="mt-1">
+        <button
+          className="btn btn-outline-primary py-3 px-3 d-flex justify-content-center"
           onClick={openModal}
         >
-          <DeleteIcon className="me-2 mb-2" />
+          <DeleteIcon className="me-2" />
           Eliminar carpeta
-        </Button>
+        </button>
       </div>
-    </>
   );
 
   const productDialogFooter = (

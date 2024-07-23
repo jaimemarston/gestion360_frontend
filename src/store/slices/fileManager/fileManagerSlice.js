@@ -110,12 +110,34 @@ export const desassignateUsersToaFolder = createAsyncThunk(
     }
 );
 
+export const desassignateUsersToaGroupUsers = createAsyncThunk(
+    'FileManagerSlice/desassignateUsersToaGroupUsers',
+    async (group, thunkAPI) => {
+
+        const { id, users } = group;
+
+        const response = await usersGroup.unassignUsersFromUserGroups(id, group);
+   
+        thunkAPI.dispatch(fetchUsersGroups());
+        return response;
+    }
+);
+
 export const fetchUsersGroups = createAsyncThunk(
     'FileManagerSlice/fetchUsersGroups',
     async (_, thunkAPI) => {
-        const year = thunkAPI.getState().FileManager.currentDate;
 
-        const response = await usersGroup.getAllUsersGroups(year);
+        const response = await usersGroup.getAllUsersGroups();
+
+        return response;
+    }
+);
+
+export const fetchUsersGroupsAssing = createAsyncThunk(
+    'FileManagerSlice/fetchUsersGroupsAssing',
+    async (groupId, thunkAPI) => {
+
+        const response = await usersGroup.getUsersFromAGroupUser(groupId);
 
         return response;
     }

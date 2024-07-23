@@ -1,7 +1,6 @@
 import { editFolder, getUsersAssignToFolder, getGroupsUsersAssignToFolder, addUsersAndGroupsToTheFolder, desassignateUsersToaFolder } from '../../../../../store/slices/fileManager/fileManagerSlice';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { fetchGet, } from '../../../../../api';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
 import { useDispatch } from 'react-redux';
@@ -187,17 +186,15 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
 
 
   const leftToolbarTemplate = () => (
-    <>
-      <div className='my-2'>
-        <Button
-          className='p-button-success d-flex justify-content-center mr-2'
+      <div className='mt-1'>
+        <button
+          className='btn btn-outline-primary py-3 px-3 d-flex justify-content-center'
           onClick={openModal}
         >
-          <BorderColorIcon className='me-2 mb-2' />
+          <BorderColorIcon className='me-2' />
           Editar carpeta
-        </Button>
+        </button>
       </div>
-    </>
   );
   const editProduct = (data) => {
     setData({ ...data });
