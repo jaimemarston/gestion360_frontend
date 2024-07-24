@@ -83,14 +83,14 @@ export default function FileManager() {
 
   const groups = useTransformedGroups();
 
-  const clearData = () =>{
+  const clearData = () => {
     setNameFolder("")
     setNameGroup("")
     setSelectedGroupId(null)
     setselectedFolderId(null)
   }
 
-  const updateDate = (value) =>{
+  const updateDate = (value) => {
     setDate(value);
     dispatch(setCurrentDate(value?.toISOString().slice(0, 4)));
   }
@@ -244,15 +244,7 @@ export default function FileManager() {
                 <DeleteGroup groupId={selectedGroupId} />
               )}
 
-            {showModal && (
-              <RegisterFolder
-                parentFolder={parentFolder}
-                folderId={selectedFolderId}
-                groupName={nameGroup}
-                groupID={selectedGroupId}
-              />
-            )}
-            {(permissions === 2 ? selectedGroupId !== null : editFolder && selectedFolderId !== null ) && showModal &&(
+            {(permissions === 2 ? selectedGroupId !== null : editFolder && selectedFolderId !== null) && showModal && (
               <EditFolder
                 editGroup={editFolder}
                 selectedFolderFather={selectedFolderFather}
@@ -262,6 +254,16 @@ export default function FileManager() {
                 groupId={selectedGroupId}
               />
             )}
+
+            {showModal && (
+              <RegisterFolder
+                parentFolder={parentFolder}
+                folderId={selectedFolderId}
+                groupName={nameGroup}
+                groupID={selectedGroupId}
+              />
+            )}
+
             {selectedFolderId &&
               showModal &&
               !isLoading &&
@@ -272,23 +274,23 @@ export default function FileManager() {
           </div>
           <div className="col-4 mt-1 d-flex align-items-center justify-content-center">
             <div className="mb-3">
-              <Calendar style={{width: "220px"}} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => updateDate(e.value)} view="year" dateFormat="yy" />
+              <Calendar style={{ width: "220px" }} locale="es" placeholder="Filtrar por año" value={date} onChange={(e) => updateDate(e.value)} view="year" dateFormat="yy" />
             </div>
           </div>
         </div>
         <div className="col-6 folder-list">
-        {groups.length ? 
-          <FileExplorer
-            setEditFolder={setEditFolder}
-            groups={groups}
-            setSelectedFolderFather={setSelectedFolderFather}
-            showCreateFolder={createFolder}
-            selectGroupId={handleGroupId}
-            selectIdFolder={handleFolderId}
-            setNameFolder={setNameFolder}
-            setNameGroup={setNameGroup}
-          />
-        : <h5>Este año no posee informacion</h5> }
+          {groups.length ?
+            <FileExplorer
+              setEditFolder={setEditFolder}
+              groups={groups}
+              setSelectedFolderFather={setSelectedFolderFather}
+              showCreateFolder={createFolder}
+              selectGroupId={handleGroupId}
+              selectIdFolder={handleFolderId}
+              setNameFolder={setNameFolder}
+              setNameGroup={setNameGroup}
+            />
+            : <h5>Este año no posee informacion</h5>}
         </div>
 
         <div
