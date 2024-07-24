@@ -35,19 +35,21 @@ const RegistroDocumentos = ({ isDarkMode }) => {
 
   const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
 
-  const [ballotFilterStatus, setBallotFilterStatus] = useState({ name: 'Boletas firmadas' });
+  const [ballotFilterStatus, setBallotFilterStatus] = useState(true);
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const listarDatosState = async () => {
-    const response = await fetchGet(`empleadosState/${selectedCity1?.name}`)
+    const response = await fetchGet(`empleadosState/${selectedCity1?.name}?documentsFilter=${ballotFilterStatus}`)
     setProducts(response.registroEmpleados);
   };
 
+  const conditionNoContent = selectedCity1 !== "" ;
+
   useEffect(() => {
     listarDatosState();
-  }, [selectedCity1 !== "" && selectedCity1]);
+  }, [conditionNoContent, selectedCity1, ballotFilterStatus]);
 
   const dialogFuncMap = {
     displayBasic: setDisplayBasic,
@@ -422,10 +424,10 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     console.log('click');
   };
 
-  const tickets = [{ name: 'Boletas firmadas' }, { name: 'Boletas sin firmar' }, { name: 'Todas' }];
+  const tickets = [{ name: 'Boletas firmadas', value: true }, { name: 'Boletas sin firmar', value: false }, { name: 'Todas', value: "null" }];
 
   const onChange = (e) => {
-    setBallotFilterStatus(e.value);
+    setBallotFilterStatus(e.target.value);
   };
 
   const header = (
@@ -512,7 +514,7 @@ const RegistroDocumentos = ({ isDarkMode }) => {
           ''
         )}
         <Dropdown
-          id='state'
+          id='ticket'
           value={ballotFilterStatus}
           options={tickets}
           onChange={onChange}
