@@ -12,10 +12,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 import "./style.scss";
-/* import JSZip from 'jszip';
-import JSZipUtils from '../assets/JSZipUtils';
-let zip = new JSZip();
- */
+
 const RegistroDocumentos = ({ isDarkMode }) => {
 
   const mainUrlmin = VITE_API_URL;
@@ -23,10 +20,8 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   const [spinner, setSpinner] = useState(false)
   const [products, setProducts] = useState([]);
   const [view] = useState(false);
-  //const [text, setText] = useState('');
   const [expandedRows, setExpandedRows] = useState(null);
   const [list, setList] = useState({ download: '', href: '' });
-  // const [deleteDocumentsDialog, setDeleteDocumentsDialog] = useState(false);
   const [, setPosition] = useState('center');
   const [displayBasic, setDisplayBasic] = useState(false);
   const [product, setProduct] = useState({});
@@ -37,54 +32,24 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   const [lista, setLista] = useState(null);
 
   const [viewFirmados, setViewFirmados] = useState(false);
-  // const customerService = new CustomerService();
-  /*   const empleadoService = new EmpleadoService(); */
+
   const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
+
+  const [ballotFilterStatus, setBallotFilterStatus] = useState(true);
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const listarDatos = async () => {
-
-    const response = await fetchGet('empleados')
-    setProducts(response.registroEmpleados);
-
-    /*     empleadoService
-          .getProductsWithOrdersSmall(selectedCity1?.name)
-          .then((data) => {
-            setProducts(data);
-          }); */
-  };
-
   const listarDatosState = async () => {
-    const response = await fetchGet(`empleadosState/${selectedCity1?.name}`)
+    const response = await fetchGet(`empleadosState/${selectedCity1?.name}?documentsFilter=${ballotFilterStatus}`)
     setProducts(response.registroEmpleados);
   };
 
-  // const getCustomers = (data) => {
-  //   return [...(data || [])].map((d) => {
-  //     d.fechaenvio = new Date(d.fechaenvio);
-  //     return d;
-  //   });
-  // };
-
-  const onUpload = (e) => {
-    toast.current.show({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Documentos subidos correctamente',
-      life: 3000,
-    });
-    listarDatos();
-  };
-
-  useEffect(() => {
-    listarDatos();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const conditionNoContent = selectedCity1 !== "" ;
 
   useEffect(() => {
     listarDatosState();
-  }, [selectedCity1]);
+  }, [conditionNoContent, selectedCity1, ballotFilterStatus]);
 
   const dialogFuncMap = {
     displayBasic: setDisplayBasic,
@@ -107,16 +72,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
       return (
         <div>
           <Button label="Cerrar" icon="pi pi-check" onClick={() => onHide(name)} className="p-button-text" />
-          <Button
-            label='Aceptar'
-            disabled={spinner}
-            // icon='pi pi-check'
-            onClick={() => {
-              onHide(name);
-              // listarDatos();
-            }}
-            autoFocus
-          />
         </div>
       );
     };
@@ -145,10 +100,8 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         listarDatos();
       })
         .catch((error) => {
-          // listarDatos();
           console.log(error);
         });
-      // listarDatos();
     };
 
     const customBaseUploader = (e) => {
@@ -169,10 +122,8 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         listarDatos();
       })
         .catch((error) => {
-          // listarDatos();
           console.log(error);
         });
-      // listarDatos();
     };
 
     const onFileSelect = (e) => {
@@ -211,10 +162,11 @@ const RegistroDocumentos = ({ isDarkMode }) => {
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
+              chooseLabel='Subir'
+              uploadLabel='Cargar'
+              cancelLabel='Cancelar'
               name='image'
-              /*  url={Urluploading} */
               accept='pdf/*'
-              // onUpload={onUpload}
               customUpload
               uploadHandler={customBase64Uploader}
               maxFileSize={1000000}
@@ -229,7 +181,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
           header='Importacion de Documentos Firmados'
           visible={viewFirmados}
           style={{ width: '50vw' }}
-          // footer={renderFooter('displayBasic')}
           onHide={() => { setViewFirmados(false), setSelectedFiles([]) }}
         >
           <p>Seleccione archivos a Importar en Formato PDF</p>
@@ -237,13 +188,14 @@ const RegistroDocumentos = ({ isDarkMode }) => {
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
+              chooseLabel='Subir'
+              uploadLabel='Cargar'
+              cancelLabel='Cancelar'
               name='image'
-              /*  url={urlfirmado} */
               accept='pdf/*'
               customUpload
 
               uploadHandler={customBaseUploader}
-              // onUpload={onUpload}
               maxFileSize={1000000}
               onSelect={onFileSelect}
               onRemove={onFileRemove}
@@ -281,14 +233,11 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   const editProduct = (product) => {
 
     localStorage.setItem('pdfdetalle', JSON.stringify(product));
-    /*      var url = '/viewpdf';
-         history.push(url, { detail: product.nombredoc }); */
   };
 
   const actionBodyTemplate = (rowData) => {
     return (
       <div className='actions'>
-        {/* <Button icon='pi pi-user-edit' onClick={() => editProduct(rowData)} /> */}
         <a
           icon='pi pi-user-edit'
           href='/viewpdf'
@@ -297,7 +246,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         >
           Ver
         </a>
-        {/* <Button icon='pi pi-user-edit' onClick={() => editProduct(rowData)} /> */}
       </div>
     );
   };
@@ -326,20 +274,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     data = e.value.map((item) => item.id);
     setDeleteId(data);
   };
-
-  /*   const fetchDelete = async (method = '', data) => {
-      const response = await fetch(`${mainUrl}/documentosall`, {
-        method,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const result = await response.json();
-  
-      return result;
-    }; */
 
   const deleteAll = () => {
     fetchDelete('DELETE', deleteId)
@@ -397,8 +331,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
           throw new Error('No se pudo descargar el archivo')
         }
 
-
-        //setText(response.msg);
       })
       .catch((error) => {
         toast.current.show({
@@ -430,10 +362,7 @@ const RegistroDocumentos = ({ isDarkMode }) => {
           currentPageReportTemplate='Mostrando {first} a {last} de {totalRecords}'
           globalFilter={globalFilter1}
           emptyMessage='No Data found.'
-          // header={header}
           responsiveLayout='scroll'
-        // selection={selectedProducts}
-        // onSelectionChange={(e) => console.log(e.value)}
         >
           <Column
             selectionMode='multiple'
@@ -487,14 +416,18 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     );
   };
 
-
-
   const cities = [{ name: 'todos' }, { name: 'activo' }, { name: 'inactivo' }];
   const onCityChange = (e) => {
     setSelectedCity1(e.value);
   };
   const getDownload = () => {
     console.log('click');
+  };
+
+  const tickets = [{ name: 'Boletas firmadas', value: true }, { name: 'Boletas sin firmar', value: false }, { name: 'Todas', value: "null" }];
+
+  const onChange = (e) => {
+    setBallotFilterStatus(e.target.value);
   };
 
   const header = (
@@ -560,7 +493,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
             ) : (
               <a
                 href={list.href}
-                // target='_blank'
                 download={list.download}
                 style={{
                   marginLeft: '10px',
@@ -581,6 +513,17 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         ) : (
           ''
         )}
+        <Dropdown
+          id='ticket'
+          value={ballotFilterStatus}
+          options={tickets}
+          onChange={onChange}
+          optionLabel='name'
+          placeholder='Seleccionar'
+          style={{
+            marginLeft: '10px',
+          }}
+        />
         <Dropdown
           id='state'
           value={selectedCity1}
@@ -665,14 +608,9 @@ const RegistroDocumentos = ({ isDarkMode }) => {
                 field='activo'
                 header='Status'
                 body={statusOrderBodyTemplate}
-                //   filterMenuStyle={{ width: '14rem' }}
-                //   style={{ minWidth: '14rem' }}
                 showFilterMatchModes={false}
                 sortable
-              //   filterElement={representativeFilterTemplate}
-              //   filter
               ></Column>
-              {/* <Column field='Status' header='Status' sortable /> */}
             </DataTable>
           </div>
         </div>
@@ -727,10 +665,6 @@ const EliminarDocumento = ({
       </div>
     </Dialog>
   );
-};
-
-const comparisonFn = function (prevProps, nextProps) {
-  return prevProps.location.pathname === nextProps.location.pathname;
 };
 
 export default RegistroDocumentos
