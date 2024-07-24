@@ -107,16 +107,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
       return (
         <div>
           <Button label="Cerrar" icon="pi pi-check" onClick={() => onHide(name)} className="p-button-text" />
-          <Button
-            label='Aceptar'
-            disabled={spinner}
-            // icon='pi pi-check'
-            onClick={() => {
-              onHide(name);
-              // listarDatos();
-            }}
-            autoFocus
-          />
         </div>
       );
     };
@@ -211,6 +201,9 @@ const RegistroDocumentos = ({ isDarkMode }) => {
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
+              chooseLabel='Subir'
+              uploadLabel='Cargar'
+              cancelLabel='Cancelar'
               name='image'
               /*  url={Urluploading} */
               accept='pdf/*'
@@ -237,6 +230,9 @@ const RegistroDocumentos = ({ isDarkMode }) => {
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
+              chooseLabel='Subir'
+              uploadLabel='Cargar'
+              cancelLabel='Cancelar'
               name='image'
               /*  url={urlfirmado} */
               accept='pdf/*'
