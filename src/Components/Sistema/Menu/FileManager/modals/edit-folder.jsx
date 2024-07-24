@@ -10,7 +10,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import TablaUsuario from '../../TableUsers'
 
-const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, folderId }) => {
+const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, editFolder, folderId }) => {
   const [usersId, setUsersId] = useState([]);
 
   useEffect(() => {
@@ -186,15 +186,15 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
 
 
   const leftToolbarTemplate = () => (
-      <div className='mt-1'>
-        <button
-          className='btn btn-outline-primary py-3 px-3 d-flex justify-content-center'
-          onClick={openModal}
-        >
-          <BorderColorIcon className='me-2' />
-          Editar carpeta
-        </button>
-      </div>
+    <div className='mt-1'>
+      <button
+        className='btn btn-outline-primary py-3 px-3 d-flex justify-content-center'
+        onClick={openModal}
+      >
+        <BorderColorIcon className='me-2' />
+        Editar{editFolder ? " carpeta" : " grupo"}
+      </button>
+    </div>
   );
   const editProduct = (data) => {
     setData({ ...data });
@@ -315,118 +315,147 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
     return (
       <Dialog
         visible={isModal}
-        style={{ width: '800px', height: "600px" }}
+        style={editFolder ? { width: '800px', height: "600px" }: { width: "450px", height: "220px" }}
         header={`Grupo seleccionado: ${groupName}`}
         modal
         className='p-fluid'
         footer={productDialogFooter}
         onHide={openModal}
       >
-        <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName}</h5>
-        <div className='field'>
-          <label htmlFor='label'>Carpeta principal</label>
-          <div className="d-flex">
-            <div className={`${editNameFolder ? 'col-11' : 'col-10'} d-flex`}>
-              <InputText
-                id='label'
-                name='label'
-                value={data?.label?.trim()}
-                onChange={(e) => onInputChange(e, 'label')}
-                required
-                autoFocus
-                disabled={editNameFolder}
-                className={classNames({
-                  'p-invalid': submitted && !data.label,
-                })}
-              />
-              {submitted && !data.label && (
-                <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
-              )}
-            </div>
-            <div className={`${editNameFolder ? 'col-1' : 'col-2'}`}>
-              {editNameFolder &&
-                <Button
-                  className="text-center d-flex justify-content-center"
-                  onClick={() => setEditNameFolder(false)}
-                >
-                  <BorderColorIcon />
-                </Button>
-              }
-              {!editNameFolder &&
-                <div className='d-flex'>
-                  <Button
-                    className="text-center me-3 d-flex justify-content-center"
-                    onClick={() => setEditNameFolder(!editNameFolder)}
-                  >
-                    <i className='pi pi-times py-1' />
-                  </Button>
+        {editFolder ? <>
+          <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName}</h5>
+          <div className='field'>
+            <label htmlFor='label'>Carpeta principal</label>
+            <div className="d-flex">
+              <div className={`${editNameFolder ? 'col-11' : 'col-10'} d-flex`}>
+                <InputText
+                  id='label'
+                  name='label'
+                  value={data?.label?.trim()}
+                  onChange={(e) => onInputChange(e, 'label')}
+                  required
+                  autoFocus
+                  disabled={editNameFolder}
+                  className={classNames({
+                    'p-invalid': submitted && !data.label,
+                  })}
+                />
+                {submitted && !data.label && (
+                  <small className='p-invalid'>Nombre de la carpeta principal es requerido</small>
+                )}
+              </div>
+              <div className={`${editNameFolder ? 'col-1' : 'col-2'}`}>
+                {editNameFolder &&
                   <Button
                     className="text-center d-flex justify-content-center"
-                    onClick={EditLabelFolder}
+                    onClick={() => setEditNameFolder(false)}
                   >
-                    <i className='pi pi-check py-1' />
+                    <BorderColorIcon />
                   </Button>
-                </div>
-              }
+                }
+                {!editNameFolder &&
+                  <div className='d-flex'>
+                    <Button
+                      className="text-center me-3 d-flex justify-content-center"
+                      onClick={() => setEditNameFolder(!editNameFolder)}
+                    >
+                      <i className='pi pi-times py-1' />
+                    </Button>
+                    <Button
+                      className="text-center d-flex justify-content-center"
+                      onClick={EditLabelFolder}
+                    >
+                      <i className='pi pi-check py-1' />
+                    </Button>
+                  </div>
+                }
+              </div>
             </div>
           </div>
-        </div>
 
-        {selectedFolderFather &&
+          {selectedFolderFather &&
+            <>
+              <div className="my-2 d-flex">
+                <Button
+                  className="p-button-success d-flex justify-content-center mr-2"
+                  onClick={showTableUsers}
+                  disabled={!showGroupUser}
+                >
+                  Tabla de usuarios
+                </Button>
+                <Button
+                  className="p-button-success d-flex justify-content-center mr-2"
+                  onClick={showTableGroup}
+                  disabled={showGroupUser}
+                >
+                  Tabla de grupo de usuarios
+                </Button>
+              </div>
+
+              {!showGroupUser && (
+                <TablaUsuario
+                  dt={dt}
+                  listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
+                  selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersCheck}
+                  setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersCheck}
+                  selectedDelete={selectedUsersDelete}
+                  assign={filterStatusUsers === 'asignados' ? true : false}
+                  setSelectedDelete={setSelectedUsersDelete}
+                  globalFilter={globalFilter}
+                  header={header}
+                  actionBodyTemplate={actionBodyTemplate}
+                  actionBodyTemplate2={actionBodyTemplate2}
+                />
+              )}
+
+              {showGroupUser && (
+                <TablaUsuario
+                  dt={dt}
+                  listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
+                  selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersCheck}
+                  setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersCheck}
+                  selectedDelete={selectedGroupsUsersDelete}
+                  assign={filterStatusGroup === 'asignados' ? true : false}
+                  setSelectedDelete={setSelectedGroupsUsersDelete}
+                  globalFilter={globalFilter}
+                  header={headerGroup}
+                  actionBodyTemplate={actionBodyTemplate}
+                  actionBodyTemplate2={actionBodyTemplate2}
+                  codigoBodyTemplate={idBodyTemplate}
+                  nombreBodyTemplate={nameBodyTemplate}
+                  AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
+                />
+              )}
+            </>
+          }
+        </> :
           <>
-            <div className="my-2 d-flex">
-              <Button
-                className="p-button-success d-flex justify-content-center mr-2"
-                onClick={showTableUsers}
-                disabled={!showGroupUser}
-              >
-                Tabla de usuarios
-              </Button>
-              <Button
-                className="p-button-success d-flex justify-content-center mr-2"
-                onClick={showTableGroup}
-                disabled={showGroupUser}
-              >
-                Tabla de grupo de usuarios
-              </Button>
+            <div className="field">
+              <label htmlFor="name">Carpeta principal</label>
+              <InputText
+                id="name"
+                name="name"
+                value={data?.name?.trim()}
+                onChange={(e) => onInputChange(e, "name")}
+                required
+                autoFocus
+                className={classNames({
+                  'p-invalid': submitted && !data.name,
+                })}
+              />
+              {submitted && !data.name && (
+                <small className='p-invalid'>El nombre de el grupo es requerido</small>
+              )}
             </div>
-
-            {!showGroupUser && (
-              <TablaUsuario
-                dt={dt}
-                listProduct={filterStatusUsers === 'sin asignar' ? usersActive : usersAssign}
-                selectedUsers={filterStatusUsers === 'sin asignar' ? selectedUsers : selectedUsersCheck}
-                setSelectedProducts={filterStatusUsers === 'sin asignar' ? setSelectedUsers : setSelectedUsersCheck}
-                selectedDelete={selectedUsersDelete}
-                assign={filterStatusUsers === 'asignados' ? true : false}
-                setSelectedDelete={setSelectedUsersDelete}
-                globalFilter={globalFilter}
-                header={header}
-                actionBodyTemplate={actionBodyTemplate}
-                actionBodyTemplate2={actionBodyTemplate2}
-              />
-            )}
-
-            {showGroupUser && (
-              <TablaUsuario
-                dt={dt}
-                listProduct={filterStatusGroup === 'sin asignar' ? usersGroup : usersGroupAssign}
-                selectedUsers={filterStatusGroup === 'sin asignar' ? selectedGroups : selectedGroupsUsersCheck}
-                setSelectedProducts={filterStatusGroup === 'sin asignar' ? setSelectedGroups : setSelectedGroupsUsersCheck}
-                selectedDelete={selectedGroupsUsersDelete}
-                assign={filterStatusGroup === 'asignados' ? true : false}
-                setSelectedDelete={setSelectedGroupsUsersDelete}
-                globalFilter={globalFilter}
-                header={headerGroup}
-                actionBodyTemplate={actionBodyTemplate}
-                actionBodyTemplate2={actionBodyTemplate2}
-                codigoBodyTemplate={idBodyTemplate}
-                nombreBodyTemplate={nameBodyTemplate}
-                AmountOfUsersBodyTemplate={AmountOfUsersBodyTemplate}
-              />
-            )}
-          </>
-        }
+            <div
+              className="field"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            ></div>
+          </>}
       </Dialog>
     );
   };
@@ -446,7 +475,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, f
           label={`${filterStatusGroup === 'sin asignar' ? 'Asignar' : 'Desasignar'}`}
           icon='pi pi-check'
           className='p-button-text'
-          disabled={filterStatusGroup === 'sin asignar' ? selectedGroups.length === 0 : selectedGroupsUsersDelete.length === 0 }
+          disabled={filterStatusGroup === 'sin asignar' ? selectedGroups.length === 0 : selectedGroupsUsersDelete.length === 0}
           onClick={filterStatusGroup === 'sin asignar' ? AssignUsersAndGroupUser : DisasignateUsersAndUserGroups}
         />
         :

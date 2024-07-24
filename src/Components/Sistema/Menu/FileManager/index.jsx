@@ -45,6 +45,7 @@ export default function FileManager() {
   const [totalElements, setTotalElements] = useState(0);
   const [date, setDate] = useState(new Date());
   const [selectedFolderFather, setSelectedFolderFather] = useState(false);
+  const [editFolder, setEditFolder] = useState(false);
 
   const permissions = usePermission.getPermissionLevel();
   const { showToast, ToastComponent } = useToast();
@@ -237,7 +238,6 @@ export default function FileManager() {
           <div className="d-flex col-8">
             {permissions === 2 && <RegisterGroup />}
             {permissions === 2 && nameGroup !== "" &&
-
             selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
 
             {selectedGroupId &&
@@ -254,8 +254,9 @@ export default function FileManager() {
                 groupID={selectedGroupId}
               />
             )}
-            {selectedFolderId && showModal && (
+            {selectedGroupId !== null && showModal && (
               <EditFolder
+                editFolder={editFolder}
                 selectedFolderFather={selectedFolderFather}
                 folderName={nameFolder}
                 groupName={nameGroup}
@@ -279,6 +280,7 @@ export default function FileManager() {
         <div className="col-6 folder-list">
         {groups.length ? 
           <FileExplorer
+            setEditFolder={setEditFolder}
             groups={groups}
             setSelectedFolderFather={setSelectedFolderFather}
             showCreateFolder={createFolder}

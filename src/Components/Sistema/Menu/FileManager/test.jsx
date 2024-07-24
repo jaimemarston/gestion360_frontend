@@ -142,7 +142,7 @@ const getIconFromFileTypeAndDepth = (item, depth) => {
 };
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
-  const { id, itemId, label, disabled, children, showModal, selectGroup, onItemSelect, setNameFolder, setNameGroup, setSelectedFolderFather, ...other } = props;
+  const { id, itemId, label, disabled, children, showModal, selectGroup, onItemSelect, setNameFolder, setNameGroup, setSelectedFolderFather, setEditFolder, ...other } = props;
 
   const {
     getRootProps,
@@ -164,8 +164,10 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(props, ref) {
       showModal(true);
       selectGroup(itemId);
       setNameGroup(label);
+      setEditFolder(false)
     }
     if (icon === FolderRounded) {
+      setEditFolder(true)
       onItemSelect(Number(itemId.split("-")[0]));
       setNameFolder(label);
       setSelectedFolderFather(item.fatherFolder)
@@ -236,7 +238,7 @@ const handleApplyFilter = (groups, filterText) => {
   return filterGroups(groups);
 };
 
-export default function FileExplorer({ selectIdFolder, groups, showCreateFolder, selectGroupId, setNameFolder, setNameGroup, setSelectedFolderFather }) {
+export default function FileExplorer({ selectIdFolder, groups, showCreateFolder, selectGroupId, setNameFolder, setNameGroup, setSelectedFolderFather, setEditFolder }) {
   const [filterText, setFilterText] = useState("");
   const [filteredGroups, setFilteredGroups] = useState(Object.values(groups));
 
@@ -300,6 +302,7 @@ export default function FileExplorer({ selectIdFolder, groups, showCreateFolder,
           item: (props) => (
             <CustomTreeItem
               {...props}
+              setEditFolder={setEditFolder}
               showModal={showCreateFolder}
               selectGroup={selectGroupId}
               setNameGroup={setNameGroup}
