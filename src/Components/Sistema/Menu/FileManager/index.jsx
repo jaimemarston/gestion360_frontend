@@ -237,10 +237,8 @@ export default function FileManager() {
         <div className="col-12 d-flex">
           <div className="d-flex col-8">
             {permissions === 2 && <RegisterGroup />}
-            {permissions === 2 && nameGroup !== "" &&
-            selectedGroupId !== null && <EditGroup name={nameGroup} id={selectedGroupId} />}
 
-            {selectedGroupId &&
+            {permissions === 2 && selectedGroupId &&
               showModal &&
               !isLoading && (
                 <DeleteGroup groupId={selectedGroupId} />
@@ -254,13 +252,14 @@ export default function FileManager() {
                 groupID={selectedGroupId}
               />
             )}
-            {selectedGroupId !== null && showModal && (
+            {(permissions === 2 ? selectedGroupId !== null : editFolder && selectedFolderId !== null ) && showModal &&(
               <EditFolder
-                editFolder={editFolder}
+                editGroup={editFolder}
                 selectedFolderFather={selectedFolderFather}
                 folderName={nameFolder}
                 groupName={nameGroup}
                 folderId={selectedFolderId}
+                groupId={selectedGroupId}
               />
             )}
             {selectedFolderId &&
