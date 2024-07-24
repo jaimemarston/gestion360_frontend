@@ -308,6 +308,10 @@ export default function AppMenu({ isOpen }) {
                     return
                   }
 
+                  if (dataUser?.rol == 'USER_ROLE' && item2.label == 'Crear grupos de usuarios') {
+                    return
+                  }
+
                   return (
                     <li
                       key={index2}

@@ -97,7 +97,9 @@ export default function CreateGroupUsers() {
                 setSelectedUsersCheck([])
             }
         } catch (error) {
-            console.log("error", error);
+            if (import.meta.env.MODE === 'development') {
+                console.log(error);
+            }
         }
     };
 
@@ -120,7 +122,9 @@ export default function CreateGroupUsers() {
                 setSelectedUsersAsiggn([])
             }
         } catch (error) {
-            console.log("error", error);
+            if (import.meta.env.MODE === 'development') {
+                console.log(error);
+            }
         }
     };
 
@@ -144,7 +148,9 @@ export default function CreateGroupUsers() {
                 setSelectedUsersDelete([])
             }
         } catch (error) {
-            console.log("error", error);
+            if (import.meta.env.MODE === 'development') {
+                console.log(error);
+            }
         }
     };
 
