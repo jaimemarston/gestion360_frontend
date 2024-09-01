@@ -17,3 +17,10 @@ Para levantar el backend hace falta estas variables de entorno dentro de un arch
 // URL DEL API 
 VITE_API_URL=
 ```
+
+### Desplegar en local
+```
+yarn install
+yarn run dev
+yarn build
+```

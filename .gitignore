@@ -1,6 +1,9 @@
 /node_modules
 .vscode
 .env
-.dist
-dist
-/dist
+dist/*
+dist/
+.idea
+.idea/
+.idea/*
+.env
