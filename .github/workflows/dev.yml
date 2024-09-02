@@ -29,15 +29,17 @@ jobs:
 
       - name: Build
         run: yarn build
-
-      - name: Deploy to S3
-        uses: jakejarvis/s3-sync-action@master
+      
+      - name: S3 Sync
+        uses: jakejarvis/s3-sync-action@v0.5.1
         with:
-          args: --acl public-read --delete
+          args: --acl public-read --follow-symlinks --delete
         env:
           AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME_DEV }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-2'   
+          SOURCE_DIR: 'dist'      
 
       - name: Invalidate CloudFront cache
         uses: chetan/invalidate-cloudfront-action@master
