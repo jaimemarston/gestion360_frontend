@@ -40,7 +40,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Invalidate CloudFront cache
-        uses: aws-actions/aws-cloudfront-invalidate-action@v1
+        uses: awslabs/aws-cloudfront-action@v2.0.0
         with:
           paths: '/*'
         env:
