@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           touch .env
-          echo "VITE_API_URL_ID=${{ secrets.VITE_API_URL }}" > .env
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
           echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> .env
 
       - name: Install dependencies
