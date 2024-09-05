@@ -132,7 +132,6 @@ const RegistroEmpleado = ({isDarkMode}) => {
     async function doIt(){
 
       const response =  await fetchGet('empleados')
-      console.log(response.registroEmpleados)
       setProducts(response.registroEmpleados);
 
     
@@ -151,7 +150,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
 
   
   }
-  const [selectedCity1, setSelectedCity1] = useState(null);
+  const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
 
   const toast = useRef(null);
 
@@ -527,7 +526,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
   const statusOrderBodyTemplate = (rowData) => {
     return (
       <span
-        className={`order-badge order-${rowData.activo ? 'activo' : 'cesado'}`}
+        className={`order-badge order-${rowData.estado ? 'activo' : 'cesado'}`}
       >
         {rowData.estado == true ? 'Activo' : 'Cesado'}
       </span>
@@ -585,7 +584,6 @@ const RegistroEmpleado = ({isDarkMode}) => {
   const onCityChange = (e) => {
     setSelectedCity1(e.value);
   };
-  console.log(globalFilter);
   const header = (
     <div  className={isDarkMode ?  'dark-mode-table  flex flex-column flex-md-row justify-content-md-between align-items-md-center' : 'flex flex-column flex-md-row justify-content-md-between align-items-md-center'  }>
       
