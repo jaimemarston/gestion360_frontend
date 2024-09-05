@@ -345,6 +345,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, e
     isModal,
     productDialogFooter,
     openModal,
+    closeModal,
     data,
     onInputChange,
     onInputChangeGroup,
@@ -358,9 +359,10 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, e
         style={editGroup ? { width: '800px', height: "600px" } : { width: "450px", height: "220px" }}
         header={`Grupo seleccionado: ${groupName}`}
         modal
+        closeModal={closeModal}
         className='p-fluid'
         footer={productDialogFooter}
-        onHide={openModal}
+        onHide={closeModal}
       >
         {editGroup ? <>
           <h5 className='fw-bold text-bold mb-5'>Carpeta seleccionada: {folderName}</h5>
@@ -555,6 +557,7 @@ const EditFolder = ({ isDarkMode, folderName, groupName, selectedFolderFather, e
               isModal,
               productDialogFooter,
               openModal,
+              closeModal,
               data,
               setData,
               onInputChange,
