@@ -3,7 +3,8 @@ import {
     fetchUsersGroups,
     addUsersToTheUserGroup,
     fetchUsersGroupsAssing,
-    desassignateUsersToaGroupUsers
+    desassignateUsersToaGroupUsers,
+    removeGroup
 } from "../../../../store/slices/fileManager/fileManagerSlice";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -93,6 +94,26 @@ export default function CreateGroupUsers() {
                 showToast("error", "Error al intentar crear una carpeta");
             } else {
                 showToast("success", "Carpeta creada con éxito");
+                getGroups();
+                setSelectedUsersCheck([])
+            }
+        } catch (error) {
+            if (import.meta.env.MODE === 'development') {
+                console.log(error);
+            }
+        }
+    };
+
+    const remove = async () => {
+        const payload = {
+            id: selectGroupId,
+        };
+        try {
+            const resultAction = await dispatch(removeGroup(payload));
+            if (resultAction.error) {
+                showToast("error", "Error al intentar eliminar un grupo");
+            } else {
+                showToast("success", "Grupo eliminado con éxito");
                 getGroups();
                 setSelectedUsersCheck([])
             }
@@ -223,11 +244,28 @@ export default function CreateGroupUsers() {
                             </div>
                         </div>
                         <h4 htmlFor="label">Elige el grupo al que le quieres asignar usuarios</h4>
-                        <select value={selectGroupId} onChange={(e) => setSelectGroupId(e.target.value)} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                            {usersGroup && usersGroup.map((group) => (
-                                <option key={group.id} value={group.id}>{group.name}</option>
-                            ))}
-                        </select>
+                        <div className="d-flex w-full justify-content-center mb-3">
+                            <div className="col-10 p-0">
+                                <select value={selectGroupId} onChange={(e) => setSelectGroupId(e.target.value)} className="form-select form-select-lg" aria-label=".form-select-lg example">
+                                    {usersGroup && usersGroup.map((group) => (
+                                        <option key={group.id} value={group.id}>{group.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {
+                                selectGroupId && (
+                                    <div className="col-2  p-0 d-flex justify-content-center align-items-center">
+                                        <Button
+                                            label="Eliminar grupo"
+                                            icon="pi pi-trash"
+                                            className="p-button-text"
+                                            severity="danger"
+                                            onClick={() => { remove(), setData({ name: "" }) }}
+                                        />
+                                    </div>
+                                )
+                            }
+                        </div>
                         <TablaUsuario
                             dt={dt}
                             listProduct={filterStatus === 'sin asignar' ? usersActive : listUsersAssig}
