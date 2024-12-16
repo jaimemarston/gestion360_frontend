@@ -30,7 +30,8 @@ const fetchGet = async (url = '', method = 'GET') => {
 
 const firmarDoc = async (data) => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`${VITE_API_URL}/firmar_doc`, {
+  const type = data?.doc?.tipodoc ?? 'Boleta';
+  const response = await fetch(`${VITE_API_URL}/firmar_doc?type=${type}`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
