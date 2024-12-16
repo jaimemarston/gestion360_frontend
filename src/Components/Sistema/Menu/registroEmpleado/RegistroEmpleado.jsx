@@ -375,7 +375,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
   };
 
   const listarDatosState = async () => {
-    const response =  await fetchGet(`empleadosState/${selectedCity1?.name}`)
+    const response =  await fetchGet(`empleadosState/${selectedCity1?.name}?documentsFilter=todos`)
     setProducts(response.registroEmpleados);
   };
 
@@ -585,7 +585,6 @@ const RegistroEmpleado = ({isDarkMode}) => {
   const onCityChange = (e) => {
     setSelectedCity1(e.value);
   };
-  console.log(globalFilter);
   const header = (
     <div  className={isDarkMode ?  'dark-mode-table  flex flex-column flex-md-row justify-content-md-between align-items-md-center' : 'flex flex-column flex-md-row justify-content-md-between align-items-md-center'  }>
       

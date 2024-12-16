@@ -33,15 +33,17 @@ const RegistroDocumentos = ({ isDarkMode }) => {
 
   const [viewFirmados, setViewFirmados] = useState(false);
 
-  const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
+  const [selectedCity1, setSelectedCity1] = useState({ name: 'todos' });
 
-  const [ballotFilterStatus, setBallotFilterStatus] = useState(true);
+  const [ballotFilterStatus, setBallotFilterStatus] = useState('todos');
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   const listarDatosState = async () => {
-    const response = await fetchGet(`empleadosState/${selectedCity1?.name}?documentsFilter=${ballotFilterStatus}`)
+    const documentSelected = ballotFilterStatus !== 'todos'? ballotFilterStatus.split('-')[0]  : ballotFilterStatus;
+    const firmedStatus = ballotFilterStatus !== 'todos' ? ballotFilterStatus.split('-')[1]  : ballotFilterStatus;
+    const response = await fetchGet(`empleadosState/${selectedCity1?.name}?documentsFilter=${documentSelected}&firmedStatus=${firmedStatus}`)
     setProducts(response.registroEmpleados);
   };
 
@@ -424,7 +426,13 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     console.log('click');
   };
 
-  const tickets = [{ name: 'Boletas firmadas', value: true }, { name: 'Boletas sin firmar', value: false }, { name: 'Todas', value: "null" }];
+  const tickets = [
+    { name: 'Boletas firmadas', value: 'Boleta-true' },
+    { name: 'Boletas sin firmar', value: 'Boleta-false' },
+    { name: 'Cts firmados', value: "Cts-true" },
+    { name: 'Cts sin firmar', value: "Cts-false" },
+    { name: 'Todos', value: "todos" }
+  ];
 
   const onChange = (e) => {
     setBallotFilterStatus(e.target.value);
