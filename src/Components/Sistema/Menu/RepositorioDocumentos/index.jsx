@@ -7,7 +7,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import { fetchDelete, fetchGet, createFormData, VITE_API_URL } from '../../../../api';
+import { fetchDelete, fetchGet, createFormData, VITE_API_URL, fetchPut } from '../../../../api';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
@@ -220,14 +220,23 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   };
 
   const statusOrderBody = (rowData) => {
-
-    const data = rowData.estado === true ? '#8ff484' : '#f4d484';
+    let status;
+    let backgroundColor;
+  
+    if (rowData.tipodoc === 'Boleta' || rowData.tipodoc === 'Cts') {
+      status = rowData.estado === true ? 'Firmado' : 'Pendiente';
+      backgroundColor = rowData.estado === true ? '#8ff484' : '#f4d484';
+    } else {
+      status = rowData.certified === true ? 'Certificado' : 'Pendiente';
+      backgroundColor = rowData.certified === true ? '#8ff484' : '#f4d484';
+    }
+  
     return (
       <span
-        className={`order-badge `}
-        style={{ backgroundColor: data, fontWeight: '500' }}
+        className={`order-badge`}
+        style={{ backgroundColor: backgroundColor, fontWeight: '500' }}
       >
-        {rowData.estado === true ? 'Firmado' : 'Pendiente'}
+        {status}
       </span>
     );
   };
@@ -237,19 +246,58 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     localStorage.setItem('pdfdetalle', JSON.stringify(product));
   };
 
+  const certifyDocument = (element) => {
+    fetchPut(`regDoc/certify/${element.id}`, 'PUT', {}).then(({ message, success }) => {
+      if (!success) {
+        toast.current.show({
+          severity: 'warn',
+          summary: 'No se pudo certificar el documento',
+        });
+      } else {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Certificado',
+          detail: message,
+        });
+        listarDatosState();
+      }
+    });
+  }
+
   const actionBodyTemplate = (rowData) => {
-    return (
-      <div className='actions'>
-        <a
-          icon='pi pi-user-edit'
-          href='/viewpdf'
-          target='_blank'
-          onClick={() => editProduct(rowData)}
-        >
-          Ver
-        </a>
+    if (rowData.tipodoc === 'Boleta' || rowData.tipodoc === 'Cts') {
+      return (
+        <div className='actions'>
+          <a
+            icon='pi pi-user-edit'
+            href='/viewpdf'
+            target='_blank'
+            onClick={() => editProduct(rowData)}
+          >
+            Ver
+          </a>
+        </div>
+      );
+    } else {
+      return (
+        <div className='actions'>
+        {rowData.certified ? (
+          <Button
+            icon='pi pi-check-circle'
+            label="Certificado"
+            className="p-button-success p-button-outlined"
+            disabled
+          />
+        ) : (
+          <Button
+            icon='pi pi-check'
+            label="Certificar"
+            onClick={() => certifyDocument(rowData)}
+          />
+        )}
       </div>
-    );
+      );
+    }
   };
 
   const confirmDeleteDocuments = (product) => {
