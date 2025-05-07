@@ -132,7 +132,6 @@ const RegistroEmpleado = ({isDarkMode}) => {
     async function doIt(){
 
       const response =  await fetchGet('empleados')
-      console.log(response.registroEmpleados)
       setProducts(response.registroEmpleados);
 
     
@@ -151,7 +150,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
 
   
   }
-  const [selectedCity1, setSelectedCity1] = useState(null);
+  const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
 
   const toast = useRef(null);
 
@@ -527,7 +526,7 @@ const RegistroEmpleado = ({isDarkMode}) => {
   const statusOrderBodyTemplate = (rowData) => {
     return (
       <span
-        className={`order-badge order-${rowData.activo ? 'activo' : 'cesado'}`}
+        className={`order-badge order-${rowData.estado ? 'activo' : 'cesado'}`}
       >
         {rowData.estado == true ? 'Activo' : 'Cesado'}
       </span>
