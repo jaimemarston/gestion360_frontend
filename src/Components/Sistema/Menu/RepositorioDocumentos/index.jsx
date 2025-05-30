@@ -7,11 +7,15 @@ import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import { fetchDelete, fetchGet, createFormData, VITE_API_URL } from '../../../../api';
+import { fetchDelete, fetchGet, createFormData, VITE_API_URL, fetchPut } from '../../../../api';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 import "./style.scss";
+import { DatePicker } from '@mui/x-date-pickers'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { es } from 'date-fns/locale';
 
 const RegistroDocumentos = ({ isDarkMode }) => {
 
@@ -39,6 +43,7 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const listarDatosState = async () => {
     const documentSelected = ballotFilterStatus !== 'todos'? ballotFilterStatus.split('-')[0]  : ballotFilterStatus;
@@ -85,7 +90,16 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     const customBase64Uploader = (e) => {
       setSpinner(true)
       let formData = new FormData();
+
+      const formattedDate = selectedDate.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '-');
+
       e.files.map((e) => formData.append('file', e));
+      formData.append('date', formattedDate);
+
       createFormData(`regdocAddAll`,
         'POST',
         formData,
@@ -109,7 +123,16 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     const customBaseUploader = (e) => {
       setSpinner(true)
       let formData = new FormData();
+
+      const formattedDate = selectedDate.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '-');
+
       e.files.map((e) => formData.append('file', e));
+
+      formData.append('date', formattedDate);
       createFormData(`regdocfirmAddAll`,
         'POST',
         formData,
@@ -161,6 +184,15 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         >
           <p>Seleccione el o los archivos a Importar en Formato PDF</p>
           <div className='card'>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+            <DatePicker
+              label="Fecha del documento"
+              value={selectedDate}
+              onChange={(newValue) => setSelectedDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+              format="dd/MM/yyyy"
+            />
+          </LocalizationProvider>
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
@@ -187,6 +219,15 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         >
           <p>Seleccione archivos a Importar en Formato PDF</p>
           <div className='card'>
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+              <DatePicker
+                label="Fecha del documento"
+                value={selectedDate}
+                onChange={(newValue) => setSelectedDate(newValue)}
+                renderInput={(params) => <TextField {...params} fullWidth />}
+                format="dd/MM/yyyy"
+              />
+            </LocalizationProvider>
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
@@ -220,14 +261,23 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   };
 
   const statusOrderBody = (rowData) => {
-
-    const data = rowData.estado === true ? '#8ff484' : '#f4d484';
+    let status;
+    let backgroundColor;
+  
+    if (rowData.tipodoc === 'Boleta' || rowData.tipodoc === 'Cts') {
+      status = rowData.estado === true ? 'Firmado' : 'Pendiente';
+      backgroundColor = rowData.estado === true ? '#8ff484' : '#f4d484';
+    } else {
+      status = rowData.certified === true ? 'Certificado' : 'Pendiente';
+      backgroundColor = rowData.certified === true ? '#8ff484' : '#f4d484';
+    }
+  
     return (
       <span
-        className={`order-badge `}
-        style={{ backgroundColor: data, fontWeight: '500' }}
+        className={`order-badge`}
+        style={{ backgroundColor: backgroundColor, fontWeight: '500' }}
       >
-        {rowData.estado === true ? 'Firmado' : 'Pendiente'}
+        {status}
       </span>
     );
   };
@@ -237,19 +287,37 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     localStorage.setItem('pdfdetalle', JSON.stringify(product));
   };
 
+  const certifyDocument = (element) => {
+    fetchPut(`regDoc/certify/${element.id}`, 'PUT', {}).then(({ message, success }) => {
+      if (!success) {
+        toast.current.show({
+          severity: 'warn',
+          summary: 'No se pudo certificar el documento',
+        });
+      } else {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Certificado',
+          detail: message,
+        });
+        listarDatosState();
+      }
+    });
+  }
+
   const actionBodyTemplate = (rowData) => {
-    return (
-      <div className='actions'>
-        <a
-          icon='pi pi-user-edit'
-          href='/viewpdf'
-          target='_blank'
-          onClick={() => editProduct(rowData)}
-        >
-          Ver
-        </a>
-      </div>
-    );
+      return (
+        <div className='actions'>
+          <a
+            icon='pi pi-user-edit'
+            href='/viewpdf'
+            target='_blank'
+            onClick={() => editProduct(rowData)}
+          >
+            Ver
+          </a>
+        </div>
+      );
   };
 
   const confirmDeleteDocuments = (product) => {
