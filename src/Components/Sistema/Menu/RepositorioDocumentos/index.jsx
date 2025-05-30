@@ -12,6 +12,10 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 import "./style.scss";
+import { DatePicker } from '@mui/x-date-pickers'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { es } from 'date-fns/locale';
 
 const RegistroDocumentos = ({ isDarkMode }) => {
 
@@ -39,6 +43,7 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const listarDatosState = async () => {
     const documentSelected = ballotFilterStatus !== 'todos'? ballotFilterStatus.split('-')[0]  : ballotFilterStatus;
@@ -85,7 +90,16 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     const customBase64Uploader = (e) => {
       setSpinner(true)
       let formData = new FormData();
+
+      const formattedDate = selectedDate.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '-');
+
       e.files.map((e) => formData.append('file', e));
+      formData.append('date', formattedDate);
+
       createFormData(`regdocAddAll`,
         'POST',
         formData,
@@ -109,7 +123,16 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     const customBaseUploader = (e) => {
       setSpinner(true)
       let formData = new FormData();
+
+      const formattedDate = selectedDate.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '-');
+
       e.files.map((e) => formData.append('file', e));
+
+      formData.append('date', formattedDate);
       createFormData(`regdocfirmAddAll`,
         'POST',
         formData,
@@ -161,6 +184,15 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         >
           <p>Seleccione el o los archivos a Importar en Formato PDF</p>
           <div className='card'>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+            <DatePicker
+              label="Fecha del documento"
+              value={selectedDate}
+              onChange={(newValue) => setSelectedDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+              format="dd/MM/yyyy"
+            />
+          </LocalizationProvider>
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
@@ -187,6 +219,15 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         >
           <p>Seleccione archivos a Importar en Formato PDF</p>
           <div className='card'>
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+              <DatePicker
+                label="Fecha del documento"
+                value={selectedDate}
+                onChange={(newValue) => setSelectedDate(newValue)}
+                renderInput={(params) => <TextField {...params} fullWidth />}
+                format="dd/MM/yyyy"
+              />
+            </LocalizationProvider>
             <h5>Seleccionar Archivos</h5>
             <FileUpload
               multiple
@@ -265,7 +306,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
   }
 
   const actionBodyTemplate = (rowData) => {
-    if (rowData.tipodoc === 'Boleta' || rowData.tipodoc === 'Cts') {
       return (
         <div className='actions'>
           <a
@@ -278,26 +318,6 @@ const RegistroDocumentos = ({ isDarkMode }) => {
           </a>
         </div>
       );
-    } else {
-      return (
-        <div className='actions'>
-        {rowData.certified ? (
-          <Button
-            icon='pi pi-check-circle'
-            label="Certificado"
-            className="p-button-success p-button-outlined"
-            disabled
-          />
-        ) : (
-          <Button
-            icon='pi pi-check'
-            label="Certificar"
-            onClick={() => certifyDocument(rowData)}
-          />
-        )}
-      </div>
-      );
-    }
   };
 
   const confirmDeleteDocuments = (product) => {
