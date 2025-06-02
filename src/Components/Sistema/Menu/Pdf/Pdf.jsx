@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -8,7 +8,7 @@ import { PDFViewer } from '@react-pdf/renderer';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import { getUser } from '../../../../utils/getUser';
-import { fetchPost, firmarDoc } from '../../../../api';
+import { fetchPost, fetchPut, firmarDoc } from '../../../../api';
 
 const Pdf = (match) => {
   const toast = useRef(null);
@@ -33,10 +33,6 @@ const Pdf = (match) => {
       const userData = await getUser();
       
       setDataUser(userData);
-
-      console.log(userData?.rol)
-      
-    
     }
 
   useEffect( () =>  {
@@ -65,11 +61,9 @@ const Pdf = (match) => {
   }, []); */
 
   const firmaDoc = async (product) => {
-   
+  
     const data = {user: dataUser, doc: product}
 
-    console.log('data', data)
-      
     if (dataUser?.imgfirma == null) {
       toast.current.show({
         severity: 'warn',
@@ -78,32 +72,60 @@ const Pdf = (match) => {
         life: 3000,
       });
     } else {
-   const result = await  firmarDoc(data)
-   toast.current.show({
-    severity: 'success',
-    summary: 'Successful',
-    detail: 'Documento Firmado',
-    life: 3000,
-  });
+      const result = await  firmarDoc(data)
+      toast.current.show({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Documento Firmado',
+        life: 3000,
+      });
 
-localStorage.removeItem('pdfdetalle')
-  localStorage.setItem('pdfdetalle', JSON.stringify(result.newdoc));
-navigate('/visor-documento')
-  
+      localStorage.removeItem('pdfdetalle')
+      localStorage.setItem('pdfdetalle', JSON.stringify(result.newdoc));
+      navigate('/visor-documento')
     }
-    //   //var url = '/firmadocumento';
-    //   //history.push(url, { detail: product });
   };
-  // useEffect(() => {}, []);
-  // console.log(dataFirma);
-/*   const handleClickVolver = () => {
-    const origen = localStorage.getItem('origen');
-    if (origen === 'usuarios') {
-      history.push('/Documentos');
+
+  const certifyDocument = async (element) => {
+    await fetchPut(`regDoc/certify/${element.id}`, 'PUT', {}).then(({ message, success }) => {
+      if (!success) {
+        toast.current.show({
+          severity: 'warn',
+          summary: 'No se pudo certificar el documento',
+        });
+      } else {
+        toast.current.show({
+          severity: 'success',
+          summary: 'Certificado',
+          detail: message,
+        });
+        localStorage.removeItem('pdfdetalle')
+        navigate('/repositorio-documentos')
+      }
+    });
+  }
+
+  const buttonProps = useMemo(() => {
+    if (pdfdetalle?.tipodoc === 'Boleta' || pdfdetalle?.tipodoc === 'Cts') {
+      // Lógica para documentos que se firman
+      return {
+        label: pdfdetalle?.estado ? 'Documento Firmado' : 'Firmar Documento',
+        onClick: () => pdfdetalle?.estado ? () => {} : firmaDoc(pdfdetalle),
+        disabled: pdfdetalle?.estado,
+        className: `p-button-success mr-2 mt-2 ${pdfdetalle?.estado ? 'p-button-outlined' : ''}`,
+        visible: dataUser?.rol === "USER_ROLE"
+      };
     } else {
-      history.push('/visor');
+      // Lógica para documentos que se certifican
+      return {
+        label: pdfdetalle?.certified ? 'Documento Certificado' : 'Certificar Documento',
+        onClick: () => pdfdetalle?.certified ? () => {} : certifyDocument(pdfdetalle),
+        disabled: pdfdetalle?.certified,
+        className: `p-button-success mr-2 mt-2 ${pdfdetalle?.certified ? 'p-button-outlined' : ''}`,
+        visible: dataUser?.rol === "USER_ROLE" // Asumiendo que solo los administradores pueden certificar
+      };
     }
-  }; */
+  }, [pdfdetalle, dataUser]);
 
 
   const url1 = `${mainUrlmin}/api/minio/get-file-url/documents/firmado_${pdfdetalle?.nombredoc}`;
@@ -205,16 +227,15 @@ useEffect(() => {
 
 
 
-        {
-          pdfdetalle?.estado == false && dataUser?.rol == "USER_ROLE" ? (
+        {buttonProps.visible && (
           <Button
-            label='Firmar Documento'
-            onClick={() => firmaDoc(pdfdetalle)}
-            className='p-button-success mr-2 mt-2'
+            label={buttonProps.label}
+            onClick={buttonProps.onClick}
+            disabled={buttonProps.disabled}
+            className={buttonProps.className}
           />
-        ) : (
-''
         )}
+
         {url !== '/viewpdf' && (
           <Button
             label='Volver'

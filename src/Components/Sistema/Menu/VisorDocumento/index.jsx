@@ -94,13 +94,23 @@ const VisorDocumento = ({isDarkMode}) => {
 
   const statusOrderBodyTemplate = (rowData) => {
     // console.log(rowData);
-    const data = rowData.estado === true ? '#8ff484' : '#f4d484';
+    let status;
+    let backgroundColor;
+  
+    if (rowData.tipodoc === 'Boleta' || rowData.tipodoc === 'Cts') {
+      status = rowData.estado === true ? 'Firmado' : 'Pendiente';
+      backgroundColor = rowData.estado === true ? '#8ff484' : '#f4d484';
+    } else {
+      status = rowData.certified === true ? 'Certificado' : 'Pendiente';
+      backgroundColor = rowData.certified === true ? '#8ff484' : '#f4d484';
+    }
+    // const data = rowData.estado === true ? '#8ff484' : '#f4d484';
     return (
       <span
         className={`order-badge `}
-        style={{ backgroundColor: data, fontWeight: '500' }}
+        style={{ backgroundColor, fontWeight: '500' }}
       >
-        {rowData.estado === true ? 'Firmado' : 'Pendiente'}
+        {status}
       </span>
     );
   };
