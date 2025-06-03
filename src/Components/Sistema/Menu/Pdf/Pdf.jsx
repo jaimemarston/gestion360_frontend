@@ -100,7 +100,7 @@ const Pdf = (match) => {
           detail: message,
         });
         localStorage.removeItem('pdfdetalle')
-        navigate('/repositorio-documentos')
+        navigate('/visor-documento')
       }
     });
   }
