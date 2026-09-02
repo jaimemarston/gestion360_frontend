@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -16,6 +16,8 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
+import { parse, isValid, startOfDay, endOfDay } from 'date-fns';
+import JSZip from 'jszip';
 
 const RegistroDocumentos = ({ isDarkMode }) => {
 
@@ -37,13 +39,47 @@ const RegistroDocumentos = ({ isDarkMode }) => {
 
   const [viewFirmados, setViewFirmados] = useState(false);
 
-  const [selectedCity1, setSelectedCity1] = useState({ name: 'todos' });
+  const [selectedCity1, setSelectedCity1] = useState({ name: 'activo' });
 
   const [ballotFilterStatus, setBallotFilterStatus] = useState('todos');
   const [deleteId, setDeleteId] = useState([]);
   const dt = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // Rangos de fecha para acotar los documentos listados.
+  const [envioDesde, setEnvioDesde] = useState(null);
+  const [envioHasta, setEnvioHasta] = useState(null);
+  const [firmaDesde, setFirmaDesde] = useState(null);
+  const [firmaHasta, setFirmaHasta] = useState(null);
+
+  const hayFiltroFechas = Boolean(envioDesde || envioHasta || firmaDesde || firmaHasta);
+
+  const [descargandoZip, setDescargandoZip] = useState(false);
+
+  const limpiarRangos = () => {
+    setEnvioDesde(null);
+    setEnvioHasta(null);
+    setFirmaDesde(null);
+    setFirmaHasta(null);
+  };
+
+  // El API devuelve fechaenvio/fechafirma como texto 'dd-MM-yyyy' (fechafirma es
+  // null mientras el documento no esta firmado).
+  const parseFechaDoc = (valor) => {
+    if (!valor) return null;
+    const fecha = parse(valor, 'dd-MM-yyyy', new Date());
+    return isValid(fecha) ? fecha : null;
+  };
+
+  const dentroDeRango = (valor, desde, hasta) => {
+    if (!desde && !hasta) return true;
+    const fecha = parseFechaDoc(valor);
+    if (!fecha) return false;
+    if (desde && fecha < startOfDay(desde)) return false;
+    if (hasta && fecha > endOfDay(hasta)) return false;
+    return true;
+  };
 
   const listarDatosState = async () => {
     const documentSelected = ballotFilterStatus !== 'todos'? ballotFilterStatus.split('-')[0]  : ballotFilterStatus;
@@ -506,7 +542,127 @@ const RegistroDocumentos = ({ isDarkMode }) => {
     setBallotFilterStatus(e.target.value);
   };
 
+  const productosFiltrados = useMemo(() => {
+    if (!products) return products;
+    if (!hayFiltroFechas) return products;
+
+    return products
+      .map((empleado) => ({
+        ...empleado,
+        registroDocumentos: (empleado.registroDocumentos || []).filter(
+          (doc) =>
+            dentroDeRango(doc.fechaenvio, envioDesde, envioHasta) &&
+            dentroDeRango(doc.fechafirma, firmaDesde, firmaHasta)
+        ),
+      }))
+      .filter((empleado) => empleado.registroDocumentos.length > 0);
+  }, [products, hayFiltroFechas, envioDesde, envioHasta, firmaDesde, firmaHasta]);
+
+  // Boleta y Cts se consideran firmadas por `estado`; el resto de tipos usa
+  // `certified` y no tiene una version firmada en S3.
+  const esFirmado = (doc) =>
+    (doc.tipodoc === 'Boleta' || doc.tipodoc === 'Cts') && doc.estado === true;
+
+  const documentosFirmadosVisibles = useMemo(
+    () =>
+      (productosFiltrados || []).flatMap((empleado) =>
+        (empleado.registroDocumentos || []).filter(esFirmado)
+      ),
+    [productosFiltrados]
+  );
+
+  const descargarFirmadosZip = async () => {
+    if (documentosFirmadosVisibles.length === 0) return;
+
+    setDescargandoZip(true);
+    const zip = new JSZip();
+    const nombresUsados = new Set();
+    let fallidos = 0;
+
+    try {
+      // En tandas para no abrir cientos de peticiones a S3 a la vez.
+      const TAMANO_TANDA = 5;
+      for (let i = 0; i < documentosFirmadosVisibles.length; i += TAMANO_TANDA) {
+        const tanda = documentosFirmadosVisibles.slice(i, i + TAMANO_TANDA);
+
+        await Promise.all(
+          tanda.map(async (doc) => {
+            try {
+              const respuestaUrl = await fetch(
+                `${mainUrlmin}/minio/get-file-url/documents/firmado_${doc.nombredoc}`
+              );
+              if (!respuestaUrl.ok) throw new Error('No se pudo obtener la URL del documento');
+
+              const { url } = await respuestaUrl.json();
+              const archivo = await fetch(url);
+              if (!archivo.ok) throw new Error(`S3 respondio ${archivo.status}`);
+
+              let nombre = `firmado_${doc.nombredoc}`;
+              if (nombresUsados.has(nombre)) nombre = `${doc.id}_${nombre}`;
+              nombresUsados.add(nombre);
+
+              zip.file(nombre, await archivo.blob());
+            } catch (error) {
+              fallidos += 1;
+              console.error(`Error al descargar el documento ${doc.id}:`, error);
+            }
+          })
+        );
+      }
+
+      if (nombresUsados.size === 0) {
+        toast.current.show({
+          severity: 'error',
+          summary: 'No se descargo ningun documento',
+          detail: 'No se pudo obtener ninguno de los PDF firmados',
+          life: 4000,
+        });
+        return;
+      }
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const blobUrl = URL.createObjectURL(blob);
+      const enlace = document.createElement('a');
+      enlace.style.display = 'none';
+      enlace.href = blobUrl;
+      enlace.download = 'documentos_firmados.zip';
+      document.body.appendChild(enlace);
+      enlace.click();
+      enlace.remove();
+      URL.revokeObjectURL(blobUrl);
+
+      toast.current.show({
+        severity: fallidos > 0 ? 'warn' : 'success',
+        summary: 'Descarga generada',
+        detail:
+          fallidos > 0
+            ? `${nombresUsados.size} documentos descargados, ${fallidos} fallaron`
+            : `${nombresUsados.size} documentos firmados descargados`,
+        life: 4000,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.current.show({
+        severity: 'error',
+        summary: '',
+        detail: 'Error al generar la descarga',
+        life: 3000,
+      });
+    } finally {
+      setDescargandoZip(false);
+    }
+  };
+
+  const propsRangoFecha = {
+    format: 'dd/MM/yyyy',
+    slotProps: {
+      textField: { size: 'small', sx: { width: 150 } },
+      field: { clearable: true },
+    },
+  };
+
   const header = (
+   <div className='flex flex-column' style={{ gap: '10px' }}>
     <div className='flex flex-column flex-md-row justify-content-md-between align-items-md-center'>
       <span className='block mt-2 mt-md-0 p-input-icon-left'>
         <i className='pi pi-search' />
@@ -613,6 +769,70 @@ const RegistroDocumentos = ({ isDarkMode }) => {
         />
       </div>
     </div>
+
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+      <div
+        className='flex flex-wrap align-items-center'
+        style={{ gap: '8px', rowGap: '10px' }}
+      >
+        <span style={{ fontSize: '13px', fontWeight: 600 }}>Fecha Envio:</span>
+        <DatePicker
+          label='Desde'
+          value={envioDesde}
+          onChange={(valor) => setEnvioDesde(valor)}
+          maxDate={envioHasta || undefined}
+          {...propsRangoFecha}
+        />
+        <DatePicker
+          label='Hasta'
+          value={envioHasta}
+          onChange={(valor) => setEnvioHasta(valor)}
+          minDate={envioDesde || undefined}
+          {...propsRangoFecha}
+        />
+
+        <span style={{ fontSize: '13px', fontWeight: 600, marginLeft: '12px' }}>
+          Fecha Firma:
+        </span>
+        <DatePicker
+          label='Desde'
+          value={firmaDesde}
+          onChange={(valor) => setFirmaDesde(valor)}
+          maxDate={firmaHasta || undefined}
+          {...propsRangoFecha}
+        />
+        <DatePicker
+          label='Hasta'
+          value={firmaHasta}
+          onChange={(valor) => setFirmaHasta(valor)}
+          minDate={firmaDesde || undefined}
+          {...propsRangoFecha}
+        />
+
+        {hayFiltroFechas ? (
+          <Button
+            label='Limpiar fechas'
+            icon='pi pi-filter-slash'
+            className='p-button-text p-button-sm'
+            onClick={limpiarRangos}
+          />
+        ) : null}
+
+        <Button
+          label={
+            descargandoZip
+              ? 'Generando ZIP...'
+              : `Descargar documentos firmados (${documentosFirmadosVisibles.length})`
+          }
+          icon={descargandoZip ? 'pi pi-spin pi-spinner' : 'pi pi-download'}
+          className='p-button-sm'
+          style={{ marginLeft: 'auto' }}
+          disabled={descargandoZip || documentosFirmadosVisibles.length === 0}
+          onClick={descargarFirmadosZip}
+        />
+      </div>
+    </LocalizationProvider>
+   </div>
   );
   const buscador = (data) => {
     setGlobalFilter(data.target.value);
@@ -659,7 +879,7 @@ const RegistroDocumentos = ({ isDarkMode }) => {
             <Toolbar className='mb-4' right={rightToolbarTemplate}></Toolbar>
 
             <DataTable
-              value={products}
+              value={productosFiltrados}
               expandedRows={expandedRows}
               onRowToggle={(e) => setExpandedRows(e.data)}
               responsiveLayout='scroll'
