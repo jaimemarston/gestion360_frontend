@@ -12,7 +12,7 @@ import { Button } from "primereact/button";
 import { Image } from "primereact/image";
 import "./login.scss";
 import { setToken } from "../../../api/services/axios";
-import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+import GoogleLoginButton from "./GoogleLoginButton";
 
 export default function Login() {
   const [login, setLogin] = useState({
@@ -89,12 +89,7 @@ export default function Login() {
     }
   }, [googleToken]);
 
-  const handleLogin = useGoogleLogin({
-    onSuccess: (response) => {
-      setGoogleToken(response.access_token);
-    },
-    onError: (error) => alert(`Error with Google Login: ${error}`),
-  });
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   return (
     <section id="login">
@@ -134,10 +129,9 @@ export default function Login() {
             </div>
             <Button type="submit" label={"Ingreso"} className="inputs" />
 
-              <button onClick={() => handleLogin()} 
-              type="button" className="login-with-google-btn mt-5">
-                Sign in with Google
-              </button>
+            {googleClientId && (
+              <GoogleLoginButton onToken={setGoogleToken} />
+            )}
           </form>
         </div>
       </div>
